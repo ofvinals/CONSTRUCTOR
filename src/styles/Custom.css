@@ -1,0 +1,17 @@
+.p-dialog-header {
+	background-color: #d4d4d4 !important;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+.p-icon {
+	font-size: 24px !important;
+	width: 20px;
+	height: 20px;
+	margin: 10px;
+}
+.p-menuitem-icon {
+	margin-right: 10px;
+}
+.p-menuitem-icon:hover {
+	color: red;
+}
