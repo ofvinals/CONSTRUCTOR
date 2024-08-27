@@ -1,9 +1,13 @@
+/* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin');
 
 export default {
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
+		screens: {
+			xs: '475px',
+		},
 		extend: {
 			fontFamily: {
 				sans: ['Roboto', 'sans-serif'],
@@ -30,8 +34,9 @@ export default {
 					backgroundColor: '#ffd52b',
 					color: 'black',
 					padding: '10px',
-					width: '170px',
+					width: 'auto',
 					border: 'none',
+					borderRadius: '6px',
 					fontWeight: '600',
 					'&:hover': {
 						backgroundColor: '#fde047',

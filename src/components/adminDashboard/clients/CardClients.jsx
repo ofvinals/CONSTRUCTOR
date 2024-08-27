@@ -10,10 +10,12 @@ import { FormClients } from './FormClients';
 import { Dialog } from 'primereact/dialog';
 import Avatar from 'react-avatar';
 import '../../../styles/Custom.css';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const CardClients = ({ users }) => {
 	const { allUsersStatus, disableUser, deleteUser, enableUser } =
 		useUserActions();
+	const { loggedUser } = useAuth();
 	const [userId, setUserId] = useState(null);
 	const editModal = useModal();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -69,7 +71,7 @@ export const CardClients = ({ users }) => {
 
 	return (
 		<div className='flex flex-row flex-wrap items-center justify-around bg-background'>
-			{users.map((user) => (
+			{users?.map((user) => (
 				<Card
 					key={user.uid}
 					className='w-[330px] h-full flex flex-col border-2 border-[#ffd52b] justify-center rounded-xl m-2'>
@@ -114,7 +116,7 @@ export const CardClients = ({ users }) => {
 								editModal.openModal();
 							}}
 							className='hover:bg-slate-300 p-2 rounded-md'>
-							<i className='pi pi-user-edit mr-1 text-blue-500 font-bold'></i>
+							<i className='pi pi-user-edit mr-2 text-xl text-blue-500 font-bold'></i>
 							Editar
 						</Button>
 						<Button
@@ -126,23 +128,25 @@ export const CardClients = ({ users }) => {
 							className='hover:bg-slate-300 focus:shadow-outline focus:outline-none text-black p-2 rounded'>
 							{user.isActive ? (
 								<>
-									<i className='pi pi-play mr-1 text-yellow-500 font-bold'></i>
+									<i className='pi pi-user-minus text-xl mr-2 text-red-500 font-bold'></i>
 									Suspender
 								</>
 							) : (
 								<>
-									<i className='pi pi-pause mr-1 text-green-500 font-bold'></i>
+									<i className='pi pi-user-plus text-xl mr-2 text-green-500 font-bold'></i>
 									Habilitar
 								</>
 							)}
 						</Button>
-						<Button
-							type='button'
-							onClick={() => handleShowDeleteConfirm(user.uid)}
-							className='hover:bg-slate-300 p-2 rounded-md'>
-							<i className='pi pi-trash mr-1 text-red-500 font-bold'></i>
-							Eliminar
-						</Button>
+						{loggedUser.superAdmin && (
+							<Button
+								type='button'
+								onClick={() => handleShowDeleteConfirm(user.uid)}
+								className='hover:bg-slate-300 p-2 rounded-md'>
+								<i className='pi pi-trash mr-1 text-red-500 font-bold'></i>
+								Eliminar
+							</Button>
+						)}
 					</div>
 				</Card>
 			))}

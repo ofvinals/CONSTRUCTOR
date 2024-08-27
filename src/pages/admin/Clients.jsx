@@ -15,14 +15,17 @@ export const Clients = () => {
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const addModal = useModal();
 	const navigate = useNavigate();
-	const { users } = useUserActions(); 
+	const { users } = useUserActions();
 
 	useEffect(() => {
 		if (searchQuery) {
-			const filtered = users.filter((user) =>
-				user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				user.cel?.includes(searchQuery)
+			const filtered = users.filter(
+				(user) =>
+					user.displayName
+						?.toLowerCase()
+						.includes(searchQuery.toLowerCase()) ||
+					user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+					user.cel?.includes(searchQuery)
 			);
 			setFilteredUsers(filtered);
 		} else {
@@ -47,38 +50,40 @@ export const Clients = () => {
 
 	return (
 		<div className='min-h-screen'>
-			<div className='flex flex-row flex-wrap items-center justify-between my-3 mx-2'>
-				<h1 className='font-semibold text-xl'>Clientes</h1>
-				<div className='gap-2 flex flex-row flex-wrap items-center justify-around'>
+			<div className='flex flex-wrap items-center justify-between my-3 mx-2'>
+				<h1 className='title'>Clientes</h1>
+				<div className='flex flex-wrap items-center justify-center md:justify-end w-full sm:w-auto mt-3 sm:mt-0'>
 					<form onSubmit={handleSearchSubmit} className='flex'>
 						<input
 							type='text'
 							placeholder='Buscar...'
-							className='w-[full] px-2 py-1 bg-white border-1 border-yellow-500 text-black placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-[#61dafb]'
+							className='w-full px-2 py-1 bg-white border-1 border-yellow-500 text-black placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-[#61dafb]'
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
 						<button
 							type='submit'
-							className='ml-2 bg-[#ffd52b] hover:bg-[#fde047] duration-200  text-black px-4 py-2 rounded-md focus:outline-none'>
-							<i className='pi pi-search font-semibold'></i>
+							className='ml-2 bg-[#ffd52b] hover:bg-[#fde047] duration-200 text-black px-3 py-2 rounded-md focus:outline-none'>
+							<i className='pi pi-search font-bold'></i>
 						</button>
 					</form>
-					<Button
-						onClick={handleCard}
-						className='hover:bg-yellow-200 p-3 rounded-md'>
-						<i className='pi pi-objects-column'></i>
-					</Button>
-					<Button
-						onClick={handleList}
-						className='hover:bg-yellow-200 p-3 rounded-md'>
-						<i className='pi pi-list'></i>
-					</Button>
-					<Button
-						onClick={() => addModal.openModal()}
-						className='btnprimary'>
-						<i className='pi pi-plus mr-2'></i> Nuevo Cliente
-					</Button>
+					<div className='ml-1 flex flex-row items-center sm:w-fit gap-2 justify-center space-y-2 sm:space-y-0 '>
+						<Button
+							onClick={handleCard}
+							className='hover:bg-yellow-200 p-3 rounded-md'>
+							<i className='pi pi-objects-column'></i>
+						</Button>
+						<Button
+							onClick={handleList}
+							className='hover:bg-yellow-200 p-3 rounded-md m-0'>
+							<i className='pi pi-list'></i>
+						</Button>
+						<Button
+							onClick={() => addModal.openModal()}
+							className='btnprimary m-0'>
+							<i className='pi pi-plus mr-2 font-bold'></i> Nuevo Cliente
+						</Button>
+					</div>
 				</div>
 			</div>
 			{openCardClients && <CardClients users={filteredUsers} />}

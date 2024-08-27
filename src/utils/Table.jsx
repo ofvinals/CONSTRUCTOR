@@ -37,17 +37,21 @@ export const Table = ({ columns, data, actions }) => {
 			shape: 'rounded',
 			variant: 'outlined',
 		},
-		renderRowActions: ({ row }) => (
-			<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-				{actions.map((action, index) => (
-					<span
-						key={index}
-						onClick={() => action.onClick && action.onClick(row)}>
-						{action.icon}
-					</span>
-				))}
-			</Box>
-		),
+		renderRowActions: ({ row }) => {
+			const rowActions = actions(row); // Llama a la función actions con row
+			console.log(rowActions)
+			return (
+				<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+					{rowActions.map((action, index) => (
+						<span
+							key={index}
+							onClick={() => action.onClick && action.onClick(row)}>
+							{action.icon}
+						</span>
+					))}
+				</Box>
+			);
+		},
 	});
 
 	return (

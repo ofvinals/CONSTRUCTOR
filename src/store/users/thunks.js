@@ -106,7 +106,7 @@ export const createUser = createAsyncThunk(
 			const userData = {
 				...values,
 				admin: false,
-				active: true,
+				isActive: true,
 				displayName: displayNameValue,
 			};
 			const res = await addDoc(usersRef, userData);

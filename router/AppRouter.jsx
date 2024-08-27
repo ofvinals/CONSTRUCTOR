@@ -15,6 +15,9 @@ import { Budgets } from '../src/pages/admin/Budgets';
 import { Clients } from '../src/pages/admin/Clients';
 import { Proyects } from '../src/pages/admin/Proyects';
 import { EditProfile } from '../src/components/adminDashboard/navbar/EditProfile';
+import { Config } from '../src/components/adminDashboard/employees/config/Config';
+import { Attendance } from '../src/components/adminDashboard/employees/attendance/Attendance';
+import { Salary } from '../src/components/adminDashboard/employees/salary/Salary';
 
 export const AppRouter = () => {
 	return (
@@ -35,6 +38,11 @@ export const AppRouter = () => {
 				<Route path='/employees' element={<Employees />}></Route>
 				<Route path='/tools' element={<Tools />}></Route>
 				<Route path='/profile' element={<EditProfile />}></Route>
+				<Route path='/employees/config' element={<Config />}></Route>
+				<Route
+					path='/employees/attendance'
+					element={<Attendance />}></Route>
+				<Route path='/employees/salary' element={<Salary />}></Route>
 
 				<Route element={<PrivateRoute />}></Route>
 			</Routes>

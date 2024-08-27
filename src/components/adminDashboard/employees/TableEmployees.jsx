@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { useUserActions } from '../../../hooks/UseUserActions';
+import { useEmployeeActions } from '../../../hooks/UseEmployeeActions';
 import {
 	Edit as EditIcon,
 	Delete as DeleteIcon,
@@ -12,19 +12,19 @@ import useModal from '../../../hooks/useModal';
 import Loader from '../../../utils/Loader';
 import { Table } from '../../../utils/Table';
 import Modals from '../../../utils/Modals';
-import { FormClients } from './FormClients';
+import { FormEmployees } from './FormEmployees';
 import { useAuth } from '../../../hooks/useAuth';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 
-export const TableClients = ({ users }) => {
+export const TableEmployees = ({ employees }) => {
 	const {
-		deleteUser,
-		allUserStatus,
-		userStatusDelete,
-		enableUser,
-		disableUser,
-	} = useUserActions();
+		deleteEmployee,
+		allEmployeeStatus,
+		employeeStatusDelete,
+		enableEmployee,
+		disableEmployee,
+	} = useEmployeeActions();
 	const { loggedUser } = useAuth();
 	const superAdmin = loggedUser.superAdmin;
 	const admin = loggedUser.admin;
@@ -35,26 +35,26 @@ export const TableClients = ({ users }) => {
 	const viewModal = useModal();
 	const editModal = useModal();
 
-	const handleDeleteUser = () => {
+	const handleDeleteEmployee = () => {
 		if (rowId) {
-			deleteUser({ id: rowId });
+			deleteEmployee({ id: rowId });
 			setShowConfirmDialog(false);
 		}
 	};
 
 	const handleConfirmDisable = async (uid) => {
 		try {
-			await disableUser({ id: uid });
+			await disableEmployee({ id: uid });
 		} catch (error) {
-			console.error('Error al deshabilitar usuario:', error);
+			console.error('Error al deshabilitar el empleado:', error);
 		}
 	};
 
 	const handleConfirmEnable = async (uid) => {
 		try {
-			await enableUser({ id: uid });
+			await enableEmployee({ id: uid });
 		} catch (error) {
-			console.error('Error al habilitar usuario:', error);
+			console.error('Error al habilitar el empleado:', error);
 		}
 	};
 
@@ -74,8 +74,8 @@ export const TableClients = ({ users }) => {
 				size: 50,
 			},
 			{
-				header: 'Email',
-				accessorKey: 'email',
+				header: 'Position',
+				accessorKey: 'position',
 				size: 50,
 			},
 			{
@@ -152,7 +152,7 @@ export const TableClients = ({ users }) => {
 			<Button
 				label='Sí'
 				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={handleDeleteUser}
+				onClick={handleDeleteEmployee}
 				className='p-button-text hover:bg-green-200 p-2 rounded-md'
 			/>
 		</div>
@@ -163,12 +163,12 @@ export const TableClients = ({ users }) => {
 			<section className='bg-background pb-3 '>
 				<hr className='linea text-white mx-3' />
 				<div className='container-lg my-3'>
-					{allUserStatus === 'Cargando' ||
-					userStatusDelete === 'Cargando' ? (
+					{allEmployeeStatus === 'Cargando' ||
+					employeeStatusDelete === 'Cargando' ? (
 						<Loader />
 					) : (
 						<div className='table-responsive'>
-							<Table columns={columns} data={users} actions={actions} />
+							<Table columns={columns} data={employees} actions={actions} />
 						</div>
 					)}
 				</div>
@@ -178,7 +178,7 @@ export const TableClients = ({ users }) => {
 						isOpen={editModal.isOpen}
 						onClose={editModal.closeModal}
 						title='Editar Datos del Cliente'>
-						<FormClients
+						<FormEmployees
 							id={rowId}
 							onClose={editModal.closeModal}
 							mode='edit'
@@ -188,7 +188,7 @@ export const TableClients = ({ users }) => {
 						isOpen={viewModal.isOpen}
 						onClose={viewModal.closeModal}
 						title='Ver Datos del Cliente'>
-						<FormClients
+						<FormEmployees
 							id={rowId}
 							onClose={viewModal.closeModal}
 							mode='view'
@@ -199,7 +199,7 @@ export const TableClients = ({ users }) => {
 						onHide={() => setShowConfirmDialog(false)}
 						header='Confirmar Eliminación'
 						footer={footerContent}>
-						<p>¿Estás seguro de que quieres eliminar este usuario?</p>
+						<p>¿Estás seguro de que quieres eliminar este empleado?</p>
 					</Dialog>
 				</div>
 			</section>

@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateTime } from './Date';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from 'primereact/button';
 import Navbar from '../adminDashboard/navbar/Navbar';
+import { Link, useLocation } from 'react-router-dom';
+import { menuOptions } from '../../utils/HeaderOptions';
 
 export function Header() {
 	const { loggedUser } = useAuth();
 	const [visible, setVisible] = useState(false);
+	const location = useLocation();
 
 	const handleMouseEnter = () => {
 		if (loggedUser) {
@@ -14,15 +17,19 @@ export function Header() {
 		}
 	};
 
+	useEffect(() => {}, [location]);
+
 	const handleMouseLeave = () => {
 		setVisible(false);
 	};
 
+	const currentMenuOptions = menuOptions[location.pathname] || [];
+
 	return (
 		<header className='relative bg-background text-white'>
-			<section className='flex items-center justify-center sm:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto'>
+			<section className='flex items-center w-full justify-center sm:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto'>
 				<div
-					className='flex items-center justify-center'
+					className='flex items-start justify-start'
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}>
 					<Button className='hover:opacity-80 duration-200 my-3'>
@@ -39,7 +46,24 @@ export function Header() {
 						</div>
 					)}
 				</div>
-				<div className='text-black font-semibold flex flex-col text-center flex-wrap items-center'>
+				<div className='flex flex-row flex-wrap m-2 space-x-4 items-center justify-center lg:justify-end'>
+					{currentMenuOptions.map((option) => (
+						<Link
+							key={option.path}
+							to={option.path}
+							className={`flex justify-center text-center  items-center hover:text-yellow-300 text-black hover:border-b-2 hover:border-blue-500  ${
+								option.icon ? 'w-10' : 'w-20'
+							}`}>
+							{option.icon && (
+								<span className='mr-2  text-center font-bold'>
+									{option.icon}
+								</span>
+							)}
+							{option.label}
+						</Link>
+					))}
+				</div>
+				<div className='text-black font-semibold flex flex-col text-end flex-wrap items-center justify-center md:items-end'>
 					<DateTime />
 				</div>
 			</section>
