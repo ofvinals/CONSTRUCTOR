@@ -15,8 +15,8 @@ export const FormInput = ({
 	const isExpte = name === 'nroexpte';
 	const inputClass = `items-center w-full p-2 focus:outline-none text-black ${
 		isCaratula || (isExpte && mode === 'view') || mode === 'view'
-			? 'border-none shadow-none bg-transparent'
-			: 'border-2 border-black shadow-2xl rounded-md'
+			? 'border-none bg-transparent'
+			: 'border-2 border-black rounded-md'
 	}`;
 
 	return (
@@ -26,7 +26,7 @@ export const FormInput = ({
 			} mt-2`}>
 			<Form.Label
 				className={`text-start bg-transparent text-xl mb-0 mt-2  ${
-					customClass ? 'text-white' : 'text-background'
+					customClass ? 'text-black' : 'text-black'
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>
@@ -87,7 +87,7 @@ export const FormSelect = ({
 			} mt-2`}>
 			<Form.Label
 				className={`text-start bg-transparent text-xl mb-0 mt-2 ${
-					customClass ? 'text-white' : 'text-background'
+					customClass ? 'text-black' : 'text-black'
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>
@@ -112,18 +112,16 @@ export const FormSelect = ({
 };
 
 export const SaveButton = ({ onSubmit, label }) => (
-	<Button
-		type='submit'
-		className='bg-background shadow-3xl btnLogout text-white text-center p-2 border-2 w-[230px] my-3  border-white rounded-xl font-semibold'
-		onClick={onSubmit}>
+	<Button type='submit' className='btnprimary w-[190px]' onClick={onSubmit}><i className='pi pi-save mr-1'></i>
 		{label}
 	</Button>
 );
 
 export const CancelButton = ({ onClose, label }) => (
 	<Button
-		className='bg-white shadow-3xl btnAdmin text-primary text-center p-2 border-2 w-[150px] my-3 border-primary rounded-xl font-semibold'
+		className='btncancel'
 		onClick={onClose}>
+			<i className='pi pi-times mr-1'></i>
 		{label}
 	</Button>
 );

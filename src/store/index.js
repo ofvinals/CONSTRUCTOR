@@ -1,13 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './user/slice';
-import toastReducer from './toast/slice'
-import modalReducer from './modals/slice';
+import userReducer from './users/slice';
+import toastReducer from './toast/slice';
+import authReducer from './auth/slice';
 
 export const store = configureStore({
 	reducer: {
-		user: userReducer,
+		auth: authReducer,
+		users: userReducer,
 		toast: toastReducer,
-		modal: modalReducer,
-
 	},
 });

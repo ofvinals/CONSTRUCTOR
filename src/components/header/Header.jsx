@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DateTime } from './Date';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from 'primereact/button';
-import Navbar from '../adminDashboard/Navbar';
+import Navbar from '../adminDashboard/navbar/Navbar';
 
 export function Header() {
 	const { loggedUser } = useAuth();

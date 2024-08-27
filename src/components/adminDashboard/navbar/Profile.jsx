@@ -1,12 +1,13 @@
 import { useRef } from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
+import Avatar from 'react-avatar';
 
 export const Profile = () => {
-	const { loggedUser, logout } = useAuth();
+	const { loggedUser, logoutUser } = useAuth();
 	const op = useRef(null);
 	const navigate = useNavigate();
 
@@ -14,7 +15,7 @@ export const Profile = () => {
 		{
 			label: 'Perfil',
 			icon: 'pi pi-user',
-			className: ' hover:font-bold hover:bg-yellow-200  p-2 text-black',
+			className: ' hover:font-bold hover:bg-yellow-200 p-2 text-black',
 			command: () => {
 				navigate('/profile');
 			},
@@ -24,27 +25,35 @@ export const Profile = () => {
 			icon: 'pi pi-sign-out',
 			className: 'pt-3 hover:font-bold hover:bg-yellow-200  p-2 text-black',
 			command: () => {
-				logout();
+				logoutUser();
 			},
 		},
 	];
 	return (
-		<div className='flex flex-row flex-wrap items-center'>
+		<div className='flex flex-row  items-center justify-center'>
 			<Button
 				onClick={(e) => op.current.toggle(e)}
 				className='w-12 h-12 rounded-full m-3 ring-2 ring-yellow-500  cursor-pointer'>
-				<img
-					className='object-cover w-full h-full'
-					src={loggedUser?.photoProfile}
-					width={105}
-					alt='Foto de perfil'
-				/>
+				{loggedUser.photoProfiles ? (
+					<img
+						src={loggedUser.photoProfile}
+						alt='foto de perfil'
+						className='object-cover w-full h-full'
+					/>
+				) : (
+					<Avatar
+						name={loggedUser.displayName}
+						size='46'
+						round={true}
+						className='object-cover w-full h-full'
+					/>
+				)}
 			</Button>
-			<p className='font-semibold'>{loggedUser?.fullName}</p>
+			<p className='font-semibold text-wrap'>{loggedUser.displayName}</p>
 			<OverlayPanel ref={op} dismissable>
 				<Menu
 					model={userMenuItems}
-					className='mb-3 rounded-lg p-3 bg-neutral-100'
+					className='mb-3 rounded-lg p-3 '
 				/>
 			</OverlayPanel>
 		</div>

@@ -30,11 +30,22 @@ export default {
 					backgroundColor: '#ffd52b',
 					color: 'black',
 					padding: '10px',
+					width: '170px',
+					border: 'none',
 					fontWeight: '600',
-					borderRadius: '0.375rem',
 					'&:hover': {
 						backgroundColor: '#fde047',
 						color: 'black',
+					},
+				},
+				'.btncancel': {
+					backgroundColor: '#4b5563',
+					color: '#ffd52b',
+					padding: '10px',
+					fontWeight: '600',
+					border: 'none',
+					'&:hover': {
+						backgroundColor: '#6b7280',
 					},
 				},
 				// Estilo para .btnicon

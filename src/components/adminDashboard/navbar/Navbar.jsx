@@ -2,21 +2,20 @@
 import { useState } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { Menu } from 'primereact/menu';
-import '../../styles/Custom.css';
+import '../../../styles/Custom.css';
 import { Profile } from './Profile';
-import { createItemsNavbar } from '../../utils/CreateItemsNavbar';
+import { createItemsNavbar } from '../../../utils/CreateItemsNavbar';
 
 export const Navbar = ({ visible, onHide }) => {
 	const [activeItem, setActiveItem] = useState('Proyectos');
 	const itemsNavbar = createItemsNavbar(onHide, setActiveItem, activeItem);
 
 	return (
-		<nav>
+		<nav className='bg-background'>
 			<Sidebar
 				visible={visible}
 				onHide={onHide}
 				baseZIndex={1000}
-				className='bg-background'
 				style={{ width: '250px' }}>
 				<div className='flex flex-row flex-wrap items-center text-xl text-yellow-500 font-bold'>
 					<img

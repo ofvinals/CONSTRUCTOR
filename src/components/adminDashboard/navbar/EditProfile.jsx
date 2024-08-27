@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { useUserAction } from '../../hooks/useUserAction';
+import { useAuth } from '../../../hooks/useAuth';
+import { useUserActions } from '../../../hooks/useUserActions';
 import { Link } from 'react-router-dom';
+import Avatar from 'react-avatar';
 
 export const EditProfile = () => {
 	const { loggedUser } = useAuth();
-	const { updateProfile, userStatusUpdate } = useUserAction();
+	const { updateProfile, userStatusUpdate } = useUserActions();
 
 	const [fullName, setFullName] = useState(loggedUser?.fullName);
 	const [photoProfile, setPhotoProfile] = useState(loggedUser?.photoProfile);
@@ -22,7 +23,7 @@ export const EditProfile = () => {
 			setFileImage(file);
 		}
 	};
-
+	console.log(loggedUser);
 	return (
 		<div className='bg-background p-4'>
 			<div className='max-w-screen-sm mx-auto bg-gray-200 rounded-lg px-8 pt-6 pb-8 mb-4'>
@@ -31,11 +32,19 @@ export const EditProfile = () => {
 				</h2>
 				<div className='flex flex-col items-center mt-8'>
 					<div className='relative'>
-						<img
-							className='object-cover w-40 h-40 p-1 rounded-full ring-2 ring-[#ffd52b]'
-							src={photoProfile}
-							alt={'Foto de perfil de ' + loggedUser?.fullName}
-						/>
+						{loggedUser.photoProfiles ? (
+							<img
+								src={loggedUser.photoProfile}
+								alt='foto de perfil'
+								className='object-cover w-40 h-40 p-1 rounded-full ring-2 ring-[#ffd52b]'
+							/>
+						) : (
+							<Avatar
+								name={loggedUser.displayName}
+								size='175'
+								className='object-cover w-40 h-40 p-1 rounded-full ring-2 ring-[#ffd52b]'
+							/>
+						)}
 						<input
 							type='file'
 							accept='image/*'
@@ -62,7 +71,7 @@ export const EditProfile = () => {
 								type='text'
 								disabled={userStatusUpdate === 'Cargando'}
 								className='w-full p-2 border-2 rounded-md bg-white text-black border-[#ffd52b]'
-								value={fullName}
+								value={loggedUser.displayName}
 								onChange={(e) => setFullName(e.target.value)}
 							/>
 						</div>
@@ -78,7 +87,9 @@ export const EditProfile = () => {
 								type='button'
 								disabled={userStatusUpdate === 'Cargando'}
 								className='rounded-lg bg-[#ffd52b] font-semibold px-4 py-2 text-black hover:bg-yellow-200 focus:outline-none flex flex-row justify-center items-center'
-								onClick={() => updateProfile({ fullName, fileImage })}>
+								onClick={() =>
+									updateProfile({ displayName, fileImage })
+								}>
 								{userStatusUpdate === 'Cargando' ? (
 									'Cargando'
 								) : (

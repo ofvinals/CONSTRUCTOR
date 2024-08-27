@@ -1,14 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { auth, db, storage } from '../../services/firebase';
-import {
-	doc,
-	setDoc,
-	getDoc,
-	getDocs,
-	query,
-	collection,
-	updateDoc,
-} from 'firebase/firestore';
+import { auth, db } from '../../services/firebase';
+import { doc, setDoc, getDoc, collection, addDoc } from 'firebase/firestore';
 import {
 	createUserWithEmailAndPassword,
 	GoogleAuthProvider,
@@ -18,67 +10,70 @@ import {
 	signOut,
 	updateProfile,
 } from 'firebase/auth';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { showToast } from '../toast/slice';
-
+import { useUserActions } from '../../hooks/UseUserActions';
+const { getUsers } = useUserActions;
 // FUNCION REGISTRO DE USUARIOS
-export const registerUser = createAsyncThunk(
-	'user/registro',
-	async (values, { rejectWithValue }) => {
+export const register = createAsyncThunk(
+	'user/register',
+	async ({ values }, { rejectWithValue, dispatch }) => {
 		console.log(values);
-		const { nombre, apellido, email, password, photoProfile, role } = values;
+		const { nombre, apellido, email, password } = values;
 
 		try {
-			const currentUser = await createUserWithEmailAndPassword(
+			const userCredential = await createUserWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
+			const currentUser = userCredential.user;
+			const displayNameValue = `${nombre} ${apellido}`;
 			console.log(currentUser);
-
-			// Actualizar el perfil del usuario en Firebase Auth
 			await updateProfile(auth.currentUser, {
-				displayName: `${nombre} ${apellido}`,
-				photoURL: photoProfile, // URL o cadena vacía
+				displayName: displayNameValue,
 			});
-
-			// Guardar datos adicionales del usuario en Firestore
-			await setDoc(doc(db, 'users', currentUser.user.uid), {
-				email: currentUser.user.email,
-				fullName: currentUser.user.displayName,
-				photoProfile: currentUser.user.photoURL,
-				role: role,
-				authMethod: currentUser.user.providerData.map(
-					(prov) => prov.providerId
-				),
-			});
-
-			// Obtener los datos del usuario recién creado
-			const userDoc = await getDoc(doc(db, 'users', currentUser.user.uid));
-			console.log(userDoc);
-			return { uid: userDoc.id, ...userDoc.data() };
+			const usersRef = collection(db, 'users');
+			const userData = {
+				...values,
+				admin: false,
+				active: true,
+				displayName: displayNameValue,
+			};
+			const res = await addDoc(usersRef, userData);
+			dispatch(getUsers());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Cliente creado exitosamente',
+				})
+			);
+			return { id: res.id, ...userData };
 		} catch (error) {
-			if (error.code === 'auth/email-already-in-use') {
-				return rejectWithValue('Email en uso');
-			} else {
-				return rejectWithValue(error.code || 'Error al registrar');
-			}
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al registrar el usuario',
+				})
+			);
+			console.log(error.response.data);
+			return rejectWithValue(error.response.data);
 		}
 	}
 );
 
 // FUNCION LOGIN CON CORREO ELECTRONICO
-export const loginUserWithEmail = createAsyncThunk(
-	'user/loginWithEmail',
-	async ({ email, password }, { rejectWithValue, dispatch }) => {
+export const login = createAsyncThunk(
+	'user/login',
+	async ({ values }, { rejectWithValue, dispatch }) => {
+		const { email, password } = values;
 		try {
 			const signWithEmail = await signInWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
-			const userDoc = await getDoc(doc(db, 'users', signWithEmail.user.uid));
 
+			const userDoc = await getDoc(doc(db, 'users', signWithEmail.user.uid));
 			dispatch(
 				showToast({
 					type: 'success',
@@ -93,8 +88,8 @@ export const loginUserWithEmail = createAsyncThunk(
 					message: 'Error al iniciar sesion',
 				})
 			);
-			console.log(error.code);
-			return rejectWithValue(error.code);
+			console.log(error.response.data);
+			return rejectWithValue(error.response.data);
 		}
 	}
 );
@@ -104,15 +99,16 @@ export const loginWithGoogle = createAsyncThunk(
 	'user/loginGoogle',
 	async (_, { rejectWithValue, dispatch }) => {
 		const googleProvider = new GoogleAuthProvider();
+
 		try {
 			const res = await signInWithPopup(auth, googleProvider);
-
 			const currentUser = res.user;
+
 			await setDoc(doc(db, 'users', currentUser.uid), {
 				email: currentUser.email,
-				fullName: currentUser.displayName,
+				displayName: currentUser.displayName,
 				photoProfile: currentUser.photoURL,
-				role: 'user',
+				admin: true,
 				authMethod: currentUser.providerData.map((prov) => prov.providerId),
 			});
 
@@ -138,14 +134,34 @@ export const loginWithGoogle = createAsyncThunk(
 );
 
 // FUNCION LOGOUT
-export const logout = createAsyncThunk('user/logout', async () => {
-	await signOut(auth);
-});
+export const logout = createAsyncThunk(
+	'user/logout',
+	async (_, { dispatch }) => {
+		try {
+			await signOut(auth);
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Sesion cerrada exitosamente',
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al cerrar sesion',
+				})
+			);
+			console.error('Error al cerrar sesión:', error);
+			return error.message;
+		}
+	}
+);
 
 // FUNCION VERIFICAR USUARIO LOGUEADO
 export const verifyLoggedUser = createAsyncThunk(
-	'user/login/email',
-	async ({ rejectWithValue, dispatch }) => {
+	'user/verifyLoggedUser',
+	async () => {
 		return new Promise((resolve) => {
 			onAuthStateChanged(auth, async (currentUser) => {
 				if (currentUser) {

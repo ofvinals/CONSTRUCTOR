@@ -14,7 +14,7 @@ import { Business } from '../src/pages/admin/business';
 import { Budgets } from '../src/pages/admin/Budgets';
 import { Clients } from '../src/pages/admin/Clients';
 import { Proyects } from '../src/pages/admin/Proyects';
-import { EditProfile } from '../src/components/adminDashboard/EditProfile';
+import { EditProfile } from '../src/components/adminDashboard/navbar/EditProfile';
 
 export const AppRouter = () => {
 	return (

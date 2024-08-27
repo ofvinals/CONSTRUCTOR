@@ -11,7 +11,7 @@ import '../../styles/Custom.css';
 
 export const Register = () => {
 	const { sendMailRegister } = useMails();
-	const { registro } = useAuth();
+	const { registerUser } = useAuth();
 	const navigate = useNavigate();
 	const {
 		register,
@@ -32,7 +32,7 @@ export const Register = () => {
 	const onSubmit = handleSubmit(async (values) => {
 		try {
 			console.log(values);
-			await registro(values);
+			await registerUser({values});
 			reset();
 			// await sendMailRegister(values);
 			navigate('/admin');
@@ -54,7 +54,7 @@ export const Register = () => {
 					onSubmit={onSubmit}
 					ref={form}>
 					{/* Agrupa los inputs del formulario */}
-					{['nombre', 'apellido', 'email'].map((field, index) => (
+					{['nombre', 'apellido', 'cel', 'email'].map((field, index) => (
 						<Form.Group className='mb-3' key={index}>
 							<Form.Label className='text-start bg-transparent text-xl text-neutral-800 w-7/12 font-medium'>
 								{field.charAt(0).toUpperCase() + field.slice(1)}
@@ -85,7 +85,7 @@ export const Register = () => {
 							<Form.Label className='text-start bg-transparent text-xl text-neutral-800 w-10/12 font-medium'>
 								Contraseña
 							</Form.Label>
-							<div className='flex flex-row items-center bg-neutral-200 shadow-2xl w-full rounded-md focus:outline-none border-2 border-black'>
+							<div className='flex flex-row items-center bg-neutral-200 w-full rounded-md focus:outline-none border-2 border-black'>
 								<Form.Control
 									className='border-none'
 									type={showPassword ? 'text' : 'password'}
@@ -125,7 +125,7 @@ export const Register = () => {
 								id='inputconfirm'>
 								Confirmar Contraseña
 							</Form.Label>
-							<div className='flex flex-row items-center bg-neutral-200 shadow-2xl w-full rounded-md focus:outline-none border-2 border-black'>
+							<div className='flex flex-row items-center bg-neutral-200  w-full rounded-md focus:outline-none border-2 border-black'>
 								<Form.Control
 									className='border-none '
 									type={showCoPassword ? 'text' : 'password'}
