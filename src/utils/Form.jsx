@@ -74,6 +74,7 @@ export const FormSelect = ({
 	options,
 	selectOptions,
 	customClass,
+	attendanceClass,
 }) => {
 	const isCaratula = name === 'caratula';
 	const selectClass = `items-center w-full p-2 focus:outline-none text-black ${
@@ -89,8 +90,12 @@ export const FormSelect = ({
 			} mt-2`}>
 			<Form.Label
 				className={`text-start bg-transparent text-xl mb-0 mt-2 ${
-					customClass ? 'text-green' : 'text-red'
-				}  w-1/2 font-medium`}>
+					customClass
+						? 'text-green'
+						: attendanceClass
+						? 'text-[15px]'
+						: 'text-red'
+				} w-1/2 font-medium`}>
 				{label}
 			</Form.Label>
 			<Form.Control

@@ -26,8 +26,8 @@ export function Header() {
 	const currentMenuOptions = menuOptions[location.pathname] || [];
 
 	return (
-		<header className='relative bg-background text-white'>
-			<section className='flex items-center w-full justify-center sm:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto'>
+		<header className='bg-background text-white'>
+			<section className='flex items-center w-full justify-center sm:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto min-h-[100px]'>
 				<div
 					className='flex items-start justify-start'
 					onMouseEnter={handleMouseEnter}

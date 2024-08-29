@@ -25,6 +25,9 @@ export function useEmployeeActions() {
 	const employeeStatus = useAppSelector(
 		(state) => state.employees.statusEmployee
 	);
+	const configState = useAppSelector((state) => state.employees.config);
+	const configLoading = useAppSelector((state) => state.employees.loading);
+
 	const dispatch = useAppDispatch();
 
 	const getEmployee = async ({ id }) => {
@@ -86,5 +89,7 @@ export function useEmployeeActions() {
 		enableEmployee,
 		updateConfig,
 		getConfig,
+		configState,
+		configLoading,
 	};
 }
