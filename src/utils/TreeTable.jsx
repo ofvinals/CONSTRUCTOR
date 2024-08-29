@@ -3,67 +3,76 @@ import {
 	MaterialReactTable,
 	useMaterialReactTable,
 } from 'material-react-table';
-import { Box } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import { useAttendanceActions } from '../hooks/useAttendanceActions';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { MRT_Localization_ES } from 'material-react-table/locales/es';
-
+import Loader from './Loader';
 const theme = createTheme({
 	palette: {
 		mode: 'light',
 	},
 });
 
-export const TreeTable = ({ columns, data, actions }) => {
+export const TreeTable = ({
+	columns,
+	data,
+	setValidationErrors,
+	onSave,
+	initialSortColumn,
+}) => {
+	const { allAttendancesStatus } = useAttendanceActions();
+
 	const table = useMaterialReactTable({
 		columns,
-		data: data || [],
-		localization: MRT_Localization_ES,
-		enableExpandAll: false,
-		enableExpanding: true,
-		filterFromLeafRows: true,
-		getSubRows: (row) => row.employees, // Definir subRows como empleados
-		initialState: { expanded: {} }, // Puedes ajustar el estado inicial si es necesario
-		paginateExpandedRows: false,
-		renderRowActions: ({ row }) => {
-			const rowActions = actions(row);
-			return (
-				<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-					{rowActions.map((action, index) => (
-						<span
-							key={index}
-							onClick={() => action.onClick && action.onClick(row)}>
-							{action.icon}
-						</span>
-					))}
-				</Box>
-			);
+		data,
+		initialState: {
+			showGlobalFilter: true,
+			sorting: initialSortColumn
+				? [{ id: initialSortColumn, desc: true }]
+				: [],
+			columnPinning: { left: ['mrt-row-actions'], right: [] },
+			expanded: false,
+			pagination: { pageSize: 10, pageIndex: 0 },
 		},
+		createDisplayMode: 'row',
+		editDisplayMode: 'row',
+		enableColumnOrdering: true,
+		enableColumnFilterModes: true,
+		enableColumnPinning: true,
+		localization: MRT_Localization_ES,
+		enableEditing: true,
+		enableExpanding: true,
+		getSubRows: (row) => row.employees,
+		onCreatingRowCancel: () => setValidationErrors({}),
+		onEditingRowCancel: () => setValidationErrors({}),
+		onEditingRowSave: onSave,
+		renderRowActions: ({ row, table }) => (
+			<Box sx={{ display: 'flex', gap: '1rem' }}>
+				{row.depth > 0 && (
+					<>
+						<Tooltip title='Editar Asistencia'>
+							<IconButton onClick={() => table.setEditingRow(row)}>
+								<EditIcon className='text-blue-500' />
+							</IconButton>
+						</Tooltip>
+					</>
+				)}
+			</Box>
+		),
 	});
+
+	if (allAttendancesStatus === 'Cargando') {
+		return <Loader />;
+	}
 
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
-			<MaterialReactTable
-				table={table}
-				sx={{
-					'& .MuiTableCell-root': {
-						borderBottom: '1px solid #ddd',
-					},
-					'& .MuiTableHead-root': {
-						backgroundColor: '#e0e0e0',
-					},
-					'& .MuiTableCell-head': {
-						backgroundColor: '#185574',
-						fontWeight: 'bold',
-					},
-					'& .MuiTableBody-root': {
-						fontSize: '0.875rem',
-					},
-				}}
-			/>
+			<MaterialReactTable table={table} />;
 		</ThemeProvider>
 	);
 };
-
 export default TreeTable;

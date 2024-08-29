@@ -1,178 +1,133 @@
-/* eslint-disable react/prop-types */
-import  { useState } from 'react';
-import { useAttendanceActions } from '../../../../hooks/UseAttendanceActions';
-import {
-	Edit as EditIcon,
-	Visibility as VisibilityIcon,
-} from '@mui/icons-material';
-import useModal from '../../../../hooks/useModal';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useMemo, useState } from 'react';
+import { useAttendanceActions } from '../../../../hooks/useAttendanceActions'
 import Loader from '../../../../utils/Loader';
-import Modals from '../../../../utils/Modals';
-import { FormAttendance } from './FormAttendance';
-import { useAuth } from '../../../../hooks/useAuth';
-import TreeTable from '../../../../utils/TreeTable'; 
-import { TextField } from '@mui/material';
+import TreeTable from '../../../../utils/TreeTable';
+import { DateTime } from 'luxon';
 
 export const TableAttendance = () => {
-	const { attendances, allAttendanceStatus, attendanceStatusDelete } =
-		useAttendanceActions();
-	const { loggedUser } = useAuth();
-	const admin = loggedUser?.admin;
-	const coadmin = loggedUser?.coadmin;
-	const [rowId, setRowId] = useState(null);
-	const [expandedRow, setExpandedRow] = useState(null);
-	const viewModal = useModal();
-	const editModal = useModal();
+	const {
+		attendances,
+		updateAttendance,
+		allAttendanceStatus,
+		attendanceStatusDelete,
+	} = useAttendanceActions();
+	const [validationErrors, setValidationErrors] = useState({});
 
-	const handleCellEdit = (rowId, key, value) => {
-		// Implement the logic to handle cell editing
-		console.log(`Edited row ${rowId}, key ${key}, value ${value}`);
+	const formatDate = (date) => {
+		const parsedDate = DateTime.fromISO(date, {
+			zone: 'America/Argentina/Buenos_Aires',
+		});
+		if (parsedDate.isValid) {
+			return parsedDate.toFormat('dd/MM/yyyy');
+		}
+		return '';
 	};
 
-	const columns = [
-		{ accessorKey: 'date', header: 'Fecha', size:10 },
-
-		{
-			accessorKey: 'displayName',
-			header: 'Empleado',
-			Cell: ({ row }) => <div>{row.original.displayName}</div>,
-		},
-		{
-			accessorKey: 'position',
-			header: 'Posición',
-      size:10,
-		},
-		{
-			accessorKey: 'construction',
-			header: 'Obra',
-      size:10,
-		},
-		{
-			accessorKey: 'startTime',
-			header: 'Hora Ingreso',
-      size:10,
-			Cell: ({ row }) => (
-				<>
-					{console.log(row)}
-					{expandedRow === row.original.uid ? (
-						<TextField
-							value={row.original.startTime || ''}
-							onChange={(e) =>
-								handleCellEdit(
-									row.original.uid,
-									'startTime',
-									e.target.value
-								)
-							}
-							size='small'
-							fullWidth
-						/>
-					) : (
-						row.original.startTime
-					)}
-					,
-				</>
-			),
-		},
-		{
-			accessorKey: 'endTime',
-			header: 'Hora Salida',
-      size:10,
-			Cell: ({ row }) => (
-				<div>
-					{expandedRow === row.original.uid ? (
-						<TextField
-							value={row.original.endTime || ''}
-							onChange={(e) =>
-								handleCellEdit(
-									row.original.uid,
-									'endTime',
-									e.target.value
-								)
-							}
-							size='small'
-							fullWidth
-						/>
-					) : (
-						row.original.endTime
-					)}
-				</div>
-			),
-		},
+	const selectOptions = [
+		{ value: 'Casa Loma', label: 'Casa Loma' },
+		{ value: 'Country Las Flores', label: 'Country Las Flores' },
 	];
 
-	const actions = (row) => [
-		{
-			text: 'Ver',
-			icon: <VisibilityIcon color='primary' cursor='pointer' />,
-			onClick: () => {
-				setRowId(row.original.uid);
-				viewModal.openModal();
-			},
-		},
-		{
-			text: 'Editar',
-			icon:
-				admin || coadmin ? (
-					<EditIcon color='success' cursor='pointer' />
-				) : null,
-			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					editModal.openModal();
-				}
-			},
-		},
-	];
-
-	const handleRowExpand = (rowId) => {
-		setExpandedRow(expandedRow === rowId ? null : rowId);
+	const handleUpdateAttendance = async ({ values, row, table }) => {
+		try {
+			const id = row.original.uid;
+			const cleanValues = { ...values };
+			delete cleanValues.date;
+			cleanValues.attendance = cleanValues.startTime ? true : false;
+			await updateAttendance({
+				id,
+				values: cleanValues,
+			});
+			table.setEditingRow(null);
+		} catch (error) {
+			console.error('Error al guardar el usuario:', error);
+		}
 	};
+
+	const columns = useMemo(
+		() => [
+			{
+				accessorKey: 'date',
+				header: 'Fecha',
+				enableEditing: false,
+				enableSorting: true,
+				size: 10,
+				Cell: ({ cell }) => {
+					const dateValue = cell.getValue();
+					return formatDate(dateValue);
+				},
+			},
+			{
+				accessorKey: 'displayName',
+				header: 'Empleado',
+				enableEditing: false,
+				size: 10,
+			},
+			{
+				accessorKey: 'position',
+				header: 'Posicion',
+				enableEditing: false,
+				size: 10,
+			},
+			{
+				accessorKey: 'construction',
+				size: 10,
+				header: 'Obra',
+				editVariant: 'select',
+				editSelectOptions: selectOptions,
+				muiEditTextFieldProps: {
+					required: true,
+					select: true,
+					error: !!validationErrors?.construction,
+					helperText: validationErrors?.construction,
+				},
+			},
+			{
+				accessorKey: 'startTime',
+				size: 10,
+				header: 'Hora Ingreso',
+				muiEditTextFieldProps: {
+					required: true,
+					error: !!validationErrors?.startDate,
+					helperText: validationErrors?.startDate,
+				},
+			},
+			{
+				accessorKey: 'endTime',
+				size: 10,
+				header: 'Hora Salida',
+				muiEditTextFieldProps: {
+					required: true,
+					error: !!validationErrors?.endDate,
+					helperText: validationErrors?.endDate,
+				},
+			},
+		],
+		[validationErrors]
+	);
 
 	return (
-		<>
-			<section className='bg-background pb-3 '>
-				<hr className='linea text-white mx-3' />
-				<div className='container-lg my-3'>
-					{allAttendanceStatus === 'Cargando' ||
-					attendanceStatusDelete === 'Cargando' ? (
-						<Loader />
-					) : (
-						<div className='table-responsive'>
-							<TreeTable
-								columns={columns}
-								data={attendances || []}
-								actions={actions}
-								onRowExpand={handleRowExpand}
-								expandedRow={expandedRow}
-							/>
-						</div>
-					)}
-				</div>
-
-				<div>
-					<Modals
-						isOpen={editModal.isOpen}
-						onClose={editModal.closeModal}
-						title='Editar Datos de la Asistencia'>
-						<FormAttendance
-							id={rowId}
-							onClose={editModal.closeModal}
-							mode='edit'
+		<section className='bg-background pb-3'>
+			<hr className='linea text-white mx-3' />
+			<div className='container-lg my-3'>
+				{allAttendanceStatus === 'Cargando' ||
+				attendanceStatusDelete === 'Cargando' ||
+				attendances > 0 ? (
+					<Loader />
+				) : (
+					<div className='table-responsive'>
+						<TreeTable
+							columns={columns}
+							data={attendances || []}
+							validationErrors={validationErrors}
+							setValidationErrors={setValidationErrors}
+							onSave={handleUpdateAttendance}
+							initialSortColumn='date'
 						/>
-					</Modals>
-					<Modals
-						isOpen={viewModal.isOpen}
-						onClose={viewModal.closeModal}
-						title='Ver Datos de la Asistencia'>
-						<FormAttendance
-							id={rowId}
-							onClose={viewModal.closeModal}
-							mode='view'
-						/>
-					</Modals>
-				</div>
-			</section>
-		</>
+					</div>
+				)}
+			</div>
+		</section>
 	);
 };

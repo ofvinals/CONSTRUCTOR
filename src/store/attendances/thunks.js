@@ -90,22 +90,44 @@ export const createAttendance = createAsyncThunk(
 );
 
 export const updateAttendance = createAsyncThunk(
-	'attendance/updateAttendance',
+	'attendance/updateEmployeeInAttendance',
 	async ({ id, values }, { dispatch }) => {
 		try {
-			const usuarioRef = doc(db, 'attendances', id);
-			await updateDoc(usuarioRef, values);
-			const attendanceDoc = await getDoc(
-				doc(db, 'attendances', auth.currentAttendance.uid)
-			);
-			dispatch(getAttendances());
+			const attendancesRef = collection(db, 'attendances');
+			const querySnapshot = await getDocs(attendancesRef);
+			let attendanceId;
+			let updatedEmployees;
+			for (const docSnapshot of querySnapshot.docs) {
+				const attendanceData = docSnapshot.data();
+				// Verificar si el array de employees contiene el uid del employee
+				const employeeIndex = attendanceData.employees.findIndex(
+					(employee) => employee.uid === id
+				);
+				if (employeeIndex !== -1) {
+					// Encontrar el ID del documento de attendance
+					attendanceId = docSnapshot.id;
+					// Actualizar el array de employees
+					updatedEmployees = attendanceData.employees.map(
+						(employee, index) =>
+							index === employeeIndex
+								? { ...employee, ...values }
+								: employee
+					);
+					// Actualizar el documento en Firestore
+					await updateDoc(docSnapshot.ref, {
+						employees: updatedEmployees,
+					});
+					// Salir del bucle una vez que encontramos y actualizamos el documento
+					break;
+				}
+			}
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Asistencia actualizada exitosamente',
 				})
 			);
-			return attendanceDoc.data();
+			return { attendanceId, updatedEmployees };
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -121,19 +143,22 @@ export const updateAttendance = createAsyncThunk(
 
 export const checkDateAvailability = createAsyncThunk(
 	'attendance/checkDateAvailability',
-	async ({ date }, { rejectWithValue }) => {
+	async ({ date }, { dispatch, rejectWithValue }) => {
 		try {
+			const formattedDate = new Date(date).toISOString().split('T')[0];
 			const attendancesRef = collection(db, 'attendances');
-			const q = query(attendancesRef, where('date', '==', date));
+			const q = query(attendancesRef, where('date', '==', formattedDate));
 			const querySnapshot = await getDocs(q);
 			const exists = !querySnapshot.empty;
-			console.log('Exists:', exists); // Agrega esto para depurar
-			return exists ;
+			return exists;
 		} catch (error) {
-			console.error(
-				'Error al verificar la disponibilidad de la fecha:',
-				error
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al verificar la disponibilidad de la fecha',
+				})
 			);
+			console.error(error);
 			return rejectWithValue(
 				'Error al verificar la disponibilidad de la fecha'
 			);

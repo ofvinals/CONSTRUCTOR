@@ -64,11 +64,8 @@ export const attendanceExtraReducers = (builder) => {
 			state.statusDateCheck = 'Cargando';
 		})
 		.addCase(checkDateAvailability.fulfilled, (state, action) => {
-			console.log(action);
-
 			state.statusDateCheck = 'Exitoso';
 			state.dateAvailable = action.payload;
-			console.log(state.dateAvailable);
 		})
 		.addCase(checkDateAvailability.rejected, (state, action) => {
 			state.statusDateCheck = 'Fallido';

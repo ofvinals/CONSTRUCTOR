@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
-import Form from 'react-bootstrap/Form';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import Form from 'react-bootstrap/Form';
 import { InputSwitch } from 'primereact/inputswitch';
 import {
 	FormInput,
@@ -10,53 +9,44 @@ import {
 	SaveButton,
 	CancelButton,
 } from '../../../../utils/Form.jsx';
-import { useAttendanceActions } from '../../../../hooks/UseAttendanceActions.js';
 import Loader from '../../../../utils/Loader.jsx';
 import { useEmployeeActions } from '../../../../hooks/UseEmployeeActions.js';
+import { useAttendanceActions } from '../../../../hooks/useAttendanceActions.js';
 
 export const FormAttendance = ({ id, onClose, mode }) => {
+	const { employees } = useEmployeeActions();
+	const {
+		checkDateAvailability,
+		attendances,
+		attendanceStatus,
+		createAttendance,
+		attendanceStatusUpdate,
+	} = useAttendanceActions();
+	const [employeeAttendance, setEmployeeAttendance] = useState([]);
+	const [isExistingRecord, setIsExistingRecord] = useState(false);
+	const [showAlert, setShowAlert] = useState(false);
+
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		formState: { errors },
-		setError,
-		clearErrors,
 	} = useForm();
-	const {
-		attendance,
-		attendanceStatus,
-		createAttendance,
-		getAttendance,
-		updateAttendance,
-		attendanceStatusUpdate,
-		checkDateAvailability,
-	} = useAttendanceActions();
-	const { employees } = useEmployeeActions();
-
-	const [employeeAttendance, setEmployeeAttendance] = useState([]);
-	const [dateExists, setDateExists] = useState(false);
 
 	useEffect(() => {
-		if (mode === 'edit' || mode === 'view') {
-			getAttendance({ id });
-			setValue('date', attendance.date);
-			setEmployeeAttendance(attendance.employees);
-		} else if (mode === 'create') {
-			setValue('date', new Date().toISOString().split('T')[0]);
-			const initialAttendanceState = employees
-				.filter((employee) => employee.isActive === true)
-				.map((employee) => ({
-					uid: employee.uid,
-					displayName: employee.displayName,
-					position: employee.position,
-					attendance: false,
-					construction: '',
-					travelCost: '',
-				}));
-			setEmployeeAttendance(initialAttendanceState);
-		}
-	}, [id]);
+		setValue('date', new Date().toISOString().split('T')[0]);
+		const initialAttendanceState = employees
+			.filter((employee) => employee.isActive === true)
+			.map((employee) => ({
+				uid: employee.uid,
+				displayName: employee.displayName,
+				position: employee.position,
+				attendance: false,
+				construction: '',
+				travelCost: '',
+			}));
+		setEmployeeAttendance(initialAttendanceState);
+	}, [id, employees, setValue]);
 
 	const handleAttendanceChange = (uid, value) => {
 		setEmployeeAttendance((prevState) =>
@@ -66,61 +56,45 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 		);
 	};
 
-	const checkDate = async (date) => {
-		console.log(date);
+	const onSubmit = async (values) => {
+		const date = values.date;
 		try {
-			const exists = await checkDateAvailability({ date });
-			console.log(exists);
-			setDateExists(exists);
-			if (exists) {
-				setError('date', {
-					type: 'manual',
-					message: 'Ya existe un registro para esta fecha.',
-				});
+			const result = await checkDateAvailability({ date });
+			if (result) {
+				setIsExistingRecord(true);
 			} else {
-				clearErrors('date');
-			}
-		} catch (error) {
-			console.error('Error al verificar la fecha:', error);
-		}
-	};
-
-	const onSubmit = handleSubmit(async (values) => {
-		if (dateExists) {
-			onClose();
-			return;
-		}
-
-		const modifiedEmployees = employeeAttendance.map((employee, index) => ({
-			...employee,
-			startTime: employee.attendance ? '08:00' : '',
-			endTime: employee.attendance ? '17:00' : '',
-			construction: values.employees[index]?.construction || '',
-			travelCost: values.employees[index]?.travelCost || '',
-		}));
-		const formData = {
-			date: values.date,
-			employees: modifiedEmployees,
-		};
-		try {
-			if (mode === 'edit') {
-				await updateAttendance({ id, values: formData });
-				onClose();
-			} else if (mode === 'create') {
+				setIsExistingRecord(false);
+				const modifiedEmployees = employeeAttendance.map(
+					(employee, index) => ({
+						...employee,
+						startTime: employee.attendance ? '08:00' : '',
+						endTime: employee.attendance ? '17:00' : '',
+						construction: values.employees[index]?.construction || '',
+						travelCost: values.employees[index]?.travelCost || '',
+					})
+				);
+				const formData = {
+					date: values.date,
+					employees: modifiedEmployees,
+				};
 				await createAttendance({ values: formData });
 				onClose();
 			}
 		} catch (error) {
-			console.error('Error al editar la asistencia:', error);
+			console.error('Error al verificar la asistencia:', error);
 		}
-	});
+	};
 
 	useEffect(() => {
-		if (mode === 'create') {
-			const date = new Date().toISOString().split('T')[0];
-			checkDate(date);
+		if (isExistingRecord) {
+			setShowAlert(true);
+			const timer = setTimeout(() => {
+				setShowAlert(false);
+			}, 3000);
+
+			return () => clearTimeout(timer);
 		}
-	}, [mode]);
+	}, [isExistingRecord]);
 
 	if (
 		attendanceStatus === 'Cargando' ||
@@ -131,8 +105,8 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 
 	return (
 		<Form
-			onSubmit={onSubmit}
-			className='flex flex-wrap justify-around items-center '>
+			onSubmit={handleSubmit(onSubmit)}
+			className='flex flex-wrap justify-around items-center'>
 			<FormInput
 				label='Fecha'
 				name='date'
@@ -147,7 +121,6 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 					},
 				}}
 				readOnly={mode === 'view'}
-				onChange={(e) => checkDate(e.target.value)}
 			/>
 			{employeeAttendance.map((employee, index) => (
 				<div
@@ -208,24 +181,23 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							readOnly={mode === 'view'}
 							selectOptions={[
 								{ value: 'Centro', label: 'Centro' },
-								{
-									value: 'Yerba Buena',
-									label: 'Yerba Buena',
-								},
-								{
-									value: 'Adicional',
-									label: 'Adicional',
-								},
+								{ value: 'Yerba Buena', label: 'Yerba Buena' },
+								{ value: 'Adicional', label: 'Adicional' },
 							]}
 						/>
 					</div>
 					<hr className='size-1 bg-black w-full' />
 				</div>
 			))}
-			<Form.Group className=' flex flex-wrap items-center w-full justify-around'>
+			{showAlert && (
+				<div className='alert alert-danger'>
+					¡Ya existe un registro de asistencia para esta fecha!
+				</div>
+			)}
+			<Form.Group className='flex flex-wrap items-center w-full justify-around'>
 				{mode !== 'view' && (
 					<SaveButton
-						onSubmit={onSubmit}
+						onSubmit={handleSubmit(onSubmit)}
 						label={mode === 'create' ? 'Registrar ' : 'Guardar Cambios'}
 					/>
 				)}

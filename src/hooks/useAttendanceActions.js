@@ -45,7 +45,6 @@ export function useAttendanceActions() {
 	};
 
 	const checkDateAvailability = async ({date}) => {
-		console.log('Verificando disponibilidad para la fecha:', date);
 		const resultAction = await dispatch(checkDateAvailabilityThunk({date}));
 		return resultAction.payload
 	};

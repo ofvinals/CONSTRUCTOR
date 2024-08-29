@@ -7,17 +7,22 @@ import { Box } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { MRT_Localization_ES } from 'material-react-table/locales/es';
-
 const theme = createTheme({
 	palette: {
 		mode: 'light',
 	},
 });
 
-export const Table = ({ columns, data, actions }) => {
+export const Table = ({ columns, data, actions, initialSortColumn }) => {
 	const table = useMaterialReactTable({
 		columns,
 		data: data || [],
+		initialState: {
+			showGlobalFilter: true,
+			sorting: initialSortColumn
+				? [{ id: initialSortColumn, desc: false }]
+				: [], 
+		},
 		enableColumnFilterModes: true,
 		enableColumnOrdering: true,
 		enableGlobalFilterModes: true,
@@ -39,7 +44,7 @@ export const Table = ({ columns, data, actions }) => {
 		},
 		renderRowActions: ({ row }) => {
 			const rowActions = actions(row); // Llama a la función actions con row
-			console.log(rowActions)
+			console.log(rowActions);
 			return (
 				<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
 					{rowActions.map((action, index) => (
