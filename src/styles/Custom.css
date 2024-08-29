@@ -33,4 +33,7 @@
 .css-10ddb90-MuiButtonBase-root-MuiIconButton-root {
 	color: green !important;
 }
-
+.custom-dialog .p-dialog-header {
+	background-color: #efefef!important;
+	height: 5vh ;
+}

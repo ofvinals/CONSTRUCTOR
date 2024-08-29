@@ -22,8 +22,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 		updateUser,
 		userStatusUpdate,
 	} = useUserActions();
-	console.log(user);
-	console.log(userStatus);
 
 	useEffect(() => {
 		if (mode === 'edit' || mode === 'view') {
@@ -58,7 +56,7 @@ export const FormClients = ({ id, onClose, mode }) => {
 			console.error('Error al editar el usuario:', error);
 		}
 	});
-	console.log(userStatus);
+
 	if (userStatus === 'Cargando' || userStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}

@@ -43,7 +43,6 @@ export const getUser = createAsyncThunk(
 			const usuarioRef = doc(db, 'users', id);
 			const snapshot = await getDoc(usuarioRef);
 			const userData = snapshot.data();
-			console.log(userData);
 			return userData;
 		} catch (error) {
 			dispatch(

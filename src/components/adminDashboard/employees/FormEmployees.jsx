@@ -63,7 +63,7 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 			console.error('Error al editar el empleado:', error);
 		}
 	});
-	console.log(employeeStatus);
+
 	if (employeeStatus === 'Cargando' || employeeStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}

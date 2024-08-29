@@ -17,7 +17,7 @@ export function useAuth() {
 			if (user.admin || user.coadmin) {
 				navigate('/admin');
 			} else {
-				navigate('/adminusu');
+				navigate('/client');
 			}
 		} catch (error) {
 			alert(error);
@@ -32,7 +32,7 @@ export function useAuth() {
 			if (user.admin) {
 				navigate('/admin');
 			} else {
-				navigate('/adminusu');
+				navigate('/client');
 			}
 			return user;
 		} catch (error) {

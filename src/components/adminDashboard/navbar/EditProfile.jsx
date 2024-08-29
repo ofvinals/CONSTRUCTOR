@@ -1,16 +1,41 @@
-import { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useUserActions } from '../../../hooks/useUserActions';
-import { Link } from 'react-router-dom';
 import Avatar from 'react-avatar';
+import { FormInput, SaveButton, CancelButton } from '../../../utils/Form';
+import { useForm } from 'react-hook-form';
+import { Form } from 'react-bootstrap';
 
 export const EditProfile = () => {
 	const { loggedUser } = useAuth();
-	const { updateProfile, userStatusUpdate } = useUserActions();
+	const { updateProfile, userStatusUpdate, user, getUser } = useUserActions();
 
-	const [fullName, setFullName] = useState(loggedUser?.fullName);
-	const [photoProfile, setPhotoProfile] = useState(loggedUser?.photoProfile);
+	const [photoProfile, setPhotoProfile] = useState(
+		loggedUser?.photoProfile || ''
+	);
 	const [fileImage, setFileImage] = useState(null);
+
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		formState: { errors },
+	} = useForm();
+
+	useEffect(() => {
+		getUser({ id: loggedUser.uid });
+	}, []);
+
+	useEffect(() => {
+		if (user) {
+			setValue('nombre', user.nombre);
+			setValue('apellido', user.apellido);
+			setValue('domicilio', user.domicilio);
+			setValue('dni', user.dni);
+			setValue('cel', user.cel);
+		}
+	}, []);
 
 	const handleFileChange = (e) => {
 		const file = e.target.files[0];
@@ -23,18 +48,40 @@ export const EditProfile = () => {
 			setFileImage(file);
 		}
 	};
-	console.log(loggedUser);
+
+	const onSubmit = async (values) => {
+		try {
+			const { nombre, apellido } = values;
+			const displayName = `${nombre} ${apellido}`;
+			const updatedValues = { ...values, displayName };
+			await updateProfile({
+				id: loggedUser.uid,
+				values: updatedValues,
+				fileImage,
+			});
+			onClose(); 
+		} catch (error) {
+			console.error('Error al editar el empleado:', error);
+		}
+	};
+
+	const onClose = () => {
+		window.history.back();
+	};
+
 	return (
 		<div className='bg-background p-4'>
 			<div className='max-w-screen-sm mx-auto bg-gray-200 rounded-lg px-8 pt-6 pb-8 mb-4'>
 				<h2 className='text-2xl font-bold text-black text-center'>
-					Editar perfil
+					Editar Perfil
 				</h2>
-				<div className='flex flex-col items-center mt-8'>
+				<Form
+					onSubmit={handleSubmit(onSubmit)}
+					className='flex flex-col items-center mt-8'>
 					<div className='relative'>
-						{loggedUser.photoProfiles ? (
+						{photoProfile ? (
 							<img
-								src={loggedUser.photoProfile}
+								src={photoProfile}
 								alt='foto de perfil'
 								className='object-cover w-40 h-40 p-1 rounded-full ring-2 ring-[#ffd52b]'
 							/>
@@ -59,49 +106,106 @@ export const EditProfile = () => {
 							<i className='pi pi-pencil text-black'></i>
 						</label>
 					</div>
-					<div className='mt-8 w-full sm:max-w-md'>
-						<div className='mb-4'>
-							<label
-								className='block text-black text-sm font-bold mb-2'
-								htmlFor='fullName'>
-								Nombre completo
-							</label>
-							<input
-								id='fullName'
-								type='text'
-								disabled={userStatusUpdate === 'Cargando'}
-								className='w-full p-2 border-2 rounded-md bg-white text-black border-[#ffd52b]'
-								value={loggedUser.displayName}
-								onChange={(e) => setFullName(e.target.value)}
+					<div className='mt-8 flex flex-row flex-wrap items-center justify-around w-full sm:max-w-md'>
+						<FormInput
+							label='Nombre'
+							name='nombre'
+							type='text'
+							register={register}
+							errors={errors}
+							options={{
+								required: {
+									value: true,
+									message: 'El nombre es obligatorio.',
+								},
+							}}
+						/>
+						<FormInput
+							label='Apellido'
+							name='apellido'
+							type='text'
+							register={register}
+							errors={errors}
+						/>
+						<FormInput
+							label='DNI/CUIT'
+							name='dni'
+							type='text'
+							register={register}
+							errors={errors}
+							options={{
+								minLength: {
+									value: 8,
+									message:
+										'El DNI/CUIT debe contener entre 8 y 11 dígitos.',
+								},
+								maxLength: {
+									value: 11,
+									message:
+										'El DNI/CUIT debe contener entre 8 y 11 dígitos.',
+								},
+							}}
+						/>
+						<FormInput
+							label='Email'
+							name='email'
+							type='email'
+							register={register}
+							errors={errors}
+							options={{
+								required: {
+									value: true,
+									message: 'El email es obligatorio.',
+								},
+								pattern: {
+									value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+									message: 'El email no es válido.',
+								},
+							}}
+						/>
+						<FormInput
+							label='Domicilio'
+							name='domicilio'
+							type='text'
+							register={register}
+							errors={errors}
+							options={{
+								required: {
+									value: true,
+									message: 'El domicilio es obligatorio.',
+								},
+							}}
+						/>
+						<FormInput
+							label='Celular'
+							name='cel'
+							type='text'
+							register={register}
+							errors={errors}
+							options={{
+								required: {
+									value: true,
+									message: 'El celular es obligatorio.',
+								},
+								minLength: {
+									value: 10,
+									message: 'El celular debe contener 10 dígitos.',
+								},
+								maxLength: {
+									value: 10,
+									message: 'El celular debe contener 10 dígitos.',
+								},
+							}}
+						/>
+						<Form.Group className='flex flex-wrap items-center w-full justify-around mt-4'>
+							<SaveButton
+								onSubmit={handleSubmit(onSubmit)}
+								label='Guardar Cambios'
 							/>
-						</div>
-
-						<div className='flex justify-between'>
-							<Link
-								disabled={userStatusUpdate === 'Cargando'}
-								to='/admin'
-								className=' px-4 py-2 font-semibold text-[#ffd52b] bg-gray-600 hover:bg-gray-500 focus:outline-none rounded-lg flex flex-row justify-center items-center'>
-								<i className='pi pi-times mr-2'></i>Cancelar
-							</Link>
-							<button
-								type='button'
-								disabled={userStatusUpdate === 'Cargando'}
-								className='rounded-lg bg-[#ffd52b] font-semibold px-4 py-2 text-black hover:bg-yellow-200 focus:outline-none flex flex-row justify-center items-center'
-								onClick={() =>
-									updateProfile({ displayName, fileImage })
-								}>
-								{userStatusUpdate === 'Cargando' ? (
-									'Cargando'
-								) : (
-									<>
-										<i className='pi pi-check font-semibold mr-1'></i>
-										Guardar
-									</>
-								)}
-							</button>
-						</div>
+							<CancelButton onClose={onClose} label='Cancelar' />
+						</Form.Group>
 					</div>
-				</div>
+				</Form>
 			</div>
 		</div>
 	);

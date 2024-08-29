@@ -32,7 +32,7 @@ export function Header() {
 					className='flex items-start justify-start'
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}>
-					<Button className='hover:opacity-80 duration-200 my-3'>
+					<Button className='hover:opacity-70 duration-200 my-3 selection:ring-0 focus:ring-0'>
 						<img src='/CONSTRUCTOR.png' alt='' width={100} />
 					</Button>
 					{loggedUser && (

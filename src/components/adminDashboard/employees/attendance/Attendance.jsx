@@ -9,7 +9,7 @@ export const Attendance = () => {
 
 	return (
 		<div className='min-h-screen'>
-			<div className='flex flex-wrap flex-row items-center justify-between my-3 mx-2'>
+			<div className='flex flex-wrap flex-row items-center justify-center sm:justify-between my-3 mx-2'>
 				<h1 className='title'>Control de Asistencia</h1>
 				<Button
 					onClick={() => addModal.openModal()}

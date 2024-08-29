@@ -67,7 +67,7 @@ export const Clients = () => {
 							<i className='pi pi-search font-bold'></i>
 						</button>
 					</form>
-					<div className='ml-1 flex flex-row items-center sm:w-fit gap-2 justify-center space-y-2 sm:space-y-0 '>
+					<div className='ml-1 flex flex-row items-center sm:w-fit gap-2 justify-center pt-2 sm:pt-0 '>
 						<Button
 							onClick={handleCard}
 							className='hover:bg-yellow-200 p-3 rounded-md'>

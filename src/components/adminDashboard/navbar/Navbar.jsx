@@ -17,14 +17,14 @@ export const Navbar = ({ visible, onHide }) => {
 				onHide={onHide}
 				baseZIndex={1000}
 				style={{ width: '250px' }}>
-				<div className='flex flex-row flex-wrap items-center text-xl text-yellow-500 font-bold'>
+				<div className='flex flex-row flex-wrap items-center justify-center text-xl text-[#ffd52b] font-bold'>
 					<img
 						className='mx-3'
 						src='/CONSTRU.png'
-						width={40}
+						width={50}
 						alt='Logo de marca'
 					/>
-					<p>CONSTRUCTOR</p>
+					<p className=''>CONSTRUCTOR</p>
 				</div>
 				<div className='flex flex-col h-[85vh]'>
 					<div className='flex-grow'>

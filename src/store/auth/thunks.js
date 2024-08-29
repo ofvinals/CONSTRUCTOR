@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { auth, db } from '../../services/firebase';
-import { doc, setDoc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import {
 	createUserWithEmailAndPassword,
 	GoogleAuthProvider,
@@ -13,11 +13,11 @@ import {
 import { showToast } from '../toast/slice';
 import { useUserActions } from '../../hooks/UseUserActions';
 const { getUsers } = useUserActions;
+
 // FUNCION REGISTRO DE USUARIOS
 export const register = createAsyncThunk(
 	'user/register',
 	async ({ values }, { rejectWithValue, dispatch }) => {
-		console.log(values);
 		const { nombre, apellido, email, password } = values;
 
 		try {
@@ -32,14 +32,14 @@ export const register = createAsyncThunk(
 			await updateProfile(auth.currentUser, {
 				displayName: displayNameValue,
 			});
-			const usersRef = collection(db, 'users');
+			const userDocRef = doc(db, 'users', currentUser.uid);
 			const userData = {
 				...values,
 				admin: false,
 				isActive: true,
 				displayName: displayNameValue,
 			};
-			const res = await addDoc(usersRef, userData);
+			await setDoc(userDocRef, userData);
 			dispatch(getUsers());
 			dispatch(
 				showToast({
@@ -47,7 +47,7 @@ export const register = createAsyncThunk(
 					message: 'Cliente creado exitosamente',
 				})
 			);
-			return { id: res.id, ...userData };
+			return { id: currentUser.uid, ...userData };
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -64,32 +64,49 @@ export const register = createAsyncThunk(
 // FUNCION LOGIN CON CORREO ELECTRONICO
 export const login = createAsyncThunk(
 	'user/login',
-	async ({ values }, { rejectWithValue, dispatch }) => {
-		const { email, password } = values;
+	async ({ email, password }, { dispatch }) => {
 		try {
-			const signWithEmail = await signInWithEmailAndPassword(
-				auth,
-				email,
-				password
-			);
+			// Iniciar sesión con email y contraseña
+			const signWithEmail = await signInWithEmailAndPassword(auth, email, password);
+			const id = signWithEmail.user.uid;
+			console.log('ID del usuario:', id);
 
-			const userDoc = await getDoc(doc(db, 'users', signWithEmail.user.uid));
+			// Obtener el documento del usuario desde Firestore
+			const usuarioRef = doc(db, 'users', id);
+			const snapshot = await getDoc(usuarioRef);
+
+			// Verificar si el documento existe y tiene datos
+			if (!snapshot.exists()) {
+				console.error('Documento del usuario no encontrado');
+				throw new Error('Documento del usuario no encontrado');
+			}
+
+			const userData = snapshot.data();
+			console.log('Datos del usuario:', userData);
+
+			// Mostrar mensaje de éxito
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Usuario logueado exitosamente',
 				})
 			);
-			return { uid: userDoc.id, ...userDoc.data() };
+
+			// Devolver los datos del usuario
+			return userData;
+
 		} catch (error) {
+			// Mostrar mensaje de error
 			dispatch(
 				showToast({
 					type: 'error',
-					message: 'Error al iniciar sesion',
+					message: 'Error al iniciar sesión',
 				})
 			);
-			console.log(error.response.data);
-			return rejectWithValue(error.response.data);
+
+			// Manejar el error
+			console.error('Error al iniciar sesión:', error.message || error);
+			throw error; // Asegúrate de lanzar el error si es necesario
 		}
 	}
 );

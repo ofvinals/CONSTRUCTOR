@@ -6,11 +6,11 @@ import { Button } from 'react-bootstrap';
 import { useAuth } from '../../hooks/useAuth';
 import Modals from '../../utils/Modals';
 import { Login } from './Login';
-import { useMails } from '../../hooks/useMails';
+// import { useMails } from '../../hooks/useMails';
 import '../../styles/Custom.css';
 
 export const Register = () => {
-	const { sendMailRegister } = useMails();
+	// const { sendMailRegister } = useMails();
 	const { registerUser } = useAuth();
 	const navigate = useNavigate();
 	const {
@@ -32,7 +32,7 @@ export const Register = () => {
 	const onSubmit = handleSubmit(async (values) => {
 		try {
 			console.log(values);
-			await registerUser({values});
+			await registerUser({ values });
 			reset();
 			// await sendMailRegister(values);
 			navigate('/admin');
@@ -43,14 +43,14 @@ export const Register = () => {
 
 	return (
 		<main className='flex flex-col items-center justify-center mb-5 '>
-			<div className='w-4/5'>
+			<div className='w-[75%] flex items-center flex-col'>
 				<div className='flex flex-col flex-wrap items-center justify-center p-2'>
 					<h1 className='yellowtitle'>Constructor</h1>
 					<h2 className='title'>Registro de Usuario</h2>
 				</div>
 				<Form
 					id='loginFormreg'
-					className='flex flex-wrap flex-row justify-around items-center w-full rounded-xl bg-background py-3'
+					className='flex flex-wrap flex-row justify-around items-center w-full max-w-[700px] gap-3 rounded-xl bg-background p-5'
 					onSubmit={onSubmit}
 					ref={form}>
 					{/* Agrupa los inputs del formulario */}
@@ -80,8 +80,8 @@ export const Register = () => {
 							)}
 						</Form.Group>
 					))}
-					<div className='w-full flex flex-row flex-wrap items-center justify-around'>
-						<Form.Group className='mb-3 flex flex-col w-6/12 md:w-4/12'>
+					<div className='w-full  flex flex-row flex-wrap items-center justify-around mx-1'>
+						<Form.Group className='mb-3 flex flex-col '>
 							<Form.Label className='text-start bg-transparent text-xl text-neutral-800 w-10/12 font-medium'>
 								Contraseña
 							</Form.Label>
@@ -119,7 +119,7 @@ export const Register = () => {
 							)}
 						</Form.Group>
 
-						<Form.Group className='mb-3 flex flex-col w-6/12 md:w-4/12'>
+						<Form.Group className='mb-3 flex flex-col '>
 							<Form.Label
 								className='text-start bg-transparent text-xl text-neutral-800  font-medium'
 								id='inputconfirm'>

@@ -6,6 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import '../../styles/Custom.css'
 
 export function FormContact({ visible, onHide }) {
 	const {
@@ -18,7 +19,7 @@ export function FormContact({ visible, onHide }) {
 	const fetchImageUrl = async () => {
 		try {
 			const storage = getStorage();
-			const imageRef = ref(storage, '/CONSTRUCTOR.jpg');
+			const imageRef = ref(storage, '/CONSTRUCTOR.png');
 			const url = await getDownloadURL(imageRef);
 			return url;
 		} catch (error) {
@@ -65,65 +66,63 @@ export function FormContact({ visible, onHide }) {
 				className='custom-dialog'
 				contentStyle={{
 					width: '100%',
-					backgroundColor: '#191414',
-					borderRadius: '0.5rem',
+					backgroundColor: '#efefef',
 					padding: '20px',
 				}}>
-				<div className='flex flex-col px-3 py-5 gap-4 items-center justify-center w-full'>
-					<p className='font-bold text-3xl text-white'>
-						Formulario de contacto
+				<div className='flex flex-col px-3 gap-2 items-center justify-center w-full'>
+					<img src="/CONSTRU.png" alt="" width={90} />
+					<p className='font-bold text-3xl text-black'>
+						Formulario de Contacto
 					</p>
-					<p className='font-semibold mb-3 text-gray-400 text-center'>
+					<p className='font-semibold mb-3 text-gray-700 text-center'>
 						Envia tu consulta o sugerencia y te responderemos a la
 						brevedad!
 					</p>
 					<form
 						onSubmit={handleSubmit(onSubmitForm)}
 						className='w-full form-contact'>
-						<div className='flex flex-col items-center justify-center mt-7 w-full'>
+						<div className='flex flex-col items-center justify-center mt-1 w-full'>
 							<FloatLabel>
 								<InputText
 									id='email'
 									type='email'
-									className='border p-2 w-full bg-[#1b1b1b] text-white placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-[#61dafb]'
+									className='border p-2 w-full bg-white text-black placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fde047]'
 									{...register('email', {
-										required: 'El Email es obligatorio',
+										required: 'El email es obligatorio',
 									})}
 								/>
-								<label htmlFor='email' className='text-white'>
+								<label htmlFor='email' className='text-black'>
 									Email
 								</label>
 							</FloatLabel>
 							{errors.email && (
-								<span className='text-red-500 text-center w-full'>
+								<span className='error-message'>
 									{errors.email.message}
 								</span>
 							)}
 						</div>
-						<div className='flex flex-col items-center justify-center w-full mt-10'>
+						<div className='flex flex-col items-center justify-center w-full mt-4'>
 							<FloatLabel className='relative w-full'>
 								<InputTextarea
 									id='comment'
 									rows={7}
-									className='border p-2 w-full bg-[#1b1b1b] text-white placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-[#61dafb] min-h-20'
+									className='border p-2 w-full bg-white text-black placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fde047] min-h-20'
 									{...register('comment', {
-										required: 'El Comentario es obligatorio',
+										required: 'El comentario es obligatorio',
 									})}
 								/>
-								<label htmlFor='comment' className='text-white'>
+								<label htmlFor='comment' className='text-black'>
 									Consulta o comentario
 								</label>
 							</FloatLabel>
 							{errors.comment && (
-								<span className='text-red-500 text-center w-full'>
+								<span className='error-message'>
 									{errors.comment.message}
 								</span>
 							)}
 						</div>
-						<div className='flex justify-evenly items-center mt-5'>
-							<button
-								type='submit'
-								className='w-44 mb-2 bg-[#1b95d2] hover:bg-[#157ab8] hover:border-[#157ab8] text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline border border-[#1b95d2]'>
+						<div className='flex justify-evenly items-center mt-3'>
+							<button type='submit' className='btnprimary w-44'>
 								Enviar
 							</button>
 							<button
@@ -131,7 +130,7 @@ export function FormContact({ visible, onHide }) {
 									onHide();
 									reset();
 								}}
-								className='w-44 mb-2 text-center py-2 px-4 text-[#61dafb] bg-[#282828] hover:bg-[#383838] focus:outline-none rounded border border-[#61dafb] focus:ring-4 focus:ring-[#61dafb]'>
+								className='btncancel w-44'>
 								Cancelar
 							</button>
 						</div>

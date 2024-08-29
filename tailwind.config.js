@@ -7,6 +7,10 @@ export default {
 	theme: {
 		screens: {
 			xs: '475px',
+			sm: '640px',
+			md: '768px',
+			lg: '1024px',
+			xl: '1280px',
 		},
 		extend: {
 			fontFamily: {
@@ -48,6 +52,8 @@ export default {
 					color: '#ffd52b',
 					padding: '10px',
 					fontWeight: '600',
+					borderRadius: '6px',
+
 					border: 'none',
 					'&:hover': {
 						backgroundColor: '#6b7280',
@@ -70,18 +76,21 @@ export default {
 					padding: '10px',
 					fontSize: '36px',
 					fontWeight: '800',
+					text: 'center',
 				},
 				'.title': {
 					color: 'black',
 					padding: '10px',
 					fontSize: '26px',
 					fontWeight: '800',
+					text: 'center',
 				},
 				'.subtitle': {
 					color: 'black',
 					padding: '10px',
 					fontSize: '20px',
 					fontWeight: '600',
+					text: 'center',
 				},
 				'.error-message': {
 					color: '#dc2626',

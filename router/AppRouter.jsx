@@ -18,6 +18,7 @@ import { EditProfile } from '../src/components/adminDashboard/navbar/EditProfile
 import { Config } from '../src/components/adminDashboard/employees/config/Config';
 import { Attendance } from '../src/components/adminDashboard/employees/attendance/Attendance';
 import { Salary } from '../src/components/adminDashboard/employees/salary/Salary';
+import { ClientDashboard } from '../src/pages/client/ClientDashboard';
 
 export const AppRouter = () => {
 	return (
@@ -29,6 +30,7 @@ export const AppRouter = () => {
 				<Route path='/about' element={<About />}></Route>
 				<Route path='/register' element={<Register />}></Route>
 
+				<Route path='/client' element={<ClientDashboard />}></Route>
 				<Route path='/admin' element={<AdminDashboard />}></Route>
 				<Route path='/proyects' element={<Proyects />}></Route>
 				<Route path='/clients' element={<Clients />}></Route>
