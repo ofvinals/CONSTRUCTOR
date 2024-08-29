@@ -2,30 +2,29 @@
 import { useState } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { Menu } from 'primereact/menu';
-import '../../styles/Custom.css';
+import '../../../styles/Custom.css';
 import { Profile } from './Profile';
-import { createItemsNavbar } from '../../utils/CreateItemsNavbar';
+import { createItemsNavbar } from '../../../utils/CreateItemsNavbar';
 
 export const Navbar = ({ visible, onHide }) => {
 	const [activeItem, setActiveItem] = useState('Proyectos');
 	const itemsNavbar = createItemsNavbar(onHide, setActiveItem, activeItem);
 
 	return (
-		<nav>
+		<nav className='bg-background'>
 			<Sidebar
 				visible={visible}
 				onHide={onHide}
 				baseZIndex={1000}
-				className='bg-background'
 				style={{ width: '250px' }}>
-				<div className='flex flex-row flex-wrap items-center text-xl text-yellow-500 font-bold'>
+				<div className='flex flex-row flex-wrap items-center justify-center text-xl text-[#ffd52b] font-bold'>
 					<img
 						className='mx-3'
 						src='/CONSTRU.png'
-						width={40}
+						width={50}
 						alt='Logo de marca'
 					/>
-					<p>CONSTRUCTOR</p>
+					<p className=''>CONSTRUCTOR</p>
 				</div>
 				<div className='flex flex-col h-[85vh]'>
 					<div className='flex-grow'>

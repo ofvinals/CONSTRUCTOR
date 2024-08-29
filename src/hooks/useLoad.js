@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from './store';
 
 export function useLoad() {
-	const statusAuth = useAppSelector((state) => state.user.statusAuth);
+	const statusAuth = useAppSelector((state) => state.auth.statusAuth);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {

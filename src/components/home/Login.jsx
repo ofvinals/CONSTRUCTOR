@@ -38,7 +38,7 @@ export function Login() {
 
 	return (
 		<main className='flex flex-col items-center justify-center mb-5'>
-			<div className='w-1/2'>
+			<div className='max-w-1/2'>
 				<div className='flex flex-col flex-wrap items-center justify-center p-2'>
 					<h1 className='yellowtitle'>CONSTRUCTOR </h1>
 					<h2 className='title'>Bienvenido de nuevo!</h2>

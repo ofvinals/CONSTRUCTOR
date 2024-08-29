@@ -11,7 +11,7 @@ const Modals = ({
 	return (
 		<Modal show={isOpen} onHide={onClose}>
 			<Modal.Header closeButton>
-				<Modal.Title className='text-background font-bold'>
+				<Modal.Title className='text-black font-bold'>
 					{title}
 				</Modal.Title>
 			</Modal.Header>

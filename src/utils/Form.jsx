@@ -15,18 +15,20 @@ export const FormInput = ({
 	const isExpte = name === 'nroexpte';
 	const inputClass = `items-center w-full p-2 focus:outline-none text-black ${
 		isCaratula || (isExpte && mode === 'view') || mode === 'view'
-			? 'border-none shadow-none bg-transparent'
-			: 'border-2 border-black shadow-2xl rounded-md'
+			? 'border-none bg-transparent'
+			: 'border-2 border-black rounded-md'
 	}`;
 
 	return (
 		<Form.Group
-			className={`flex flex-col mb-3 items-center justify-around ${
-				isCaratula || type === 'textarea' ? 'w-full' : 'w-5/12'
+			className={`flex  mb-3 items-center justify-around ${
+				customClass || type === 'textarea'
+					? 'w-full flex-row'
+					: 'w-5/12 flex-col '
 			} mt-2`}>
 			<Form.Label
-				className={`text-start bg-transparent text-xl mb-0 mt-2  ${
-					customClass ? 'text-white' : 'text-background'
+				className={`text-start bg-transparent text-xl mb-0   ${
+					customClass ? 'text-black mr-2' : 'text-black mt-2'
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>
@@ -72,31 +74,36 @@ export const FormSelect = ({
 	options,
 	selectOptions,
 	customClass,
+	attendanceClass,
 }) => {
 	const isCaratula = name === 'caratula';
 	const selectClass = `items-center w-full p-2 focus:outline-none text-black ${
 		isCaratula || mode === 'view'
 			? 'border-none shadow-none bg-transparent'
-			: 'border-2 border-black shadow-2xl rounded-md'
+			: 'border-2 border-black rounded-md'
 	}`;
 
 	return (
 		<Form.Group
-			className={`flex flex-col mb-3 items-center justify-around ${
-				isCaratula ? 'w-full' : 'w-5/12'
+			className={`flex flex-col mb-3 items-start justify-around ${
+				isCaratula ? 'w-1/2' : 'w-5/12'
 			} mt-2`}>
 			<Form.Label
 				className={`text-start bg-transparent text-xl mb-0 mt-2 ${
-					customClass ? 'text-white' : 'text-background'
-				}  w-full font-medium`}>
+					customClass
+						? 'text-green'
+						: attendanceClass
+						? 'text-[15px]'
+						: 'text-red'
+				} w-1/2 font-medium`}>
 				{label}
 			</Form.Label>
 			<Form.Control
 				as='select'
 				className={selectClass}
 				{...register(name, options)}
-				readOnly={isCaratula || mode === 'view'}
-				disabled={isCaratula || mode === 'view'}>
+				readOnly={mode === 'view'}
+				disabled={mode === 'view'}>
 				<option value=''>Selecciona..</option>
 				{selectOptions.map((option, index) => (
 					<option key={index} value={option.value}>
@@ -112,18 +119,15 @@ export const FormSelect = ({
 };
 
 export const SaveButton = ({ onSubmit, label }) => (
-	<Button
-		type='submit'
-		className='bg-background shadow-3xl btnLogout text-white text-center p-2 border-2 w-[230px] my-3  border-white rounded-xl font-semibold'
-		onClick={onSubmit}>
+	<Button type='submit' className='btnprimary w-[190px]' onClick={onSubmit}>
+		<i className='pi pi-save mr-1'></i>
 		{label}
 	</Button>
 );
 
 export const CancelButton = ({ onClose, label }) => (
-	<Button
-		className='bg-white shadow-3xl btnAdmin text-primary text-center p-2 border-2 w-[150px] my-3 border-primary rounded-xl font-semibold'
-		onClick={onClose}>
+	<Button className='btncancel' onClick={onClose}>
+		<i className='pi pi-times mr-1'></i>
 		{label}
 	</Button>
 );

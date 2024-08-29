@@ -1,8 +1,8 @@
 import {
-	loginWithEmail,
+	login,
 	loginWithGoogle,
 	logout,
-	registro,
+	register,
 	verifyLoggedUser,
 } from './thunks';
 
@@ -21,27 +21,27 @@ export const authExtraReducers = (builder) => {
 		});
 
 	builder
-		.addCase(loginWithEmail.pending, (state) => {
+		.addCase(login.pending, (state) => {
 			state.statusAuth = 'Cargando';
 		})
-		.addCase(loginWithEmail.fulfilled, (state, action) => {
+		.addCase(login.fulfilled, (state, action) => {
 			state.statusAuth = 'Exitoso';
 			state.loggedUser = action.payload;
 		})
-		.addCase(loginWithEmail.rejected, (state, action) => {
+		.addCase(login.rejected, (state, action) => {
 			state.statusAuth = 'Fallido';
 			state.error = action.payload;
 		});
 
 	builder
-		.addCase(registro.pending, (state) => {
+		.addCase(register.pending, (state) => {
 			state.statusSign = 'Cargando';
 		})
-		.addCase(registro.fulfilled, (state, action) => {
+		.addCase(register.fulfilled, (state, action) => {
 			state.statusSign = 'Exitoso';
 			state.loggedUser = action.payload;
 		})
-		.addCase(registro.rejected, (state, action) => {
+		.addCase(register.rejected, (state, action) => {
 			state.statusSign = 'Fallido';
 			state.error = action.payload;
 		});

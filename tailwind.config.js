@@ -1,9 +1,17 @@
+/* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin');
 
 export default {
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
+		screens: {
+			xs: '475px',
+			sm: '640px',
+			md: '768px',
+			lg: '1024px',
+			xl: '1280px',
+		},
 		extend: {
 			fontFamily: {
 				sans: ['Roboto', 'sans-serif'],
@@ -30,11 +38,25 @@ export default {
 					backgroundColor: '#ffd52b',
 					color: 'black',
 					padding: '10px',
+					width: 'auto',
+					border: 'none',
+					borderRadius: '6px',
 					fontWeight: '600',
-					borderRadius: '0.375rem',
 					'&:hover': {
 						backgroundColor: '#fde047',
 						color: 'black',
+					},
+				},
+				'.btncancel': {
+					backgroundColor: '#4b5563',
+					color: '#ffd52b',
+					padding: '10px',
+					fontWeight: '600',
+					borderRadius: '6px',
+
+					border: 'none',
+					'&:hover': {
+						backgroundColor: '#6b7280',
 					},
 				},
 				// Estilo para .btnicon
@@ -54,18 +76,21 @@ export default {
 					padding: '10px',
 					fontSize: '36px',
 					fontWeight: '800',
+					text: 'center',
 				},
 				'.title': {
 					color: 'black',
 					padding: '10px',
 					fontSize: '26px',
 					fontWeight: '800',
+					text: 'center',
 				},
 				'.subtitle': {
 					color: 'black',
 					padding: '10px',
 					fontSize: '20px',
 					fontWeight: '600',
+					text: 'center',
 				},
 				'.error-message': {
 					color: '#dc2626',
