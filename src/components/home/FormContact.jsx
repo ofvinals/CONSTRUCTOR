@@ -6,7 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
-import '../../styles/Custom.css'
+import '../../styles/Custom.css';
 
 export function FormContact({ visible, onHide }) {
 	const {
@@ -55,7 +55,7 @@ export function FormContact({ visible, onHide }) {
 	};
 
 	return (
-		<div className='flex justify-center items-center'>
+		<div className='flex justify-center w-[40%] items-center'>
 			<Dialog
 				visible={visible}
 				modal
@@ -69,9 +69,9 @@ export function FormContact({ visible, onHide }) {
 					backgroundColor: '#efefef',
 					padding: '20px',
 				}}>
-				<div className='flex flex-col px-3 gap-2 items-center justify-center w-full'>
-					<img src="/CONSTRU.png" alt="" width={90} />
-					<p className='font-bold text-3xl text-black'>
+				<div className='flex flex-col px-3 gap-2 items-center justify-center '>
+					<img src='/CONSTRU.png' alt='' width={90} />
+					<p className='font-bold text-3xl text-black text-center'>
 						Formulario de Contacto
 					</p>
 					<p className='font-semibold mb-3 text-gray-700 text-center'>
@@ -121,8 +121,8 @@ export function FormContact({ visible, onHide }) {
 								</span>
 							)}
 						</div>
-						<div className='flex justify-evenly items-center mt-3'>
-							<button type='submit' className='btnprimary w-44'>
+						<div className='flex flex-row mt-3 flex-wrap justify-evenly items-center '>
+							<button type='submit' className='btnprimary w-44 '>
 								Enviar
 							</button>
 							<button

@@ -37,4 +37,6 @@
 	background-color: #efefef!important;
 	height: 5vh ;
 }
-
+.custom-dialog{
+	width: 60%;
+}

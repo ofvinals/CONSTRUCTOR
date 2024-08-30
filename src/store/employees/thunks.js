@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { auth, db } from '../../services/firebase';
+import { db } from '../../services/firebase';
 import {
 	doc,
 	addDoc,
@@ -71,8 +71,6 @@ export const createEmployee = createAsyncThunk(
 				displayName: displayNameValue,
 			};
 			const res = await addDoc(employeesRef, employeeData);
-			dispatch(getEmployees());
-
 			dispatch(
 				showToast({
 					type: 'success',
@@ -98,11 +96,9 @@ export const updateEmployee = createAsyncThunk(
 	'employee/updateEmployee',
 	async ({ id, values }, { dispatch }) => {
 		try {
-			const usuarioRef = doc(db, 'employees', id);
-			await updateDoc(usuarioRef, values);
-			const employeeDoc = await getDoc(
-				doc(db, 'employees', auth.currentEmployee.uid)
-			);
+			const employeeRef = doc(db, 'employees', id);
+			await updateDoc(employeeRef, values);
+			const employeeDoc = await getDoc(doc(db, 'employees', id));
 			dispatch(getEmployees());
 			dispatch(
 				showToast({
@@ -217,10 +213,13 @@ export const getConfig = createAsyncThunk(
 	async (_, { dispatch }) => {
 		const arrayAux = [];
 		try {
-			const querySnapshot = await getDocs(query(collection(db, 'config')));
+			const querySnapshot = await getDocs(
+				query(collection(db, 'employeesConfig'))
+			);
 			querySnapshot.forEach((doc) => {
 				arrayAux.push({ uid: doc.id, ...doc.data() });
 			});
+			console.log(arrayAux);
 			return arrayAux;
 		} catch (error) {
 			dispatch(
@@ -238,12 +237,10 @@ export const getConfig = createAsyncThunk(
 export const updateConfig = createAsyncThunk(
 	'employee/updateConfig',
 	async ({ values }, { dispatch }) => {
+		console.log(values);
 		try {
-			const configRef = doc(db, 'config');
-			await updateDoc(configRef, values);
-			const configDoc = await getDoc(
-				doc(db, 'config', auth.currentConfig.uid)
-			);
+			const employeesRef = collection(db, 'employeesConfig');
+			await addDoc(employeesRef, values);
 			dispatch(getEmployees());
 			dispatch(
 				showToast({
@@ -251,7 +248,7 @@ export const updateConfig = createAsyncThunk(
 					message: 'Valores actualizados exitosamente',
 				})
 			);
-			return configDoc.data();
+			return;
 		} catch (error) {
 			dispatch(
 				showToast({

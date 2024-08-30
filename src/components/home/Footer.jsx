@@ -41,18 +41,6 @@ export function Footer() {
 					</p>
 					<div className='flex items-center justify-end gap-2 text-sm lg:w-1/3'>
 						<Link
-							to='/users-view'
-							className='hover:text-[#ffd52b] hover:underline duration-400'>
-							Usuarios
-						</Link>
-						<p>•</p>
-						<Link
-							to='/about'
-							className='hover:text-[#ffd52b] hover:underline duration-400'>
-							Categorias
-						</Link>
-						<p>•</p>
-						<Link
 							onClick={handleFormContact}
 							className='hover:text-yellow-500 hover:underline duration-400'>
 							Contacto

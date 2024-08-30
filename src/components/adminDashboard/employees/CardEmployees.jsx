@@ -26,6 +26,7 @@ export const CardEmployees = ({ employees }) => {
 	const [employeeId, setEmployeeId] = useState(null);
 	const editModal = useModal();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
 	const handleConfirmDisable = async (uid) => {
 		try {
 			await disableEmployee({ id: uid });

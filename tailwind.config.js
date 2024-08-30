@@ -67,7 +67,7 @@ export default {
 					fontWeight: '600',
 					borderRadius: '0.375rem',
 					'&:hover': {
-						backgroundColor: '#eab308',
+						backgroundColor: '#ffd52b',
 					},
 				},
 				// Estilo para .title
