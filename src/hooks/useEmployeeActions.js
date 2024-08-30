@@ -39,7 +39,6 @@ export const useEmployeeActions = () => {
 	};
 
 	const createEmployee = async ({ values }) => {
-		console.log(values);
 		await dispatch(createEmployeeThunk({ values }));
 	};
 
@@ -48,7 +47,6 @@ export const useEmployeeActions = () => {
 	};
 
 	const deleteEmployee = async ({ id }) => {
-		console.log(id);
 		await dispatch(deleteEmployeeThunk({ id }));
 	};
 

@@ -31,11 +31,10 @@ export const Register = () => {
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
-			console.log(values);
 			await registerUser({ values });
 			reset();
 			// await sendMailRegister(values);
-			navigate('/admin');
+			navigate('/client');
 		} catch (error) {
 			console.error('Error al registrar el usuario:', error);
 		}
@@ -55,12 +54,12 @@ export const Register = () => {
 					ref={form}>
 					{/* Agrupa los inputs del formulario */}
 					{['nombre', 'apellido', 'cel', 'email'].map((field, index) => (
-						<Form.Group className='mb-3' key={index}>
+						<Form.Group className='mb-3 flex flex-col ' key={index}>
 							<Form.Label className='text-start bg-transparent text-xl text-neutral-800 w-7/12 font-medium'>
 								{field.charAt(0).toUpperCase() + field.slice(1)}
 							</Form.Label>
 							<Form.Control
-								className='items-center  w-full rounded-md p-2 focus:outline-none border-2 border-black'
+								className='items-center  w-full rounded-md p-2 bg-white focus:outline-none border-2 border-black'
 								type={field === 'email' ? 'email' : 'text'}
 								id={field}
 								name={field}
@@ -85,8 +84,9 @@ export const Register = () => {
 							<Form.Label className='text-start bg-transparent text-xl text-neutral-800 w-10/12 font-medium'>
 								Contraseña
 							</Form.Label>
-							<div className='flex flex-row items-center bg-neutral-200 w-full rounded-md focus:outline-none border-2 border-black'>
+							<div className='flex flex-row items-center bg-neutral-200 w-full rounded-md  border-2 border-black'>
 								<Form.Control
+									style={{ outline: 'none', boxShadow: 'none' }}
 									className='border-none'
 									type={showPassword ? 'text' : 'password'}
 									{...register('password', {
@@ -125,9 +125,10 @@ export const Register = () => {
 								id='inputconfirm'>
 								Confirmar Contraseña
 							</Form.Label>
-							<div className='flex flex-row items-center bg-neutral-200  w-full rounded-md focus:outline-none border-2 border-black'>
+							<div className='flex flex-row items-center bg-neutral-200  w-full rounded-md border-2 border-black'>
 								<Form.Control
-									className='border-none '
+									className='border-none'
+									style={{ outline: 'none', boxShadow: 'none' }}
 									type={showCoPassword ? 'text' : 'password'}
 									{...register('copassword', {
 										required: {

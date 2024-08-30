@@ -8,20 +8,20 @@ import { menuOptions } from '../../utils/HeaderOptions';
 
 export function Header() {
 	const { loggedUser } = useAuth();
-	const [visible, setVisible] = useState(false);
 	const location = useLocation();
+	const [sidebarVisible, setSidebarVisible] = useState(false);
 
 	const handleMouseEnter = () => {
 		if (loggedUser) {
-			setVisible(true);
+			setSidebarVisible(true);
 		}
 	};
 
-	useEffect(() => {}, [location]);
-
 	const handleMouseLeave = () => {
-		setVisible(false);
+		setSidebarVisible(false);
 	};
+
+	useEffect(() => {}, [location]);
 
 	const currentMenuOptions = menuOptions[location.pathname] || [];
 
@@ -40,8 +40,9 @@ export function Header() {
 							onMouseEnter={handleMouseEnter}
 							onMouseLeave={handleMouseLeave}>
 							<Navbar
-								visible={visible}
-								onHide={() => setVisible(false)}
+								visible={sidebarVisible}
+								onHide={() => setSidebarVisible(false)}
+								setVisible={setSidebarVisible}
 							/>
 						</div>
 					)}
@@ -51,11 +52,11 @@ export function Header() {
 						<Link
 							key={option.path}
 							to={option.path}
-							className={`flex justify-center text-center  items-center hover:text-yellow-300 text-black hover:border-b-2 hover:border-blue-500  ${
+							className={`flex justify-center text-center items-center hover:text-yellow-300 text-black hover:border-b-2 hover:border-blue-500 ${
 								option.icon ? 'w-10' : 'w-20'
 							}`}>
 							{option.icon && (
-								<span className='mr-2  text-center font-bold'>
+								<span className='mr-2 text-center font-bold'>
 									{option.icon}
 								</span>
 							)}

@@ -6,7 +6,7 @@ import '../../../styles/Custom.css';
 import { Profile } from './Profile';
 import { createItemsNavbar } from '../../../utils/CreateItemsNavbar';
 
-export const Navbar = ({ visible, onHide }) => {
+export const Navbar = ({ visible, onHide, setVisible }) => {
 	const [activeItem, setActiveItem] = useState('Proyectos');
 	const itemsNavbar = createItemsNavbar(onHide, setActiveItem, activeItem);
 
@@ -30,7 +30,7 @@ export const Navbar = ({ visible, onHide }) => {
 					<div className='flex-grow'>
 						<Menu model={itemsNavbar} className='mt-5' />
 					</div>
-					<Profile />
+					<Profile setVisible={setVisible} />
 				</div>
 			</Sidebar>
 		</nav>
