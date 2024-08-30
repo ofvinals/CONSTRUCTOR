@@ -67,46 +67,38 @@ export const login = createAsyncThunk(
 	async ({ email, password }, { dispatch }) => {
 		try {
 			// Iniciar sesión con email y contraseña
-			const signWithEmail = await signInWithEmailAndPassword(auth, email, password);
+			const signWithEmail = await signInWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
 			const id = signWithEmail.user.uid;
-			console.log('ID del usuario:', id);
-
 			// Obtener el documento del usuario desde Firestore
 			const usuarioRef = doc(db, 'users', id);
 			const snapshot = await getDoc(usuarioRef);
-
 			// Verificar si el documento existe y tiene datos
 			if (!snapshot.exists()) {
 				console.error('Documento del usuario no encontrado');
 				throw new Error('Documento del usuario no encontrado');
 			}
-
 			const userData = snapshot.data();
 			console.log('Datos del usuario:', userData);
-
-			// Mostrar mensaje de éxito
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Usuario logueado exitosamente',
 				})
 			);
-
-			// Devolver los datos del usuario
 			return userData;
-
 		} catch (error) {
-			// Mostrar mensaje de error
 			dispatch(
 				showToast({
 					type: 'error',
 					message: 'Error al iniciar sesión',
 				})
 			);
-
-			// Manejar el error
 			console.error('Error al iniciar sesión:', error.message || error);
-			throw error; // Asegúrate de lanzar el error si es necesario
+			throw error;
 		}
 	}
 );
@@ -116,32 +108,62 @@ export const loginWithGoogle = createAsyncThunk(
 	'user/loginGoogle',
 	async (_, { rejectWithValue, dispatch }) => {
 		const googleProvider = new GoogleAuthProvider();
-
 		try {
 			const res = await signInWithPopup(auth, googleProvider);
 			const currentUser = res.user;
-
-			await setDoc(doc(db, 'users', currentUser.uid), {
-				email: currentUser.email,
-				displayName: currentUser.displayName,
-				photoProfile: currentUser.photoURL,
-				admin: true,
-				authMethod: currentUser.providerData.map((prov) => prov.providerId),
-			});
-
-			const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-			dispatch(
-				showToast({
-					type: 'success',
-					message: 'Inicio de sesion con Google exitoso',
-				})
-			);
-			return { uid: userDoc.id, ...userDoc.data() };
+			const userRef = doc(db, 'users', currentUser.uid);
+			// Obtener el documento del usuario
+			const userDoc = await getDoc(userRef);
+			// Si el documento no existe, lo creamos
+			if (!userDoc.exists()) {
+				await setDoc(
+					userRef,
+					{
+						email: currentUser.email,
+						displayName: currentUser.displayName,
+						photoProfile: currentUser.photoURL,
+						admin: true,
+						authMethod: currentUser.providerData.map(
+							(prov) => prov.providerId
+						),
+					},
+					dispatch(
+						showToast({
+							type: 'success',
+							message: 'Registro de usuario con Google exitoso',
+						})
+					)
+				);
+			} else {
+				// Si el documento ya existe, solo actualizamos ciertos campos
+				await setDoc(
+					userRef,
+					{
+						email: currentUser.email,
+						displayName: currentUser.displayName,
+						photoProfile: currentUser.photoURL,
+						authMethod: currentUser.providerData.map(
+							(prov) => prov.providerId
+						),
+					},
+					{ merge: true }
+				); 
+				dispatch(
+					showToast({
+						type: 'success',
+						message: 'Inicio de sesión con Google exitoso',
+					})
+				);
+			}
+			// Obtener el documento actualizado del usuario
+			const updatedUserDoc = await getDoc(userRef);
+			// Devolver los datos del usuario
+			return { uid: updatedUserDoc.id, ...updatedUserDoc.data() };
 		} catch (error) {
 			dispatch(
 				showToast({
 					type: 'error',
-					message: 'Error al iniciar sesion con Google',
+					message: 'Error al iniciar sesión con Google',
 				})
 			);
 			console.error(error);

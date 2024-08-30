@@ -29,7 +29,7 @@ export const Profile = () => {
 			},
 		},
 	];
-	console.log(loggedUser)
+
 	return (
 		<div className='flex flex-row  items-center justify-center'>
 			<Button

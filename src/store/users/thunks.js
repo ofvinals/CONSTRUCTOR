@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { auth, db } from '../../services/firebase';
+import { auth, db, storage } from '../../services/firebase';
 import {
 	doc,
 	addDoc,
@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { showToast } from '../toast/slice';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
 export const getUsers = createAsyncThunk(
 	'user/getUsers',
@@ -133,16 +134,42 @@ export const createUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
 	'user/updateUser',
-	async ({ id, values }, { dispatch }) => {
+	async ({ id, values, fileImage }, { dispatch }) => {
+		console.log(id, values, fileImage);
 		try {
+			const { displayName } = values;
 			const usuarioRef = doc(db, 'users', id);
-			await updateDoc(usuarioRef, values);
-			const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+			let url = auth.currentUser?.photoURL || '';
+			if (fileImage) {
+				// Subir la imagen al almacenamiento y obtener la URL
+				const storageRef = ref(
+					storage,
+					`photoProfileUsers/${auth.currentUser.uid}`
+				);
+				const uploadTask = uploadBytesResumable(storageRef, fileImage);
+				// Esperar a que se complete la carga
+				await uploadTask;
+				url = await getDownloadURL(uploadTask.ref);
+			}
+			// Eliminar campos con valores undefined antes de actualizar
+			const filteredValues = Object.fromEntries(
+				Object.entries(values).filter(([_, value]) => value !== undefined)
+			);
+			// Actualizar el documento en Firestore
+			await updateDoc(usuarioRef, { ...filteredValues, photoProfile: url });
+			// Actualizar el perfil del usuario autenticado
+			if (auth.currentUser) {
+				await updateProfile(auth.currentUser, {
+					displayName,
+					photoProfile: url || '',
+				});
+			}
+			const userDoc = await getDoc(doc(db, 'users', id));
 			dispatch(getUsers());
 			dispatch(
 				showToast({
 					type: 'success',
-					message: 'Cliente actualizado exitosamente',
+					message: 'Perfil de usuario actualizado exitosamente',
 				})
 			);
 			return userDoc.data();
@@ -150,7 +177,7 @@ export const updateUser = createAsyncThunk(
 			dispatch(
 				showToast({
 					type: 'error',
-					message: 'Error al actualizar el cliente',
+					message: 'Error al actualizar el perfil de usuario',
 				})
 			);
 			console.error('Error:', error);

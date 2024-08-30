@@ -27,7 +27,6 @@ export function useAuth() {
 	const loginEmail = async ({ email, password }) => {
 		try {
 			const userAction = await dispatch(login({ email, password })).unwrap();
-			console.log(userAction)
 			const user = userAction;
 			if (user.admin) {
 				navigate('/admin');
