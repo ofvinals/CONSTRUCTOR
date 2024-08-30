@@ -11,6 +11,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { useEmployeeActions } from '../../../hooks/useEmployeeActions';
 import Loader from '../../../utils/Loader.jsx';
+import { getEmployees } from '../../../store/employees/thunks.js';
 
 export const FormEmployees = ({ id, onClose, mode }) => {
 	const {

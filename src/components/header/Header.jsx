@@ -27,9 +27,9 @@ export function Header() {
 
 	return (
 		<header className='bg-background text-white'>
-			<section className='flex items-center w-full justify-center sm:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto min-h-[100px]'>
+			<section className='flex items-center w-full justify-around md:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto min-h-[100px]'>
 				<div
-					className='flex items-start justify-start'
+					className='flex items-start justify-start '
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}>
 					<Button className='hover:opacity-70 duration-200 my-3 selection:ring-0 focus:ring-0'>
@@ -47,13 +47,13 @@ export function Header() {
 						</div>
 					)}
 				</div>
-				<div className='flex flex-row flex-wrap m-2 space-x-4 items-center justify-center lg:justify-end'>
+				<div className='flex flex-row flex-wrap m-2 space-x-4 items-center lg:w-9/12 justify-center lg:justify-start'>
 					{currentMenuOptions.map((option) => (
 						<Link
 							key={option.path}
 							to={option.path}
 							className={`flex justify-center text-center items-center hover:text-yellow-300 text-black hover:border-b-2 hover:border-blue-500 ${
-								option.icon ? 'w-10' : 'w-20'
+								option.icon ? 'w-10' : 'text-wrap'
 							}`}>
 							{option.icon && (
 								<span className='mr-2 text-center font-bold'>

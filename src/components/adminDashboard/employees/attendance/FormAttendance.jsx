@@ -14,7 +14,7 @@ import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
 import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 
 export const FormAttendance = ({ id, onClose, mode }) => {
-	const { employees } = useEmployeeActions();
+	const { employees, configState } = useEmployeeActions();
 	const {
 		checkDateAvailability,
 		attendanceStatus,
@@ -24,7 +24,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 	const [employeeAttendance, setEmployeeAttendance] = useState([]);
 	const [isExistingRecord, setIsExistingRecord] = useState(false);
 	const [showAlert, setShowAlert] = useState(false);
-
+	console.log(configState);
 	const {
 		register,
 		handleSubmit,
@@ -155,18 +155,19 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							attendanceClass={true}
 							disabled={mode === 'view'}
 							mode={mode}
-							options={{
-								required: {
-									value: true,
-									message: 'La obra es obligatoria.',
-								},
-							}}
 							readOnly={mode === 'view'}
 							selectOptions={[
-								{ value: 'Casa Loma', label: 'Casa Loma' },
 								{
-									value: 'Country Las Flores',
-									label: 'Country Las Flores',
+									value: 'Remedios de Escalada',
+									label: 'Remedios de Escalada',
+								},
+								{
+									value: 'Las Moras',
+									label: 'Las Moras',
+								},
+								{
+									value: 'Estados Unidos',
+									label: 'Estados Unidos',
 								},
 							]}
 						/>
@@ -178,11 +179,12 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							errors={errors}
 							mode={mode}
 							readOnly={mode === 'view'}
-							selectOptions={[
-								{ value: 'Centro', label: 'Centro' },
-								{ value: 'Yerba Buena', label: 'Yerba Buena' },
-								{ value: 'Adicional', label: 'Adicional' },
-							]}
+							selectOptions={configState[0].travelCosts.map(
+								(travelCost) => ({
+									value: travelCost.label,
+									label: travelCost.label,
+								})
+							)}
 						/>
 					</div>
 					<hr className='size-1 bg-black w-full' />

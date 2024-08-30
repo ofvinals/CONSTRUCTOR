@@ -27,8 +27,8 @@ export const FormInput = ({
 					: 'w-5/12 flex-col '
 			} mt-2`}>
 			<Form.Label
-				className={`text-start bg-transparent text-xl mb-0   ${
-					customClass ? 'text-black mr-2' : 'text-black mt-2'
+				className={`text-start bg-transparent l mb-0   ${
+					customClass ? 'text-black mr-2' : 'text-black mt-2 text-x'
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>

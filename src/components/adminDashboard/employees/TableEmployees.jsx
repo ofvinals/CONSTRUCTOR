@@ -70,7 +70,7 @@ export const TableEmployees = ({ employees }) => {
 			},
 			{
 				header: 'Celular',
-				accessorKey: 'celular',
+				accessorKey: 'cel',
 				size: 50,
 			},
 			{

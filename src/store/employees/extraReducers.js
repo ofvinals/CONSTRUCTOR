@@ -6,6 +6,7 @@ import {
 	updateEmployee,
 	enableEmployee,
 	disableEmployee,
+	getConfig
 } from './thunks';
 
 export const employeeExtraReducers = (builder) => {
@@ -104,5 +105,16 @@ export const employeeExtraReducers = (builder) => {
 			state.error = action.payload;
 		});
 
-
+		builder
+		.addCase(getConfig.pending, (state) => {
+			state.status = 'Cargando';
+		})
+		.addCase(getConfig.fulfilled, (state, action) => {
+			state.status = 'Exitoso';
+			state.config = action.payload;
+		})
+		.addCase(getConfig.rejected, (state, action) => {
+			state.status = 'Fallido';
+			state.error = action.payload;
+		});
 };
