@@ -12,7 +12,7 @@ import {
 } from '../store/employees/thunks';
 import { clearEmployee } from '../store/employees/slice';
 
-export function useEmployeeActions() {
+export const useEmployeeActions = () => {
 	const employees = useAppSelector((state) => state.employees.employees);
 	const allEmployeesStatus = useAppSelector((state) => state.employees.status);
 	const employee = useAppSelector((state) => state.employees.employee);
@@ -92,4 +92,4 @@ export function useEmployeeActions() {
 		configState,
 		configLoading,
 	};
-}
+};

@@ -11,7 +11,7 @@ import {
 } from '../store/users/thunks';
 import { clearUser } from '../store/users/slice';
 
-export function useUserActions() {
+export const useUserActions = () => {
 	const users = useAppSelector((state) => state.users.users);
 	const allUsersStatus = useAppSelector((state) => state.users.status);
 	const user = useAppSelector((state) => state.users.user);
@@ -73,4 +73,4 @@ export function useUserActions() {
 		disableUser,
 		enableUser,
 	};
-}
+};

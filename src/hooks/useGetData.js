@@ -7,7 +7,7 @@ import { getEmployees } from '../store/employees/thunks';
 import { getConfig } from '../store/employees/thunks';
 import { getAttendances } from '../store/attendances/thunks';
 
-export function useGetData() {
+export const useGetData = () => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -16,8 +16,7 @@ export function useGetData() {
 		dispatch(getEmployees());
 		dispatch(getConfig());
 		dispatch(getAttendances());
-
 	}, []);
 
 	return {};
-}
+};

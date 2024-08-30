@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from './store';
 
-export function useLoad() {
+export const useLoad = () => {
 	const statusAuth = useAppSelector((state) => state.auth.statusAuth);
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -14,4 +14,4 @@ export function useLoad() {
 	}, [statusAuth]);
 
 	return { isLoading };
-}
+};
