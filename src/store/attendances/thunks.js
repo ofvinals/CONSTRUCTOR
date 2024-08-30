@@ -52,7 +52,7 @@ export const getAttendance = createAsyncThunk(
 					message: 'Error al obtener datos de la asistencia',
 				})
 			);
-			console.log(error);
+			console.error(error);
 			throw error;
 		}
 	}

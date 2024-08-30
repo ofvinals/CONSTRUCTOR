@@ -27,8 +27,6 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 		updateEmployee,
 		employeeStatusUpdate,
 	} = useEmployeeActions();
-	console.log(employee);
-	console.log(employeeStatus);
 
 	useEffect(() => {
 		if (mode === 'edit' || mode === 'view') {

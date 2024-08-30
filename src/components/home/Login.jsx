@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { FormControl } from 'react-bootstrap';
 
 export function Login() {
-	const { loginGoogle, loginEmail, statusSign } = useAuth();
+	const { loginGoogle, loginEmail, statusAuth } = useAuth();
 	const [showPassword, setShowPassword] = useState(false);
 	const toggleShowPassword = () => setShowPassword(!showPassword);
 
@@ -23,7 +23,7 @@ export function Login() {
 		try {
 			await loginEmail({ email, password });
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	});
 
@@ -32,7 +32,7 @@ export function Login() {
 		try {
 			await loginGoogle();
 		} catch (error) {
-			console.error('Error en el inicio de sesión:', error);
+			console.error(error);
 		}
 	};
 
@@ -56,6 +56,7 @@ export function Login() {
 							Email
 						</Form.Label>
 						<FormControl
+							style={{ outline: 'none', boxShadow: 'none' }}
 							className='items-center lowercase w-8/12 rounded-md p-2 focus:outline-none border-2 border-black'
 							type='email'
 							name='email'
@@ -66,7 +67,7 @@ export function Login() {
 								},
 								pattern: {
 									value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-									message: 'Email no válido',
+									message: 'El email no es válido',
 								},
 							})}
 						/>
@@ -83,17 +84,18 @@ export function Login() {
 						</Form.Label>
 						<div className='flex flex-row justify-center w-8/12 bg-white rounded-lg border-2 border-black'>
 							<FormControl
-								className='items-center text-black  p-2 w-full rounded-md focus:outline-none '
+								style={{ outline: 'none', boxShadow: 'none' }}
+								className='items-center text-black  p-2 w-full rounded-md focus:outline-none border-none '
 								type={showPassword ? 'text' : 'password'}
 								{...register('password', {
 									required: {
 										value: true,
-										message: 'La contraseña es requerida',
+										message: 'La contraseña es obligatoria',
 									},
 									minLength: {
 										value: 7,
 										message:
-											'La contraseña debe ser mayor a 7 caracteres',
+											'La contraseña debe contener mas de 7 caracteres',
 									},
 								})}
 							/>
@@ -120,7 +122,7 @@ export function Login() {
 							¿ Olvidaste tu contraseña ?
 						</Button>
 					</Form.Group>
-					{statusSign === 'Cargando' ? (
+					{statusAuth === 'Cargando' ? (
 						<Form.Group className='flex flex-col items-center'>
 							<Button
 								className='m-3 btnprimary w-[142px]  flex items-center justify-center '

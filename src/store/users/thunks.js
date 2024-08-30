@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { auth, db, storage } from '../../services/firebase';
 import {
@@ -52,7 +53,7 @@ export const getUser = createAsyncThunk(
 					message: 'Error al obtener el cliente',
 				})
 			);
-			console.log(error);
+			console.error(error);
 			throw error;
 		}
 	}
@@ -84,7 +85,6 @@ export const getUserbyGoogle = createAsyncThunk(
 export const createUser = createAsyncThunk(
 	'user/createUser',
 	async ({ values }, { dispatch }) => {
-		console.log(values);
 		try {
 			// Creación de usuario con email y contraseña
 			const userCredential = await createUserWithEmailAndPassword(
@@ -95,7 +95,6 @@ export const createUser = createAsyncThunk(
 			const currentUser = userCredential.user;
 			const displayNameValue = `${values.nombre} ${values.apellido}`;
 			localStorage.setItem('accessToken', currentUser.accessToken);
-			console.log(currentUser.accessToken);
 			// Actualizar el displayName del usuario
 			await updateProfile(currentUser, {
 				displayName: displayNameValue,
@@ -135,7 +134,6 @@ export const createUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
 	'user/updateUser',
 	async ({ id, values, fileImage }, { dispatch }) => {
-		console.log(id, values, fileImage);
 		try {
 			const { displayName } = values;
 			const usuarioRef = doc(db, 'users', id);
@@ -239,7 +237,6 @@ export const enableUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
 	'user/deleteUser',
 	async ({ id }, { dispatch }) => {
-		console.log(id);
 		try {
 			await deleteDoc(doc(db, 'users', id));
 			dispatch(getUsers());

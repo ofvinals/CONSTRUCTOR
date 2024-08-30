@@ -18,6 +18,8 @@ import { Attendance } from '../src/components/adminDashboard/employees/attendanc
 import { Salary } from '../src/components/adminDashboard/employees/salary/Salary';
 import { ClientDashboard } from '../src/pages/client/ClientDashboard';
 import PrivateRoute from './PrivateRoute';
+import { Unauthorized } from '../src/pages/Unauthorized';
+import { Error404 } from '../src/pages/Error404';
 
 export const AppRouter = () => {
 	return (
@@ -32,7 +34,7 @@ export const AppRouter = () => {
 				{/* Rutas accesibles para todos los usuarios autenticados */}
 				<Route element={<PrivateRoute isAdminRequired={false} />}>
 					<Route path='/client' element={<ClientDashboard />} />
-					<Route path='/profile' element={<EditProfile />} />{' '}
+					<Route path='/profile' element={<EditProfile />} />
 					<Route path='/proyects' element={<Proyects />} />
 				</Route>
 
@@ -51,12 +53,10 @@ export const AppRouter = () => {
 				</Route>
 
 				{/* Ruta para usuarios no autorizados */}
-				<Route
-					path='/unauthorized'
-					element={
-						<div>No tienes permiso para acceder a esta página.</div>
-					}
-				/>
+				<Route path='/unauthorized' element={<Unauthorized />} />
+
+				{/* Ruta para 404 - Página no encontrada */}
+				<Route path='*' element={<Error404 />} />
 			</Routes>
 			<Footer />
 		</BrowserRouter>

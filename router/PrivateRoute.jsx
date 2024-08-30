@@ -24,7 +24,7 @@ export const PrivateRoute = ({ isAdminRequired }) => {
 	if (!loggedUser) {
 		return <Navigate to='/home' />;
 	}
-
+console.log(loggedUser)
 	if (isAdminRequired && !loggedUser.admin) {
 		return <Navigate to='/unauthorized' />;
 	}

@@ -43,8 +43,7 @@ export const Table = ({ columns, data, actions, initialSortColumn }) => {
 			variant: 'outlined',
 		},
 		renderRowActions: ({ row }) => {
-			const rowActions = actions(row); // Llama a la función actions con row
-			console.log(rowActions);
+			const rowActions = actions(row); 
 			return (
 				<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
 					{rowActions.map((action, index) => (

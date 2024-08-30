@@ -52,7 +52,7 @@ export const getEmployee = createAsyncThunk(
 					message: 'Error al obtener datos del empleado',
 				})
 			);
-			console.log(error);
+			console.error(error);
 			throw error;
 		}
 	}
@@ -61,7 +61,6 @@ export const getEmployee = createAsyncThunk(
 export const createEmployee = createAsyncThunk(
 	'employee/createEmployee',
 	async ({ values }, { dispatch }) => {
-		console.log(values);
 		try {
 			const displayNameValue = `${values.nombre} ${values.apellido}`;
 			const employeesRef = collection(db, 'employees');
@@ -190,7 +189,6 @@ export const enableEmployee = createAsyncThunk(
 export const deleteEmployee = createAsyncThunk(
 	'employee/deleteEmployee',
 	async ({ id }, { dispatch }) => {
-		console.log(id);
 		try {
 			await deleteDoc(doc(db, 'employees', id));
 			dispatch(getEmployees());

@@ -11,16 +11,14 @@ import {
 	updateProfile,
 } from 'firebase/auth';
 import { showToast } from '../toast/slice';
-import { useUserActions } from '../../hooks/useUserActions';
-const { getUsers } = useUserActions;
 
 // FUNCION REGISTRO DE USUARIOS
 export const register = createAsyncThunk(
 	'user/register',
 	async ({ values }, { rejectWithValue, dispatch }) => {
 		const { nombre, apellido, email, password } = values;
-
 		try {
+			// Crear un nuevo usuario con email y contraseña
 			const userCredential = await createUserWithEmailAndPassword(
 				auth,
 				email,
@@ -28,10 +26,11 @@ export const register = createAsyncThunk(
 			);
 			const currentUser = userCredential.user;
 			const displayNameValue = `${nombre} ${apellido}`;
-			console.log(currentUser);
-			await updateProfile(auth.currentUser, {
+			// Actualizar el perfil del usuario
+			await updateProfile(currentUser, {
 				displayName: displayNameValue,
 			});
+			// Referencia al documento del usuario en Firestore
 			const userDocRef = doc(db, 'users', currentUser.uid);
 			const userData = {
 				...values,
@@ -39,8 +38,9 @@ export const register = createAsyncThunk(
 				isActive: true,
 				displayName: displayNameValue,
 			};
+			// Guardar los datos del usuario en Firestore
 			await setDoc(userDocRef, userData);
-			dispatch(getUsers());
+			// Actualizar el estado global
 			dispatch(
 				showToast({
 					type: 'success',
@@ -55,8 +55,9 @@ export const register = createAsyncThunk(
 					message: 'Error al registrar el usuario',
 				})
 			);
-			console.log(error.response.data);
-			return rejectWithValue(error.response.data);
+			const errorMessage = error.message || 'Error desconocido';
+			console.error('Error al registrar el usuario:', errorMessage);
+			return rejectWithValue(errorMessage);
 		}
 	}
 );
@@ -66,7 +67,6 @@ export const login = createAsyncThunk(
 	'user/login',
 	async ({ email, password }, { dispatch }) => {
 		try {
-			// Iniciar sesión con email y contraseña
 			const signWithEmail = await signInWithEmailAndPassword(
 				auth,
 				email,
@@ -76,13 +76,17 @@ export const login = createAsyncThunk(
 			// Obtener el documento del usuario desde Firestore
 			const usuarioRef = doc(db, 'users', id);
 			const snapshot = await getDoc(usuarioRef);
-			// Verificar si el documento existe y tiene datos
-			if (!snapshot.exists()) {
-				console.error('Documento del usuario no encontrado');
-				throw new Error('Documento del usuario no encontrado');
-			}
 			const userData = snapshot.data();
-			console.log('Datos del usuario:', userData);
+			if (userData.isActive === false) {
+				dispatch(
+					showToast({
+						type: 'error',
+						message:
+							'Tu cuenta está inactiva. Por favor, contacta con el administrador.',
+					})
+				);
+				throw new Error('Cuenta inactiva');
+			}
 			dispatch(
 				showToast({
 					type: 'success',
@@ -122,7 +126,7 @@ export const loginWithGoogle = createAsyncThunk(
 						email: currentUser.email,
 						displayName: currentUser.displayName,
 						photoProfile: currentUser.photoURL,
-						admin: true,
+						admin: false,
 						authMethod: currentUser.providerData.map(
 							(prov) => prov.providerId
 						),
@@ -136,6 +140,16 @@ export const loginWithGoogle = createAsyncThunk(
 				);
 			} else {
 				// Si el documento ya existe, solo actualizamos ciertos campos
+				if (userDoc.isActive === false) {
+					dispatch(
+						showToast({
+							type: 'error',
+							message:
+								'Tu cuenta está inactiva. Por favor, contacta con el administrador.',
+						})
+					);
+					throw new Error('Cuenta inactiva');
+				}
 				await setDoc(
 					userRef,
 					{
@@ -147,7 +161,7 @@ export const loginWithGoogle = createAsyncThunk(
 						),
 					},
 					{ merge: true }
-				); 
+				);
 				dispatch(
 					showToast({
 						type: 'success',
