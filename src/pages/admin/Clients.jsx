@@ -6,7 +6,7 @@ import Modals from '../../utils/Modals';
 import { FormClients } from '../../components/adminDashboard/clients/FormClients';
 import useModal from '../../hooks/useModal';
 import { useNavigate } from 'react-router-dom';
-import { useUserActions } from '../../hooks/UseUserActions';
+import { useUserActions } from '../../hooks/useUserActions';
 
 export const Clients = () => {
 	const [openCardClients, setOpenCardClients] = useState(true);
