@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { useEmployeeActions } from '../../../hooks/UseEmployeeActions';
+import { useEmployeeActions } from '../../../hooks/useEmployeeActions';
 import {
 	Edit as EditIcon,
 	Delete as DeleteIcon,

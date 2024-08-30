@@ -9,7 +9,7 @@ import {
 	CancelButton,
 } from '../../../utils/Form.jsx';
 import { useForm } from 'react-hook-form';
-import { useEmployeeActions } from '../../../hooks/UseEmployeeActions.js';
+import { useEmployeeActions } from '../../../hooks/useEmployeeActions';
 import Loader from '../../../utils/Loader.jsx';
 
 export const FormEmployees = ({ id, onClose, mode }) => {

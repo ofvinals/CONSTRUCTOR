@@ -8,7 +8,7 @@ import {
 } from '../store/attendances/thunks';
 import { clearAttendance } from '../store/attendances/slice';
 
-export function useAttendanceActions() {
+export const useAttendanceActions = () => {
 	const attendances = useAppSelector((state) => state.attendances.attendances);
 	const allAttendancesStatus = useAppSelector(
 		(state) => state.attendances.status
@@ -44,9 +44,9 @@ export function useAttendanceActions() {
 		await dispatch(updateAttendanceThunk({ id, values }));
 	};
 
-	const checkDateAvailability = async ({date}) => {
-		const resultAction = await dispatch(checkDateAvailabilityThunk({date}));
-		return resultAction.payload
+	const checkDateAvailability = async ({ date }) => {
+		const resultAction = await dispatch(checkDateAvailabilityThunk({ date }));
+		return resultAction.payload;
 	};
 
 	const clearStateAttendance = () => {
@@ -68,4 +68,4 @@ export function useAttendanceActions() {
 		dateAvailable,
 		statusDateCheck,
 	};
-}
+};

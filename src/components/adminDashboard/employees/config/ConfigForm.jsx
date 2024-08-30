@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { SaveButton, CancelButton, FormInput } from '../../../../utils/Form';
+import { SaveButton,  FormInput } from '../../../../utils/Form';
 import { Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import Loader from '../../../../utils/Loader';
-import { useEmployeeActions } from '../../../../hooks/UseEmployeeActions';
+import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Button } from 'primereact/button';
 

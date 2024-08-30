@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import  { useState } from 'react';
-import { useUserActions } from '../../../hooks/UseUserActions';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import Loader from '../../../utils/Loader';
@@ -12,6 +11,7 @@ import Avatar from 'react-avatar';
 import PaginatorComponent from '../../../utils/Paginator';
 import '../../../styles/Custom.css';
 import { useAuth } from '../../../hooks/useAuth';
+import { useUserActions } from '../../../hooks/useUserActions';
 
 export const CardClients = ({ users }) => {
 	const { allUsersStatus, disableUser, deleteUser, enableUser } =

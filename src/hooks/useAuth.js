@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { register, login, loginWithGoogle, logout } from '../store/auth/thunks';
 import { useAppDispatch, useAppSelector } from './store';
-import { useUserActions } from './UseUserActions';
+import { useUserActions } from './useUserActions';
 
-export function useAuth() {
+export const useAuth = () => {
 	const { getUserbyGoogle } = useUserActions();
 	const loggedUser = useAppSelector((state) => state.auth.loggedUser);
 	const statusAuth = useAppSelector((state) => state.auth.statusAuth);
@@ -12,7 +12,9 @@ export function useAuth() {
 
 	const loginGoogle = async () => {
 		try {
-			const userAction = await dispatch(loginWithGoogle({ getUserbyGoogle })).unwrap();
+			const userAction = await dispatch(
+				loginWithGoogle({ getUserbyGoogle })
+			).unwrap();
 			const user = userAction;
 			if (user.admin || user.coadmin) {
 				navigate('/admin');
@@ -39,9 +41,9 @@ export function useAuth() {
 		}
 	};
 
-	const registerUser = async ({values}) => {
+	const registerUser = async ({ values }) => {
 		try {
-			await dispatch(register({values})).unwrap();
+			await dispatch(register({ values })).unwrap();
 			navigate('/admin');
 		} catch (error) {
 			alert(error);
@@ -61,4 +63,4 @@ export function useAuth() {
 		logoutUser,
 		statusAuth,
 	};
-}
+};

@@ -6,7 +6,7 @@ import Modals from '../../utils/Modals';
 import { FormEmployees } from '../../components/adminDashboard/employees/FormEmployees';
 import useModal from '../../hooks/useModal';
 import { useNavigate } from 'react-router-dom';
-import { useEmployeeActions } from '../../hooks/UseEmployeeActions';
+import { useEmployeeActions } from '../../hooks/useEmployeeActions';
 
 export const Employees = () => {
 	const [openCardEmployees, setOpenCardEmployees] = useState(true);
