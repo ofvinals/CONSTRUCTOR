@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { useEmployeeActions } from '../../../hooks/UseEmployeeActions';
+import { useEmployeeActions } from '../../../hooks/useEmployeeActions';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import Loader from '../../../utils/Loader';

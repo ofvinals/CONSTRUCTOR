@@ -10,7 +10,7 @@ import {
 	CancelButton,
 } from '../../../../utils/Form.jsx';
 import Loader from '../../../../utils/Loader.jsx';
-import { useEmployeeActions } from '../../../../hooks/UseEmployeeActions';
+import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
 import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 
 export const FormAttendance = ({ id, onClose, mode }) => {

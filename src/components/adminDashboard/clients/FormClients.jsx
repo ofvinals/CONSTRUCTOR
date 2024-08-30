@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { FormInput, SaveButton, CancelButton } from '../../../utils/Form';
 import { useForm } from 'react-hook-form';
 import Loader from '../../../utils/Loader.jsx';
-import { useUserActions } from '../../../hooks/useUserActions.js';
+import { useUserActions } from '../../../hooks/useUserActions';
 
 export const FormClients = ({ id, onClose, mode }) => {
 	const {
