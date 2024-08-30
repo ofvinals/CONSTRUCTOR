@@ -2,10 +2,10 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
-import { FormInput, SaveButton, CancelButton } from '../../../utils/Form.jsx';
+import { FormInput, SaveButton, CancelButton } from '../../../utils/Form';
 import { useForm } from 'react-hook-form';
-import { useUserActions } from '../../../hooks/UseUserActions.js';
 import Loader from '../../../utils/Loader.jsx';
+import { useUserActions } from '../../../hooks/useUserActions.js';
 
 export const FormClients = ({ id, onClose, mode }) => {
 	const {

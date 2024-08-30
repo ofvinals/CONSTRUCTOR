@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { useUserActions } from '../../../hooks/UseUserActions';
 import {
 	Edit as EditIcon,
 	Delete as DeleteIcon,
@@ -16,6 +15,7 @@ import { FormClients } from './FormClients';
 import { useAuth } from '../../../hooks/useAuth';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { useUserActions } from '../../../hooks/useUserActions';
 
 export const TableClients = ({ users }) => {
 	const {

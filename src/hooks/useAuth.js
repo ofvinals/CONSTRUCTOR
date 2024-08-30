@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { register, login, loginWithGoogle, logout } from '../store/auth/thunks';
 import { useAppDispatch, useAppSelector } from './store';
-import { useUserActions } from './UseUserActions';
+import { useUserActions } from './useUserActions';
 
 export function useAuth() {
 	const { getUserbyGoogle } = useUserActions();

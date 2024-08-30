@@ -10,14 +10,13 @@ import {
 	CancelButton,
 } from '../../../../utils/Form.jsx';
 import Loader from '../../../../utils/Loader.jsx';
-import { useEmployeeActions } from '../../../../hooks/UseEmployeeActions.js';
-import { useAttendanceActions } from '../../../../hooks/useAttendanceActions.js';
+import { useEmployeeActions } from '../../../../hooks/UseEmployeeActions';
+import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 
 export const FormAttendance = ({ id, onClose, mode }) => {
 	const { employees } = useEmployeeActions();
 	const {
 		checkDateAvailability,
-		attendances,
 		attendanceStatus,
 		createAttendance,
 		attendanceStatusUpdate,
