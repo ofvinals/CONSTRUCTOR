@@ -11,7 +11,7 @@ import {
 	updateProfile,
 } from 'firebase/auth';
 import { showToast } from '../toast/slice';
-import { useUserActions } from '../../hooks/UseUserActions';
+import { useUserActions } from '../../hooks/useUserActions';
 const { getUsers } = useUserActions;
 
 // FUNCION REGISTRO DE USUARIOS

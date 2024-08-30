@@ -33,7 +33,6 @@ export function useUserActions() {
 	};
 
 	const createUser = async ({ values }) => {
-		console.log(values);
 		await dispatch(createUserThunk({ values }));
 	};
 
@@ -42,7 +41,6 @@ export function useUserActions() {
 	};
 
 	const deleteUser = async ({ id }) => {
-		console.log(id);
 		await dispatch(deleteUserThunk({ id }));
 	};
 
