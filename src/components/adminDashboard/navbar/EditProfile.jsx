@@ -6,10 +6,11 @@ import Avatar from 'react-avatar';
 import { FormInput, SaveButton, CancelButton } from '../../../utils/Form';
 import { useForm } from 'react-hook-form';
 import { Form } from 'react-bootstrap';
+import Loader from '../../../utils/Loader';
 
 export const EditProfile = () => {
 	const { loggedUser } = useAuth();
-	const { updateProfile, userStatusUpdate, user, getUser } = useUserActions();
+	const { updateUser, userStatusUpdate } = useUserActions();
 
 	const [photoProfile, setPhotoProfile] = useState(
 		loggedUser?.photoProfile || ''
@@ -24,18 +25,16 @@ export const EditProfile = () => {
 	} = useForm();
 
 	useEffect(() => {
-		getUser({ id: loggedUser.uid });
-	}, []);
-
-	useEffect(() => {
-		if (user) {
-			setValue('nombre', user.nombre);
-			setValue('apellido', user.apellido);
-			setValue('domicilio', user.domicilio);
-			setValue('dni', user.dni);
-			setValue('cel', user.cel);
+		if (loggedUser) {
+			setValue('nombre', loggedUser.nombre);
+			setValue('apellido', loggedUser.apellido);
+			setValue('domicilio', loggedUser.domicilio);
+			setValue('email', loggedUser.email);
+			setValue('dni', loggedUser.dni);
+			setValue('cel', loggedUser.cel);
+			setValue('photoProfile', loggedUser.photoProfile);
 		}
-	}, []);
+	}, [loggedUser]);
 
 	const handleFileChange = (e) => {
 		const file = e.target.files[0];
@@ -49,17 +48,17 @@ export const EditProfile = () => {
 		}
 	};
 
-	const onSubmit = async (values) => {
+	const onSubmit = async (values, fileImage) => {
 		try {
 			const { nombre, apellido } = values;
 			const displayName = `${nombre} ${apellido}`;
 			const updatedValues = { ...values, displayName };
-			await updateProfile({
+			await updateUser({
 				id: loggedUser.uid,
 				values: updatedValues,
 				fileImage,
 			});
-			onClose(); 
+			onClose();
 		} catch (error) {
 			console.error('Error al editar el empleado:', error);
 		}
@@ -68,6 +67,10 @@ export const EditProfile = () => {
 	const onClose = () => {
 		window.history.back();
 	};
+
+	if (userStatusUpdate == 'Cargando') {
+		return <Loader />;
+	}
 
 	return (
 		<div className='bg-background p-4'>
@@ -87,7 +90,7 @@ export const EditProfile = () => {
 							/>
 						) : (
 							<Avatar
-								name={loggedUser.displayName}
+								name={loggedUser?.displayName}
 								size='175'
 								className='object-cover w-40 h-40 p-1 rounded-full ring-2 ring-[#ffd52b]'
 							/>

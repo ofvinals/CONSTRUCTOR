@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { verifyLoggedUser } from '../src/store/auth/thunks';
 import { useLoad } from '../src/hooks/useLoad';
 import Loader from '../src/utils/Loader';
 
-export const PrivateRoute = () => {
+export const PrivateRoute = ({ isAdminRequired }) => {
 	const dispatch = useDispatch();
 	const loggedUser = useSelector((state) => state.auth.loggedUser);
 	const { isLoading } = useLoad();
@@ -19,8 +20,16 @@ export const PrivateRoute = () => {
 	if (isLoading) {
 		return <Loader />;
 	}
-	
-	return loggedUser ? <Outlet /> : <Navigate to='/home' />;
+
+	if (!loggedUser) {
+		return <Navigate to='/home' />;
+	}
+
+	if (isAdminRequired && !loggedUser.admin) {
+		return <Navigate to='/unauthorized' />;
+	}
+
+	return <Outlet />;
 };
 
 export default PrivateRoute;
