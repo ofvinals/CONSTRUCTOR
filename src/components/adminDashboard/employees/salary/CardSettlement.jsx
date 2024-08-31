@@ -40,7 +40,7 @@ export const CardSettlement = ({ startDate, endDate }) => {
 				return attendanceDate >= start && attendanceDate <= end;
 			});
 
-			// Obtén el valor del presenteísmo por día
+			// Obténer el valor del presenteísmo por día
 			const valuePresentism = configState[0]?.presentism?.hourlyRate || 0;
 			console.log(valuePresentism);
 			// Calcular las horas trabajadas, días de inasistencia, descanso y presentismo para cada empleado
@@ -51,6 +51,9 @@ export const CardSettlement = ({ startDate, endDate }) => {
 					);
 					const endTime = new Date(`1970-01-01T${employee.endTime}:00Z`);
 					const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+
+					// TIENE QUE TRAER EL VALOR ACTUAL DE LA HORA DE LA POSICION DESDE CONFIGSTATE
+
 					const totalHoursValue = hoursWorked * employee.valuePosition;
 
 					// Inicializar variables para contar días de inasistencia y descanso

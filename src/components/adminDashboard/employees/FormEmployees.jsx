@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import {
@@ -26,6 +26,7 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 		getEmployee,
 		updateEmployee,
 		employeeStatusUpdate,
+		configState,
 	} = useEmployeeActions();
 
 	useEffect(() => {
@@ -38,7 +39,13 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 		if (employee && (mode === 'edit' || mode === 'view')) {
 			setValue('nombre', employee.nombre);
 			setValue('apellido', employee.apellido);
-			setValue('position', employee.position);
+			setValue(
+				'position',
+				JSON.stringify({
+					label: employee.position,
+					hourlyRate: employee.valuePosition,
+				})
+			);
 			setValue('domicilio', employee.domicilio);
 			setValue('dni', employee.dni);
 			setValue('cel', employee.cel);
@@ -47,9 +54,19 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
-			const { nombre, apellido } = values;
+			const { nombre, apellido, position } = values;
 			const displayName = `${nombre} ${apellido}`;
-			const updatedValues = { ...values, displayName };
+
+			// Parse the position field to get label and hourlyRate
+			const parsedPosition = JSON.parse(position);
+
+			const updatedValues = {
+				...values,
+				displayName,
+				position: parsedPosition.label,
+				valuePosition: parsedPosition.hourlyRate,
+			};
+
 			if (mode === 'edit') {
 				await updateEmployee({ id, values: updatedValues });
 				onClose();
@@ -137,12 +154,13 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 						},
 					}}
 					readOnly={mode === 'view'}
-					selectOptions={[
-						{ value: 'Capataz', label: 'Capataz' },
-						{ value: 'Sanitarista', label: 'Sanitarista' },
-						{ value: 'Oficial', label: 'Oficial' },
-						{ value: 'Electricista', label: 'Electricista' },
-					]}
+					selectOptions={configState[0].positions.map((position) => ({
+						value: JSON.stringify({
+							label: position.label,
+							hourlyRate: position.hourlyRate,
+						}),
+						label: position.label,
+					}))}
 				/>
 
 				<FormInput
