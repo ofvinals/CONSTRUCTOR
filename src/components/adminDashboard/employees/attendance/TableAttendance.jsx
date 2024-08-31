@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useState } from 'react';
-import { useAttendanceActions } from '../../../../hooks/useAttendanceActions'
+import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 import Loader from '../../../../utils/Loader';
 import TreeTable from '../../../../utils/TreeTable';
 import { DateTime } from 'luxon';
@@ -25,10 +25,20 @@ export const TableAttendance = () => {
 	};
 
 	const selectOptions = [
-		{ value: 'Casa Loma', label: 'Casa Loma' },
-		{ value: 'Country Las Flores', label: 'Country Las Flores' },
+		{
+			value: 'Remedios de Escalada',
+			label: 'Remedios de Escalada',
+		},
+		{
+			value: 'Las Moras',
+			label: 'Las Moras',
+		},
+		{
+			value: 'Estados Unidos',
+			label: 'Estados Unidos',
+		},
 	];
-
+	
 	const handleUpdateAttendance = async ({ values, row, table }) => {
 		try {
 			const id = row.original.uid;

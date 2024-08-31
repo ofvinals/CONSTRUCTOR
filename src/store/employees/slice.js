@@ -5,7 +5,6 @@ const initialState = {
 	employees: [],
 	employee: null,
 	config: [],
-	
 	status: 'Inactivo',
 	statusEmployee: 'Inactivo',
 	statusAuth: 'Inactivo',
