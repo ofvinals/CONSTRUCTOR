@@ -41,6 +41,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 				position: employee.position,
 				valuePosition: '',
 				attendance: false,
+				rest: false,
 				construction: '',
 				travelCost: '',
 				valueTravelCost: '',
@@ -52,6 +53,14 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 		setEmployeeAttendance((prevState) =>
 			prevState.map((employee) =>
 				employee.uid === uid ? { ...employee, attendance: value } : employee
+			)
+		);
+	};
+
+	const handleRestChange = (uid, value) => {
+		setEmployeeAttendance((prevState) =>
+			prevState.map((employee) =>
+				employee.uid === uid ? { ...employee, rest: value } : employee
 			)
 		);
 	};
@@ -76,8 +85,9 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							endTime: employee.attendance ? '17:00' : '',
 							construction: values.employees[index]?.construction || '',
 							travelCost: selectedTravelCost.label,
-							valueTravelCost: selectedTravelCost.hourlyRate, 
+							valueTravelCost: selectedTravelCost.hourlyRate,
 							valuePosition: '',
+							rest: employee.rest,
 						};
 					}
 				);
@@ -110,7 +120,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 	) {
 		return <Loader />;
 	}
-	console.log(configState);
+
 	return (
 		<Form
 			onSubmit={handleSubmit(onSubmit)}
@@ -155,6 +165,17 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							disabled={mode === 'view'}
 						/>
 					</div>
+					<div className='flex items-center flex-col '>
+						<label htmlFor={`rest-${employee.uid}`} className='ml-2'>
+							Descanso
+						</label>
+						<InputSwitch
+							inputId={`rest-${employee.uid}`}
+							checked={employee.rest}
+							disabled={employee.attendance}
+							onChange={(e) => handleRestChange(employee.uid, e.value)}
+						/>
+					</div>
 					<div className='flex flex-row mx-5 w-full flex-wrap items-center justify-between'>
 						<FormSelect
 							label='Obra'
@@ -162,7 +183,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							register={register}
 							errors={errors}
 							attendanceClass={true}
-							disabled={!employee.attendance } 
+							disabled={!employee.attendance}
 							mode={mode}
 							readOnly={mode === 'view'}
 							selectOptions={[
@@ -187,7 +208,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							attendanceClass={true}
 							errors={errors}
 							mode={mode}
-							disabled={!employee.attendance} 
+							disabled={!employee.attendance}
 							readOnly={mode === 'view'}
 							selectOptions={configState[0].travelCosts.map(
 								(travelCost) => ({

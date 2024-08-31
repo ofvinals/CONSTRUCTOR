@@ -2,11 +2,11 @@ import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Button } from 'primereact/button';
 import { CardSettlement } from './CardSettlement';
+import { format } from 'date-fns';
 
 export const Salary = () => {
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(null);
-	const [openSettlement, setOpenSettlement] = useState(false);
 
 	const onChange = (dates) => {
 		const [start, end] = dates;
@@ -14,9 +14,8 @@ export const Salary = () => {
 		setEndDate(end);
 	};
 
-	const handleDates = () => {
-		setOpenSettlement(true);
-	};
+	const formattedStartDate = startDate ? format(startDate, 'yyyy/MM/dd') : '';
+	const formattedEndDate = endDate ? format(endDate, 'yyyy/MM/dd') : '';
 
 	return (
 		<div className='min-h-screen'>
@@ -32,20 +31,16 @@ export const Salary = () => {
 						selectsRange
 						className='border-2 border-[#ffd52b] p-2'
 					/>
-					<Button
-						onClick={handleDates}
-						className='btnprimary  text-center ml-5 p-2'>
-						<i className=' text-xl text-center font-bold pi pi-check'></i>
-					</Button>
-
-					<Button
-						onClick={handleDates}
-						className='btnprimary  text-center ml-5 p-2'><i className='pi pi-print mr-2 font-semibold'></i>
+					<Button className='btnprimary  text-center ml-5 p-2'>
+						<i className='pi pi-print mr-2 '></i>
 						Imprimir Liquidacion
 					</Button>
 				</div>
 			</div>
-			{<CardSettlement startDate={startDate} endDate={endDate} />}
+			<CardSettlement
+				startDate={formattedStartDate}
+				endDate={formattedEndDate}
+			/>
 		</div>
 	);
 };
