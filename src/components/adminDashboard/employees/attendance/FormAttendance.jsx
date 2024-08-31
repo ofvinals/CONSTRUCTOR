@@ -39,9 +39,11 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 				uid: employee.uid,
 				displayName: employee.displayName,
 				position: employee.position,
+				valuePosition: '',
 				attendance: false,
 				construction: '',
 				travelCost: '',
+				valueTravelCost: '',
 			}));
 		setEmployeeAttendance(initialAttendanceState);
 	}, [id, employees, setValue]);
@@ -63,13 +65,21 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 			} else {
 				setIsExistingRecord(false);
 				const modifiedEmployees = employeeAttendance.map(
-					(employee, index) => ({
-						...employee,
-						startTime: employee.attendance ? '08:00' : '',
-						endTime: employee.attendance ? '17:00' : '',
-						construction: values.employees[index]?.construction || '',
-						travelCost: values.employees[index]?.travelCost || '',
-					})
+					(employee, index) => {
+						const selectedTravelCost = values.employees[index]?.travelCost
+							? JSON.parse(values.employees[index].travelCost)
+							: { label: '', hourlyRate: '' };
+
+						return {
+							...employee,
+							startTime: employee.attendance ? '08:00' : '',
+							endTime: employee.attendance ? '17:00' : '',
+							construction: values.employees[index]?.construction || '',
+							travelCost: selectedTravelCost.label,
+							valueTravelCost: selectedTravelCost.hourlyRate, 
+							valuePosition: '',
+						};
+					}
 				);
 				const formData = {
 					date: values.date,
@@ -100,7 +110,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 	) {
 		return <Loader />;
 	}
-
+	console.log(configState);
 	return (
 		<Form
 			onSubmit={handleSubmit(onSubmit)}
@@ -152,7 +162,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							register={register}
 							errors={errors}
 							attendanceClass={true}
-							disabled={mode === 'view'}
+							disabled={!employee.attendance } 
 							mode={mode}
 							readOnly={mode === 'view'}
 							selectOptions={[
@@ -177,10 +187,14 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							attendanceClass={true}
 							errors={errors}
 							mode={mode}
+							disabled={!employee.attendance} 
 							readOnly={mode === 'view'}
 							selectOptions={configState[0].travelCosts.map(
 								(travelCost) => ({
-									value: travelCost.label,
+									value: JSON.stringify({
+										label: travelCost.label,
+										hourlyRate: travelCost.hourlyRate,
+									}),
 									label: travelCost.label,
 								})
 							)}

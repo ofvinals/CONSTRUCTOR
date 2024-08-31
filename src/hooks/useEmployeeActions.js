@@ -66,8 +66,8 @@ export const useEmployeeActions = () => {
 		await dispatch(getConfigThunk());
 	};
 
-	const updateConfig = async ({ values }) => {
-		await dispatch(updateConfigThunk({ values }));
+	const updateConfig = async ({id, values }) => {
+		await dispatch(updateConfigThunk({id, values }));
 	};
 
 	return {

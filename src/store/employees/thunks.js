@@ -236,19 +236,20 @@ export const getConfig = createAsyncThunk(
 
 export const updateConfig = createAsyncThunk(
 	'employee/updateConfig',
-	async ({ values }, { dispatch }) => {
-		console.log(values);
+	async ({ id, values }, { dispatch }) => {
+		console.log(id, values);
 		try {
-			const employeesRef = collection(db, 'employeesConfig');
-			await addDoc(employeesRef, values);
-			dispatch(getEmployees());
+			const employeeRef = doc(db, 'employeesConfig', id);
+			await updateDoc(employeeRef, values);
+			const employeeConfig = await getDoc(doc(db, 'employeesConfig', id));
+			dispatch(getConfig());
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Valores actualizados exitosamente',
 				})
 			);
-			return;
+			return employeeConfig.data();
 		} catch (error) {
 			dispatch(
 				showToast({
