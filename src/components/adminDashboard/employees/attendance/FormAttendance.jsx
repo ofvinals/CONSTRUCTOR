@@ -24,7 +24,6 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 	const [employeeAttendance, setEmployeeAttendance] = useState([]);
 	const [isExistingRecord, setIsExistingRecord] = useState(false);
 	const [showAlert, setShowAlert] = useState(false);
-	console.log(configState);
 	const {
 		register,
 		handleSubmit,
