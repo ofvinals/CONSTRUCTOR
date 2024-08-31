@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Accordion, Card, Form } from 'react-bootstrap';
 import { SaveButton, FormInput } from '../../../../utils/Form';
 import Loader from '../../../../utils/Loader';
 import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
-import { Button } from 'primereact/button';
+import { Button } from 'react-bootstrap';
 
 const ConfigForm = ({ onClose }) => {
 	const [positions, setPositions] = useState([]);
@@ -23,70 +22,59 @@ const ConfigForm = ({ onClose }) => {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({
-		defaultValues: {
-			positions: positions.reduce(
-				(acc, pos, index) => ({
-					...acc,
-					[`${index}`]: {
-						hourlyRate: pos.hourlyRate,
-					},
-				}),
-				{}
-			),
-			travelCosts: travelCosts.reduce(
-				(acc, via, index) => ({
-					...acc,
-					[`${index}`]: {
-						hourlyRate: via.hourlyRate,
-					},
-				}),
-				{}
-			),
-			presentism: presentism.hourlyRate,
-		},
-	});
+		setValue,
+	} = useForm();
 
-	const { employeeStatus, updateConfig, employeeStatusUpdate, getConfig } =
+	const { employeeStatus, updateConfig, employeeStatusUpdate, configState } =
 		useEmployeeActions();
 
 	useEffect(() => {
-		getConfig();
-	}, []);
+		const config = configState[0];
+		if (config) {
+			setPositions(config.positions || []);
+			setTravelCosts(config.travelCosts || []);
+			setPresentism(config.presentism || { value: 1, hourlyRate: 0 });
+			// Establecer valores manualmente en react-hook-form
+			config.positions?.forEach((position, index) => {
+				setValue(
+					`positions[${index}].hourlyRate`,
+					position.hourlyRate || 0
+				);
+			});
+			config.travelCosts?.forEach((travelCost, index) => {
+				setValue(
+					`travelCosts[${index}].hourlyRate`,
+					travelCost.hourlyRate || 0
+				);
+			});
+			setValue('presentism', config.presentism.hourlyRate || 0);
+		}
+	}, [configState, setValue]);
 
 	const onSubmit = async (values) => {
-		console.log('Valores del formulario:', values);
-
-		// Asegúrate de que `values` está correctamente formateado
+		const id = configState[0].uid;
+		// Actualiza posiciones, viáticos y presentismo con los valores del formulario
 		const updatedPositions = positions.map((pos, index) => ({
 			...pos,
 			hourlyRate:
-				parseInt(values[`positions[${index}].hourlyRate`], 10) ||
-				pos.hourlyRate,
+				Number(values.positions[index].hourlyRate) || pos.hourlyRate,
 		}));
-
 		const updatedTravelCosts = travelCosts.map((via, index) => ({
 			...via,
 			hourlyRate:
-				parseInt(values[`travelCosts[${index}].hourlyRate`], 10) ||
-				via.hourlyRate,
+				Number(values.travelCosts[index].hourlyRate) || via.hourlyRate,
 		}));
-
-		const updatedPresentismo = {
-			value: presentism.value,
-			hourlyRate: parseInt(values.presentism, 10) || presentism.hourlyRate,
+		const updatedPresentism = {
+			...presentism,
+			hourlyRate: Number(values.presentism) || presentism.hourlyRate,
 		};
-
 		const configData = {
 			positions: updatedPositions,
 			travelCosts: updatedTravelCosts,
-			presentism: updatedPresentismo,
+			presentism: updatedPresentism,
 		};
-
-		console.log('Datos de configuración:', configData);
-
 		try {
-			await updateConfig({ values: configData });
+			await updateConfig({ id, values: configData });
 			onClose();
 		} catch (error) {
 			console.error('Error al editar la configuración:', error);
@@ -177,14 +165,13 @@ const ConfigForm = ({ onClose }) => {
 						</p>
 						<Button
 							type='button'
-							icon='pi pi-plus'
-							variant='outline-primary'
-							className='btnicon ml-2'
+							className='bg-transparent border-none text-black '
 							onClick={(e) => {
 								e.stopPropagation();
 								addNewPosition();
-							}}
-						/>
+							}}>
+							<i className='pi pi-plus ml-2 p-2 rounded-md hover:bg-[#ffd52b] font-semibold text-xl'></i>
+						</Button>
 					</Accordion.Header>
 					<Accordion.Body>
 						<Accordion
@@ -203,28 +190,28 @@ const ConfigForm = ({ onClose }) => {
 												onClick={(e) => e.stopPropagation()}
 											/>
 										) : (
-											<div className='d-flex justify-content-between align-items-center'>
+											<div className='flex justify-between items-center'>
 												<span className='text-xl font-semibold'>
 													{position.label || 'Nueva Posición'}
 												</span>
 												<Button
 													type='button'
-													icon='pi pi-pencil'
-													className='text-green-500 hover:opacity-60'
+													className='bg-transparent border-none text-black '
 													onClick={(e) => {
 														handleFocus('positions', index);
 														e.stopPropagation();
-													}}
-												/>
+													}}>
+													<i className='pi pi-pencil text-green-500 hover:opacity-60'></i>
+												</Button>
 												<Button
 													type='button'
-													icon='pi pi-trash'
-													className='text-red-500 hover:opacity-60'
+													className='bg-transparent border-none text-black '
 													onClick={(e) => {
 														handleDelete('positions', index);
 														e.stopPropagation();
-													}}
-												/>
+													}}>
+													<i className='pi pi-trash text-red-500 hover:opacity-60'></i>
+												</Button>
 											</div>
 										)}
 									</Accordion.Header>
@@ -251,13 +238,13 @@ const ConfigForm = ({ onClose }) => {
 						<p className='text-xl text-black font-bold'>Viáticos</p>
 						<Button
 							type='button'
-							icon='pi pi-plus'
-							className='btnicon ml-2'
+							className='bg-transparent border-none text-black '
 							onClick={(e) => {
 								e.stopPropagation();
 								addNewTravelCost();
-							}}
-						/>
+							}}>
+							<i className='pi pi-plus p-2 rounded-md hover:bg-[#ffd52b] font-semibold text-xl'></i>
+						</Button>
 					</Accordion.Header>
 					<Accordion.Body>
 						<Accordion
@@ -276,34 +263,34 @@ const ConfigForm = ({ onClose }) => {
 												onClick={(e) => e.stopPropagation()}
 											/>
 										) : (
-											<div className='d-flex justify-content-between align-items-center'>
-												<span>
+											<div className='flex justify-between items-center'>
+												<span className='text-xl font-semibold'>
 													{travelCost.label || 'Nuevo Viático'}
 												</span>
 												<Button
 													type='button'
-													icon='pi pi-pencil'
-													className='text-green-500 hover:opacity-60'
+													className='bg-transparent border-none text-black '
 													onClick={(e) => {
 														handleFocus('travelCosts', index);
 														e.stopPropagation();
-													}}
-												/>
+													}}>
+													<i className='pi pi-pencil text-green-500 hover:opacity-60'></i>
+												</Button>
 												<Button
 													type='button'
-													icon='pi pi-trash'
-													className='text-red-500 hover:opacity-60'
+													className='bg-transparent border-none text-black '
 													onClick={(e) => {
 														handleDelete('travelCosts', index);
 														e.stopPropagation();
-													}}
-												/>
+													}}>
+													<i className='pi pi-trash text-red-500 hover:opacity-60'></i>
+												</Button>
 											</div>
 										)}
 									</Accordion.Header>
 									<Accordion.Body>
 										<FormInput
-											label='Valor Viático'
+											label='Valor Hora de Viáticos'
 											name={`travelCosts[${index}].hourlyRate`}
 											type='number'
 											register={register}
@@ -325,7 +312,7 @@ const ConfigForm = ({ onClose }) => {
 					</Accordion.Header>
 					<Accordion.Body>
 						<FormInput
-							label='Valor Presentismo'
+							label='Valor Hora de Presentismo'
 							name='presentism'
 							type='number'
 							register={register}
@@ -336,10 +323,7 @@ const ConfigForm = ({ onClose }) => {
 					</Accordion.Body>
 				</Accordion.Item>
 			</Accordion>
-
-			<div className='mt-4 flex flex-wrap items-center justify-center'>
-				<SaveButton label='Guardar Cambios' />
-			</div>
+			<SaveButton label='Guardar Configuración' />
 		</Form>
 	);
 };
