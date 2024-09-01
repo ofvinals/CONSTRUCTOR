@@ -53,7 +53,7 @@ export function Header() {
 							key={option.path}
 							to={option.path}
 							className={`flex justify-center text-center items-center hover:text-yellow-300 text-black hover:border-b-2 hover:border-blue-500 ${
-								option.icon ? 'w-10' : 'text-wrap'
+								option.icon ? 'w-10 mt-1' : 'text-wrap'
 							}`}>
 							{option.icon && (
 								<span className='mr-2 text-center font-bold'>

@@ -111,7 +111,6 @@ export const employeeExtraReducers = (builder) => {
 		})
 		.addCase(getConfig.fulfilled, (state, action) => {
 			state.status = 'Exitoso';
-			console.log(action);
 			state.config = action.payload;
 		})
 		.addCase(getConfig.rejected, (state, action) => {

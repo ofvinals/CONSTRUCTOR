@@ -4,6 +4,7 @@ import toastReducer from './toast/slice';
 import authReducer from './auth/slice';
 import employeeReducer from './employees/slice';
 import attendanceReducer from './attendances/slice';
+import loanReducer from './loans/slice';
 
 export const store = configureStore({
 	reducer: {
@@ -12,6 +13,6 @@ export const store = configureStore({
 		toast: toastReducer,
 		employees: employeeReducer,
 		attendances: attendanceReducer,
-
+		loans: loanReducer,
 	},
 });
