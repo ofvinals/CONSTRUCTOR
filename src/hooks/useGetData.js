@@ -6,6 +6,7 @@ import { verifyLoggedUser } from '../store/auth/thunks';
 import { getEmployees } from '../store/employees/thunks';
 import { getConfig } from '../store/employees/thunks';
 import { getAttendances } from '../store/attendances/thunks';
+import { getLoans } from '../store/loans/thunks';
 
 export const useGetData = () => {
 	const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ export const useGetData = () => {
 		dispatch(getEmployees());
 		dispatch(getConfig());
 		dispatch(getAttendances());
+		dispatch(getLoans());
 	}, []);
 
 	return {};

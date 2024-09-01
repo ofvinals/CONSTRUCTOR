@@ -1,4 +1,7 @@
 /* eslint-disable no-undef */
+
+import { Box } from '@mui/material';
+
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin');
 
@@ -45,6 +48,12 @@ export default {
 					'&:hover': {
 						backgroundColor: '#fde047',
 						color: 'black',
+						boxShadow: 'none', 
+						outline: 'none',
+					},
+					'&:focus': {
+						boxShadow: 'none', 
+						outline: 'none',
 					},
 				},
 				'.btncancel': {
@@ -53,10 +62,15 @@ export default {
 					padding: '10px',
 					fontWeight: '600',
 					borderRadius: '6px',
-
 					border: 'none',
 					'&:hover': {
 						backgroundColor: '#6b7280',
+						boxShadow: 'none', 
+						outline: 'none',
+					},
+					'&:focus': {
+						boxShadow: 'none', 
+						outline: 'none',
 					},
 				},
 				// Estilo para .btnicon
@@ -68,6 +82,12 @@ export default {
 					borderRadius: '0.375rem',
 					'&:hover': {
 						backgroundColor: '#ffd52b',
+						boxShadow: 'none', 
+						outline: 'none',
+					},
+					'&:focus': {
+						boxShadow: 'none', 
+						outline: 'none',
 					},
 				},
 				// Estilo para .title

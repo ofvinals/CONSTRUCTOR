@@ -20,6 +20,7 @@ import { ClientDashboard } from '../src/pages/client/ClientDashboard';
 import PrivateRoute from './PrivateRoute';
 import { Unauthorized } from '../src/pages/Unauthorized';
 import { Error404 } from '../src/pages/Error404';
+import { Loan } from '../src/components/adminDashboard/employees/loan/Loan';
 
 export const AppRouter = () => {
 	return (
@@ -50,6 +51,8 @@ export const AppRouter = () => {
 					<Route path='/employees/config' element={<Config />} />
 					<Route path='/employees/attendance' element={<Attendance />} />
 					<Route path='/employees/salary' element={<Salary />} />
+					<Route path='/employees/loan' element={<Loan />} />
+
 				</Route>
 
 				{/* Ruta para usuarios no autorizados */}

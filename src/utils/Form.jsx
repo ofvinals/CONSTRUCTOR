@@ -10,6 +10,7 @@ export const FormInput = ({
 	mode,
 	options,
 	customClass,
+	textareaClass
 }) => {
 	const isCaratula = name === 'caratula';
 	const isExpte = name === 'nroexpte';
@@ -22,13 +23,17 @@ export const FormInput = ({
 	return (
 		<Form.Group
 			className={`flex  mb-3 items-center justify-around ${
-				customClass || type === 'textarea'
+				customClass 
 					? 'w-full flex-row'
 					: 'w-5/12 flex-col '
-			} mt-2`}>
+			} mt-2 ${
+				textareaClass 
+					? 'w-full mx-3'
+					: ''
+			}`}>
 			<Form.Label
 				className={`text-start bg-transparent l mb-0   ${
-					customClass ? 'text-black mr-2' : 'text-black mt-2 text-x'
+					customClass || type === 'textarea' ? 'text-black mr-2' : 'text-black mt-2 text-x'
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>
@@ -37,7 +42,7 @@ export const FormInput = ({
 					as='textarea'
 					className={inputClass}
 					{...register(name, options)}
-					rows={5}
+					rows={2}
 					readOnly={
 						isCaratula || (isExpte && mode === 'view') || mode === 'view'
 					}
@@ -89,7 +94,7 @@ export const FormSelect = ({
 				isCaratula ? 'w-1/2' : 'w-5/12'
 			} mt-2`}>
 			<Form.Label
-				className={`text-start bg-transparent text-xl mb-0 mt-2 ${
+				className={`text-start bg-transparent  mb-0 mt-2 ${
 					customClass
 						? 'text-green'
 						: attendanceClass

@@ -109,7 +109,6 @@ export const createUser = createAsyncThunk(
 			};
 			const res = await addDoc(usersRef, userData);
 			dispatch(getUsers());
-
 			dispatch(
 				showToast({
 					type: 'success',
@@ -118,7 +117,6 @@ export const createUser = createAsyncThunk(
 			);
 			return { id: res.id };
 		} catch (error) {
-			// Manejo de errores
 			dispatch(
 				showToast({
 					type: 'error',
