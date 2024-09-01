@@ -73,11 +73,20 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 				setIsExistingRecord(true);
 			} else {
 				setIsExistingRecord(false);
+
 				const modifiedEmployees = employeeAttendance.map(
 					(employee, index) => {
 						const selectedTravelCost = values.employees[index]?.travelCost
 							? JSON.parse(values.employees[index].travelCost)
 							: { label: '', hourlyRate: '' };
+
+						// Encontrar el valor de la posición del empleado en configState
+						const positionData = configState[0].positions.find(
+							(position) => position.label === employee.position
+						);
+						const valuePosition = positionData
+							? positionData.hourlyRate
+							: values.employees[index].position; // Asigna 0 si no se encuentra la posición
 
 						return {
 							...employee,
@@ -86,15 +95,17 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 							construction: values.employees[index]?.construction || '',
 							travelCost: selectedTravelCost.label,
 							valueTravelCost: selectedTravelCost.hourlyRate,
-							valuePosition: '',
+							valuePosition, // Aquí se asigna el valor encontrado
 							rest: employee.rest,
 						};
 					}
 				);
+
 				const formData = {
 					date: values.date,
 					employees: modifiedEmployees,
 				};
+
 				await createAttendance({ values: formData });
 				onClose();
 			}

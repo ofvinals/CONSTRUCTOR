@@ -66,7 +66,7 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 				position: parsedPosition.label,
 				valuePosition: parsedPosition.hourlyRate,
 			};
-
+console.log(updatedValues)
 			if (mode === 'edit') {
 				await updateEmployee({ id, values: updatedValues });
 				onClose();

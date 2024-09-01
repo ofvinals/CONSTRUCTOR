@@ -23,7 +23,7 @@ export const TableAttendance = () => {
 		}
 		return '';
 	};
-
+console.log(attendances)
 	const selectOptions = [
 		{
 			value: 'Remedios de Escalada',
