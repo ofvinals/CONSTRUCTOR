@@ -146,3 +146,4 @@ export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 		</button>
 	);
 };
+export default SalaryGeneratePDF;
