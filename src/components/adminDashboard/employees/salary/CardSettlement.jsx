@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 import { Card } from 'primereact/card';
 import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
-import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
 import PaginatorComponent from '../../../../utils/Paginator';
 import { useLoanActions } from '../../../../hooks/useLoanActions';

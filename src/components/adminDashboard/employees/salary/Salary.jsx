@@ -33,11 +33,13 @@ export const Salary = () => {
 						selectsRange
 						className='border-2 border-[#ffd52b] p-2'
 					/>
+
 					<SalaryGeneratePDF
 						employees={employeeData}
 						startDate={startDate}
 						endDate={endDate}
 					/>
+
 					<Button className='btnprimary ml-3'>
 						<i className='pi pi-money-bill mr-2 text-xl'></i>
 						Registrar pago del periodo

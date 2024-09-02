@@ -1,15 +1,28 @@
 /* eslint-disable react/prop-types */
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+// import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { format } from 'date-fns';
 
-// Cargar fuentes
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+// Asignar fuentes virtuales a pdfMake
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 	const formattedStartDate = startDate ? format(startDate, 'dd/MM/yyyy') : '';
 	const formattedEndDate = endDate ? format(endDate, 'dd/MM/yyyy') : '';
+
+	// Función para formatear números
+	const formatNumber = (value) => {
+		const number = Number(value);
+		return number.toLocaleString('es-AR'); // Usar formato con puntos para Argentina
+	};
+
 	const handleDownloadPDF = () => {
+		// Verificar que los datos necesarios están presentes
+		if (!formattedStartDate || !formattedEndDate) {
+			console.error('Fechas no válidas');
+			return;
+		}
+
 		const docDefinition = {
 			content: employees.flatMap((employee) => [
 				{
@@ -58,7 +71,7 @@ export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 							[
 								{ text: 'Total por Horas:', style: 'label' },
 								{
-									text: `$ ${employee.totalHoursValue}`,
+									text: `$ ${formatNumber(employee.totalHoursValue)}`,
 									style: 'value',
 								},
 							],
@@ -71,22 +84,27 @@ export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 							],
 							[
 								{ text: 'Presentismo:', style: 'label' },
-								{ text: `$ ${employee.presentism}`, style: 'value' },
+								{
+									text: `$ ${formatNumber(employee.presentism)}`,
+									style: 'value',
+								},
 							],
 							[
 								{ text: 'Viáticos:', style: 'label' },
 								{
-									text: `$ ${employee.travelCostTotal}`,
+									text: `$ ${formatNumber(employee.travelCostTotal)}`,
 									style: 'value',
 								},
 							],
 							[
 								{ text: 'Adelantos/Préstamos:', style: 'label' },
 								{
-									text: `-$ ${employee.loans.reduce(
-										(total, loan) =>
-											total + parseFloat(loan.valueLoan),
-										0
+									text: `-$ ${formatNumber(
+										employee.loans.reduce(
+											(total, loan) =>
+												total + parseFloat(loan.valueLoan),
+											0
+										)
 									)}`,
 									style: 'value',
 								},
@@ -97,7 +115,9 @@ export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 					margin: [0, 0, 0, 20],
 				},
 				{
-					text: `Total a cobrar: $ ${employee.finalSettlement}`,
+					text: `Total a cobrar: $ ${formatNumber(
+						employee.finalSettlement
+					)}`,
 					style: 'total',
 					margin: [0, 0, 0, 20],
 				},
@@ -139,11 +159,19 @@ export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 
 	return (
 		<button
-			onClick={handleDownloadPDF}
-			className='btnprimary  text-center ml-5 '>
+			onClick={() => {
+				// Verificar que se puede descargar el PDF
+				if (formattedStartDate && formattedEndDate) {
+					handleDownloadPDF();
+				} else {
+					console.error('Fechas inválidas. No se puede generar el PDF.');
+				}
+			}}
+			className='btnprimary text-center ml-5'>
 			<i className='pi pi-print mr-2 text-xl'></i>
 			Descargar PDF
 		</button>
 	);
 };
+
 export default SalaryGeneratePDF;
