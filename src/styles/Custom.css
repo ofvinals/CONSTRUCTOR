@@ -34,9 +34,29 @@
 	color: green !important;
 }
 .custom-dialog .p-dialog-header {
-	background-color: #efefef!important;
-	height: 5vh ;
+	background-color: #efefef !important;
+	height: 5vh;
 }
-.custom-dialog{
+.custom-dialog {
 	width: 60%;
+}
+
+.custom-accordion .accordion-button {
+	background-color: #d7d8da !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: 1px;
+	border-radius: 5px;
+	display: flex;
+	justify-content:space-between ;
+}
+.custom-accordion .accordion-button:hover {
+	background-color: #ffe57c !important;
+}
+
+.custom-accordion .accordion-button:active {
+	background-color: #ffd52b !important;
+}
+.custom-accordion .accordion-button::after{
+	margin: 0px;
 }

@@ -1,4 +1,10 @@
+import TrelloBoard from '../../components/tools/TrelloBoard';
 
 export const Tools = () => {
-	return <div>Tools</div>;
+	return (
+		<div>
+			Tools
+			<TrelloBoard />
+		</div>
+	);
 };

@@ -30,7 +30,7 @@ export const useAuth = () => {
 		try {
 			const userAction = await dispatch(login({ email, password })).unwrap();
 			const user = userAction;
-			if (user.admin) {
+			if (user.admin || user.coadmin) {
 				navigate('/admin');
 			} else {
 				navigate('/client');
