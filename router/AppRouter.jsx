@@ -26,42 +26,63 @@ export const AppRouter = () => {
 	return (
 		<BrowserRouter>
 			<Header />
-			<Routes>
-				<Route path='/' element={<Home />} />
-				<Route path='/home' element={<Home />} />
-				<Route path='/about' element={<About />} />
-				<Route path='/register' element={<Register />} />
+			<div className='flex flex-col min-h-screen'>
+				<main>
+					<Routes>
+						<Route path='/' element={<Home />} />
+						<Route path='/home' element={<Home />} />
+						<Route path='/about' element={<About />} />
+						<Route path='/register' element={<Register />} />
 
-				{/* Rutas accesibles para todos los usuarios autenticados */}
-				<Route element={<PrivateRoute isAdminRequired={false} />}>
-					<Route path='/client' element={<ClientDashboard />} />
-					<Route path='/profile' element={<EditProfile />} />
-					<Route path='/proyects' element={<Proyects />} />
-				</Route>
+						{/* Rutas accesibles para todos los usuarios autenticados */}
+						<Route element={<PrivateRoute isAdminRequired={false} />}>
+							<Route path='/client' element={<ClientDashboard />} />
+							<Route path='/profile' element={<EditProfile />} />
+							<Route path='/proyects' element={<Proyects />} />
+							<Route path='/proyects/budget' element={<Proyects />} />
+							<Route path='/proyects/docs' element={<Proyects />} />
+							<Route path='/proyects/certs' element={<Proyects />} />
+							<Route
+								path='/proyects/historycerts'
+								element={<Proyects />}
+							/>
+							<Route
+								path='/proyects/subcontracts'
+								element={<Proyects />}
+							/>
+						</Route>
 
-				{/* Rutas accesibles solo para administradores */}
-				<Route element={<PrivateRoute isAdminRequired={true} />}>
-					<Route path='/admin' element={<AdminDashboard />} />
-					<Route path='/clients' element={<Clients />} />
-					<Route path='/budgets' element={<Budgets />} />
-					<Route path='/business' element={<Business />} />
-					<Route path='/pricesbank' element={<PricesBank />} />
-					<Route path='/employees' element={<Employees />} />
-					<Route path='/tools' element={<Tools />} />
-					<Route path='/employees/config' element={<Config />} />
-					<Route path='/employees/attendance' element={<Attendance />} />
-					<Route path='/employees/salary' element={<Salary />} />
-					<Route path='/employees/loan' element={<Loan />} />
+						{/* Rutas accesibles solo para administradores */}
+						<Route element={<PrivateRoute isAdminRequired={true} />}>
+							<Route path='/admin' element={<AdminDashboard />} />
+							<Route path='/clients' element={<Clients />} />
+							<Route path='/budgets' element={<Budgets />} />
+							<Route path='/business' element={<Business />} />
+							<Route path='/pricesbank' element={<PricesBank />} />
+							<Route
+								path='/pricesbank/magazine'
+								element={<PricesBank />}
+							/>
+							<Route path='/employees' element={<Employees />} />
+							<Route path='/tools' element={<Tools />} />
+							<Route path='/employees/config' element={<Config />} />
+							<Route
+								path='/employees/attendance'
+								element={<Attendance />}
+							/>
+							<Route path='/employees/salary' element={<Salary />} />
+							<Route path='/employees/loan' element={<Loan />} />
+						</Route>
 
-				</Route>
+						{/* Ruta para usuarios no autorizados */}
+						<Route path='/unauthorized' element={<Unauthorized />} />
 
-				{/* Ruta para usuarios no autorizados */}
-				<Route path='/unauthorized' element={<Unauthorized />} />
-
-				{/* Ruta para 404 - Página no encontrada */}
-				<Route path='*' element={<Error404 />} />
-			</Routes>
-			<Footer />
+						{/* Ruta para 404 - Página no encontrada */}
+						<Route path='*' element={<Error404 />} />
+					</Routes>
+				</main>
+				<Footer />
+			</div>
 		</BrowserRouter>
 	);
 };

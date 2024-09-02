@@ -49,7 +49,7 @@ export const Clients = () => {
 	};
 
 	return (
-		<div className='min-h-screen'>
+		<div >
 			<div className='flex flex-wrap items-center justify-between my-3 mx-2'>
 				<h1 className='title'>Clientes</h1>
 				<div className='flex flex-wrap items-center justify-center md:justify-end w-full sm:w-auto mt-3 sm:mt-0'>

@@ -12,13 +12,13 @@ import { useForm } from 'react-hook-form';
 import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
 import Loader from '../../../../utils/Loader.jsx';
 import { useLoanActions } from '../../../../hooks/useLoanActions.js';
+import { formatISO, parseISO } from 'date-fns';
 
 export const FormLoan = ({ id, onClose, mode }) => {
 	const {
 		register,
 		handleSubmit,
 		setValue,
-		getValues,
 		formState: { errors },
 		watch,
 	} = useForm();
@@ -46,12 +46,11 @@ export const FormLoan = ({ id, onClose, mode }) => {
 		if (loan && (mode === 'edit' || mode === 'view')) {
 			setValue('date', loan.values.date);
 			setValue('employee', loan.values.employee);
-			setValue('employeeId', loan.values.employeeId); // Ensure employeeId is set
+			setValue('employeeId', loan.values.employeeId);
 			setValue('typeLoan', loan.values.typeLoan);
 			setValue('valueLoan', loan.values.valueLoan);
 			setValue('quoteLoan', loan.values.quoteLoan);
 			setValue('quoteDateLoan', loan.values.quoteDateLoan);
-			setDueDates(loan.values.dueDates || []);
 		}
 	}, [loan, mode]);
 
@@ -108,7 +107,7 @@ export const FormLoan = ({ id, onClose, mode }) => {
 	if (loanStatus === 'Cargando' || loanStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}
-
+	console.log(loan);
 	return (
 		<div>
 			<Form
@@ -136,7 +135,7 @@ export const FormLoan = ({ id, onClose, mode }) => {
 						);
 						if (selectedEmployee) {
 							setValue('employee', selectedEmployee.displayName);
-							setValue('employeeId', selectedEmployee.id); // Update employeeId
+							setValue('employeeId', selectedEmployee.uid);
 						}
 					}}
 					readOnly={mode === 'view'}

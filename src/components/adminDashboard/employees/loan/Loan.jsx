@@ -8,7 +8,7 @@ export const Loan = () => {
 	const addModal = useModal();
 
 	return (
-		<div className='min-h-screen'>
+		<div>
 			<div className='flex flex-wrap flex-row items-center justify-center sm:justify-between my-3 mx-2'>
 				<h1 className='title'>Adelantos/Prestamos</h1>
 				<Button

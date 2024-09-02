@@ -18,7 +18,7 @@ export const Salary = () => {
 	const formattedEndDate = endDate ? format(endDate, 'yyyy/MM/dd') : '';
 
 	return (
-		<div className='min-h-screen'>
+		<div>
 			<div className='flex flex-wrap flex-row items-center justify-center sm:justify-between my-3 mx-2'>
 				<h1 className='title'>Liquidacion de Jornales</h1>
 				<div className='flex flex-row flew-wrap items-center justify-center'>
@@ -31,9 +31,12 @@ export const Salary = () => {
 						selectsRange
 						className='border-2 border-[#ffd52b] p-2'
 					/>
-					<Button className='btnprimary  text-center ml-5 p-2'>
-						<i className='pi pi-print mr-2 '></i>
+					<Button className='btnprimary  text-center ml-5 '>
+						<i className='pi pi-print mr-2 text-xl'></i>
 						Imprimir Liquidacion
+					</Button>
+					<Button className='btnprimary ml-3'><i className='pi pi-money-bill mr-2 text-xl'></i>
+						Registrar pago del periodo
 					</Button>
 				</div>
 			</div>

@@ -90,7 +90,9 @@ export const CardSettlement = ({ startDate, endDate }) => {
 					if (employee.rest) {
 						employeeMap[employee.uid].rest += 1;
 					}
-					if (employee.attendance || employee.rest) {
+					if (employeeMap[employee.uid].noAttendance > 0) {
+						null;
+					} else if (employee.attendance || employee.rest) {
 						employeeMap[employee.uid].presentism += valuePresentism;
 					}
 					if (employee.valueTravelCost) {
@@ -124,7 +126,7 @@ export const CardSettlement = ({ startDate, endDate }) => {
 
 	return (
 		<div>
-			<div className='flex items-center justify-center flex-wrap'>
+			<div className='flex items-center flex-col justify-center flex-wrap'>
 				{paginatedEmployees?.length > 0 ? (
 					<>
 						<div className='flex flex-wrap flex-row items-center justify-center'>
@@ -135,89 +137,91 @@ export const CardSettlement = ({ startDate, endDate }) => {
 								${totalFinalSettlement}
 							</span>
 						</div>
-						{paginatedEmployees.map((employee) => (
-							<Card
-								key={employee.uid}
-								className='h-full flex w-[320px] flex-wrap flex-row items-center border-2 border-[#ffd52b] justify-center rounded-xl mx-2 my-3'>
-								<div className='flex flex-col flex-wrap justify-start'>
-									<div className='flex flex-row text-center items-center gap-1 justify-center h-[15vh] border-b-2 border-[#ffd52b]'>
-										<p className='flex flex-col w-2/4 items-center justify-center'>
-											Periodo
-											<span className='font-bold'>
-												{startDate} - {endDate}
-											</span>
-										</p>
-										<p className='flex flex-col w-1/4 items-center justify-center'>
-											Empleado
-											<span className='font-bold'>
-												{employee.displayName}
-											</span>
-										</p>
-										<p className='flex flex-col w-1/4 items-center justify-center'>
-											Posicion
-											<span className='font-bold'>
-												{employee.position}
-											</span>
-										</p>
+						<div className='flex flex-row flex-wrap items-center justify-around'>
+							{paginatedEmployees.map((employee) => (
+								<Card
+									key={employee.uid}
+									className='h-full flex w-[320px] flex-wrap flex-row items-center border-2 border-[#ffd52b] justify-center rounded-xl mx-2 my-3'>
+									<div className='flex flex-col flex-wrap justify-start'>
+										<div className='flex flex-row text-center items-center gap-1 justify-center h-[15vh] border-b-2 border-[#ffd52b]'>
+											<p className='flex flex-col w-2/4 items-center justify-center'>
+												Periodo
+												<span className='font-bold'>
+													{startDate} - {endDate}
+												</span>
+											</p>
+											<p className='flex flex-col w-1/4 items-center justify-center'>
+												Empleado
+												<span className='font-bold'>
+													{employee.displayName}
+												</span>
+											</p>
+											<p className='flex flex-col w-1/4 items-center justify-center'>
+												Posicion
+												<span className='font-bold'>
+													{employee.position}
+												</span>
+											</p>
+										</div>
+										<div className='flex flex-col items-start justify-start space-y-3 py-3 border-b-2 border-[#ffd52b]'>
+											<p className='ml-3'>
+												Cantidad de horas
+												<span className='font-bold'>
+													{' '}
+													{employee.hoursWorked} horas
+												</span>
+											</p>
+											<p className='ml-3'>
+												Total por horas liquidadas
+												<span className='font-bold'>
+													{' '}
+													$ {employee.totalHoursValue}
+												</span>
+											</p>
+											<p className='ml-3'>
+												Dias de Inasistencia{' '}
+												<span className='font-bold'>
+													{employee.noAttendance} dias
+												</span>
+											</p>
+											<p className='ml-3'>
+												Presentismo{' '}
+												<span className='font-bold'>
+													$ {employee.presentism}
+												</span>
+											</p>
+											<p className='ml-3'>
+												Viaticos{' '}
+												<span className='font-bold'>
+													$ {employee.travelCostTotal}
+												</span>
+											</p>
+											<p className='ml-3'>
+												Adelantos/Prestamos{' '}
+												<span className='font-bold'>
+													${/* Si aplica */}
+												</span>
+											</p>
+										</div>
+										<div className='flex flex-row flex-wrap items-center justify-center font-bold text-xl'>
+											<p className='mt-3 flex flex-row items-center justify-around mx-5'>
+												Total $ {employee.finalSettlement}
+											</p>
+										</div>
 									</div>
-									<div className='flex flex-col items-start justify-start space-y-3 py-3 border-b-2 border-[#ffd52b]'>
-										<p className='ml-3'>
-											Cantidad de horas
-											<span className='font-bold'>
-												{' '}
-												{employee.hoursWorked} horas
-											</span>
-										</p>
-										<p className='ml-3'>
-											Total por horas liquidadas
-											<span className='font-bold'>
-												{' '}
-												$ {employee.totalHoursValue}
-											</span>
-										</p>
-										<p className='ml-3'>
-											Dias de Inasistencia{' '}
-											<span className='font-bold'>
-												{employee.noAttendance} dias
-											</span>
-										</p>
-										<p className='ml-3'>
-											Presentismo{' '}
-											<span className='font-bold'>
-												$ {employee.presentism}
-											</span>
-										</p>
-										<p className='ml-3'>
-											Viaticos{' '}
-											<span className='font-bold'>
-												$ {employee.travelCostTotal}
-											</span>
-										</p>
-										<p className='ml-3'>
-											Adelantos/Prestamos{' '}
-											<span className='font-bold'>
-												${/* Si aplica */}
-											</span>
-										</p>
+									<div className='flex flex-row flex-wrap items-center justify-around my-3'>
+										<Button className='hover:bg-slate-300 focus:shadow-outline focus:outline-none text-black p-2 rounded'>
+											<i className='pi pi-eye mr-2 font-semibold text-xl text-blue-500'></i>{' '}
+											Ver
+										</Button>
+										<Button className='hover:bg-slate-300 focus:shadow-none text-black p-2 rounded'>
+											<i className='pi pi-print text-xl mr-2 font-semibold text-green-500'></i>{' '}
+											Imprimir
+										</Button>
 									</div>
-									<div className='flex flex-row flex-wrap items-center justify-center font-bold text-xl'>
-										<p className='mt-3 flex flex-row items-center justify-around mx-5'>
-											Total $ {employee.finalSettlement}
-										</p>
-									</div>
-								</div>
-								<div className='flex flex-row flex-wrap items-center justify-around my-3'>
-									<Button className='hover:bg-slate-300 focus:shadow-outline focus:outline-none text-black p-2 rounded'>
-										<i className='pi pi-eye mr-2 font-semibold text-xl text-blue-500'></i>{' '}
-										Ver
-									</Button>
-									<Button className='hover:bg-slate-300 focus:shadow-none text-black p-2 rounded'>
-										<i className='pi pi-print text-xl mr-2 font-semibold text-green-500'></i>{' '}
-										Imprimir
-									</Button>
-								</div>
-							</Card>
-						))}
+								</Card>
+							))}
+						</div>
 					</>
 				) : (
 					<div className='h-[40vh] w-full flex items-center justify-center text-center'>
