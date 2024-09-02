@@ -3,10 +3,12 @@ import DatePicker from 'react-datepicker';
 import { Button } from 'primereact/button';
 import { CardSettlement } from './CardSettlement';
 import { format } from 'date-fns';
+import { SalaryGeneratePDF } from '../../../../utils/SalaryGeneratePDF';
 
 export const Salary = () => {
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(null);
+	const [employeeData, setEmployeeData] = useState([]);
 
 	const onChange = (dates) => {
 		const [start, end] = dates;
@@ -31,11 +33,13 @@ export const Salary = () => {
 						selectsRange
 						className='border-2 border-[#ffd52b] p-2'
 					/>
-					<Button className='btnprimary  text-center ml-5 '>
-						<i className='pi pi-print mr-2 text-xl'></i>
-						Imprimir Liquidacion
-					</Button>
-					<Button className='btnprimary ml-3'><i className='pi pi-money-bill mr-2 text-xl'></i>
+					<SalaryGeneratePDF
+						employees={employeeData}
+						startDate={startDate}
+						endDate={endDate}
+					/>
+					<Button className='btnprimary ml-3'>
+						<i className='pi pi-money-bill mr-2 text-xl'></i>
 						Registrar pago del periodo
 					</Button>
 				</div>
@@ -43,6 +47,7 @@ export const Salary = () => {
 			<CardSettlement
 				startDate={formattedStartDate}
 				endDate={formattedEndDate}
+				setEmployeeData={setEmployeeData}
 			/>
 		</div>
 	);
