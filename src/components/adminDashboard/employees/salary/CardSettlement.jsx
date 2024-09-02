@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 import { Card } from 'primereact/card';
@@ -6,8 +7,9 @@ import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
 import PaginatorComponent from '../../../../utils/Paginator';
 import { useLoanActions } from '../../../../hooks/useLoanActions';
+import PropTypes from 'prop-types';
 
-export const CardSettlement = ({ startDate, endDate }) => {
+export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 	const [filteredAttendances, setFilteredAttendances] = useState([]);
 	const [first, setFirst] = useState(0);
 	const [rows, setRows] = useState(10);
@@ -15,6 +17,8 @@ export const CardSettlement = ({ startDate, endDate }) => {
 	const { configState } = useEmployeeActions();
 	const { loans } = useLoanActions();
 	console.log(loans);
+	console.log(attendances);
+
 	useEffect(() => {
 		if (startDate && endDate) {
 			// Convertir startDate y endDate a cadenas de fecha en formato YYYY-MM-DD
@@ -53,6 +57,7 @@ export const CardSettlement = ({ startDate, endDate }) => {
 							rest: 0,
 							travelCostTotal: 0,
 							finalSettlement: 0,
+							loans: [],
 						};
 					}
 					// Convertir los horarios de entrada y salida en objetos Date
@@ -90,7 +95,9 @@ export const CardSettlement = ({ startDate, endDate }) => {
 					if (employee.rest) {
 						employeeMap[employee.uid].rest += 1;
 					}
-					if (employee.attendance || employee.rest) {
+					if (employeeMap[employee.uid].noAttendance > 0) {
+						null;
+					} else if (employee.attendance || employee.rest) {
 						employeeMap[employee.uid].presentism += valuePresentism;
 					}
 					if (employee.valueTravelCost) {
@@ -104,8 +111,51 @@ export const CardSettlement = ({ startDate, endDate }) => {
 						employeeMap[employee.uid].travelCostTotal;
 				});
 			});
+
+			// Filtrar los vencimientos de préstamos y adelantos que estén dentro del rango de fechas
+			const filteredLoans = loans.filter((loan) => {
+				// Manejar préstamos con fechas de vencimiento en dueDates
+				if (loan.values.dueDates && loan.values.dueDates.length > 0) {
+					return loan.values.dueDates.some((date) => {
+						const dueDate = new Date(date);
+						return dueDate >= start && dueDate <= end;
+					});
+				}
+				// Manejar adelantos con fecha de vencimiento en quoteDateLoan
+				if (loan.values.quoteDateLoan) {
+					const dueDate = new Date(loan.values.quoteDateLoan);
+					return dueDate >= start && dueDate <= end;
+				}
+				return false;
+			});
+			console.log(filteredLoans);
+
+			// Añadir los préstamos al mapa de empleados
+			filteredLoans.forEach((loan) => {
+				const employeeId = loan.values.employeeId;
+				if (employeeMap[employeeId]) {
+					employeeMap[employeeId].loans.push({
+						quoteDateLoan: loan.values.quoteDateLoan,
+						valueLoan: loan.values.valueLoan,
+						typeLoan: loan.values.typeLoan,
+					});
+				}
+			});
+
+			// Restar el total de préstamos de la liquidación final de cada empleado
+			Object.values(employeeMap).forEach((employee) => {
+				const totalLoans = employee.loans.reduce(
+					(total, loan) => total + parseFloat(loan.valueLoan),
+					0
+				);
+				console.log(totalLoans);
+				employee.finalSettlement -= totalLoans; // Restar los préstamos del total final
+			});
+
 			// Convertir el mapa de empleados en un array y actualizar el estado
-			setFilteredAttendances(Object.values(employeeMap));
+			const employeesArray = Object.values(employeeMap);
+			setFilteredAttendances(employeesArray);
+			setEmployeeData(employeesArray);
 		}
 	}, [startDate, endDate, attendances, configState]);
 
@@ -114,6 +164,11 @@ export const CardSettlement = ({ startDate, endDate }) => {
 		(acc, employee) => acc + employee.finalSettlement,
 		0
 	);
+
+	const formatNumber = (value) => {
+		const number = Number(value);
+		return number.toLocaleString('es-AR');
+	};
 
 	const onPageChange = (event) => {
 		setFirst(event.first);
@@ -124,7 +179,7 @@ export const CardSettlement = ({ startDate, endDate }) => {
 
 	return (
 		<div>
-			<div className='flex items-center justify-center flex-wrap'>
+			<div className='flex items-center flex-col justify-center flex-wrap'>
 				{paginatedEmployees?.length > 0 ? (
 					<>
 						<div className='flex flex-wrap flex-row items-center justify-center'>
@@ -132,92 +187,95 @@ export const CardSettlement = ({ startDate, endDate }) => {
 								Suma total por el periodo seleccionado
 							</h2>
 							<span className='text-2xl font-bold ml-3'>
-								${totalFinalSettlement}
+								$ {formatNumber(totalFinalSettlement)}
 							</span>
 						</div>
-						{paginatedEmployees.map((employee) => (
-							<Card
-								key={employee.uid}
-								className='h-full flex w-[320px] flex-wrap flex-row items-center border-2 border-[#ffd52b] justify-center rounded-xl mx-2 my-3'>
-								<div className='flex flex-col flex-wrap justify-start'>
-									<div className='flex flex-row text-center items-center gap-1 justify-center h-[15vh] border-b-2 border-[#ffd52b]'>
-										<p className='flex flex-col w-2/4 items-center justify-center'>
-											Periodo
-											<span className='font-bold'>
-												{startDate} - {endDate}
-											</span>
-										</p>
-										<p className='flex flex-col w-1/4 items-center justify-center'>
-											Empleado
-											<span className='font-bold'>
-												{employee.displayName}
-											</span>
-										</p>
-										<p className='flex flex-col w-1/4 items-center justify-center'>
-											Posicion
-											<span className='font-bold'>
-												{employee.position}
-											</span>
-										</p>
+						<div className='flex flex-row flex-wrap items-center justify-around'>
+							{paginatedEmployees.map((employee) => (
+								<Card
+									key={employee.uid}
+									className='h-full flex w-[320px] flex-wrap flex-row items-center border-2 border-[#ffd52b] justify-center rounded-xl mx-2 my-3'>
+									<div className='flex flex-col flex-wrap justify-start'>
+										<div className='flex flex-row text-center items-center gap-1 justify-center h-[15vh] border-b-2 border-[#ffd52b]'>
+											<p className='flex flex-col w-2/4 items-center justify-center'>
+												Periodo
+												<span className='font-bold'>
+													{startDate} - {endDate}
+												</span>
+											</p>
+											<p className='flex flex-col w-1/4 items-center justify-center'>
+												Empleado
+												<span className='font-bold'>
+													{employee.displayName}
+												</span>
+											</p>
+											<p className='flex flex-col w-1/4 items-center justify-center'>
+												Posicion
+												<span className='font-bold'>
+													{employee.position}
+												</span>
+											</p>
+										</div>
+										<div className='flex flex-col items-start justify-start space-y-3 py-3 border-b-2 border-[#ffd52b]'>
+											<p className='ml-3'>
+												Cantidad de horas
+												<span className='font-bold'>
+													{' '}
+													{employee.hoursWorked} horas
+												</span>
+											</p>
+											<p className='ml-3'>
+												Total por horas liquidadas
+												<span className='font-bold'>
+													{' '}
+													${' '}
+													{formatNumber(employee.totalHoursValue)}
+												</span>
+											</p>
+											<p className='ml-3'>
+												Dias de Inasistencia{' '}
+												<span className='font-bold'>
+													{employee.noAttendance} dias
+												</span>
+											</p>
+											<p className='ml-3'>
+												Presentismo{' '}
+												<span className='font-bold'>
+													$ {formatNumber(employee.presentism)}
+												</span>
+											</p>
+											<p className='ml-3'>
+												Viaticos{' '}
+												<span className='font-bold'>
+													${' '}
+													{formatNumber(employee.travelCostTotal)}
+												</span>
+											</p>
+											<p className='ml-3'>
+												Adelantos/Prestamos{' '}
+												<span className='font-bold'>
+													-${' '}
+													{formatNumber(
+														employee.loans.reduce(
+															(total, loan) =>
+																total +
+																parseFloat(loan.valueLoan),
+															0
+														)
+													)}
+												</span>
+											</p>
+										</div>
+										<div className='flex flex-row flex-wrap items-center justify-center font-bold text-xl'>
+											<p className='mt-3 flex flex-row items-center justify-around mx-5 mb-3'>
+												Total ${' '}
+												{formatNumber(employee.finalSettlement)}
+											</p>
+										</div>
 									</div>
-									<div className='flex flex-col items-start justify-start space-y-3 py-3 border-b-2 border-[#ffd52b]'>
-										<p className='ml-3'>
-											Cantidad de horas
-											<span className='font-bold'>
-												{' '}
-												{employee.hoursWorked} horas
-											</span>
-										</p>
-										<p className='ml-3'>
-											Total por horas liquidadas
-											<span className='font-bold'>
-												{' '}
-												$ {employee.totalHoursValue}
-											</span>
-										</p>
-										<p className='ml-3'>
-											Dias de Inasistencia{' '}
-											<span className='font-bold'>
-												{employee.noAttendance} dias
-											</span>
-										</p>
-										<p className='ml-3'>
-											Presentismo{' '}
-											<span className='font-bold'>
-												$ {employee.presentism}
-											</span>
-										</p>
-										<p className='ml-3'>
-											Viaticos{' '}
-											<span className='font-bold'>
-												$ {employee.travelCostTotal}
-											</span>
-										</p>
-										<p className='ml-3'>
-											Adelantos/Prestamos{' '}
-											<span className='font-bold'>
-												${/* Si aplica */}
-											</span>
-										</p>
-									</div>
-									<div className='flex flex-row flex-wrap items-center justify-center font-bold text-xl'>
-										<p className='mt-3 flex flex-row items-center justify-around mx-5'>
-											Total $ {employee.finalSettlement}
-										</p>
-									</div>
-								</div>
-								<div className='flex flex-row flex-wrap items-center justify-around my-3'>
-									<Button className='hover:bg-slate-300 focus:shadow-outline focus:outline-none text-black p-2 rounded'>
-										<i className='pi pi-eye mr-2 font-semibold text-xl text-blue-500'></i>{' '}
-										Ver
-									</Button>
-									<Button className='hover:bg-slate-300 focus:shadow-none text-black p-2 rounded'>
-										<i className='pi pi-print text-xl mr-2 font-semibold text-green-500'></i>{' '}
-										Imprimir
-									</Button>
-								</div>
-							</Card>
-						))}
+								</Card>
+							))}
+						</div>
 					</>
 				) : (
 					<div className='h-[40vh] w-full flex items-center justify-center text-center'>
@@ -228,7 +286,6 @@ export const CardSettlement = ({ startDate, endDate }) => {
 					</div>
 				)}
 			</div>
-
 			<PaginatorComponent
 				first={first}
 				rows={rows}
@@ -237,4 +294,9 @@ export const CardSettlement = ({ startDate, endDate }) => {
 			/>
 		</div>
 	);
+};
+CardSettlement.propTypes = {
+	startDate: PropTypes.string.isRequired,
+	endDate: PropTypes.string.isRequired,
+	setEmployeeData: PropTypes.func.isRequired,
 };

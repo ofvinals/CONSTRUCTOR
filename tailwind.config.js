@@ -40,7 +40,7 @@ export default {
 				'.btnprimary': {
 					backgroundColor: '#ffd52b',
 					color: 'black',
-					padding: '10px',
+					padding: '6px',
 					width: 'auto',
 					border: 'none',
 					borderRadius: '6px',

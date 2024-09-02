@@ -26,8 +26,8 @@ export function Header() {
 	const currentMenuOptions = menuOptions[location.pathname] || [];
 
 	return (
-		<header className='bg-background text-white'>
-			<section className='flex items-center w-full justify-around md:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto min-h-[100px]'>
+		<header className='bg-background text-white '>
+    <section className='flex items-center w-full justify-around md:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto h-full'>
 				<div
 					className='flex items-start justify-start '
 					onMouseEnter={handleMouseEnter}
@@ -53,8 +53,10 @@ export function Header() {
 							key={option.path}
 							to={option.path}
 							className={`flex justify-center text-center items-center hover:text-yellow-300 text-black hover:border-b-2 hover:border-blue-500 ${
-								option.icon ? 'w-10 mt-1' : 'text-wrap'
-							}`}>
+								location.pathname === option.path
+									? 'font-bold border-b-2 border-blue-500'
+									: 'text-wrap'
+							} ${option.icon ? 'w-10 mt-1' : 'text-wrap'}`}>
 							{option.icon && (
 								<span className='mr-2 text-center font-bold'>
 									{option.icon}
