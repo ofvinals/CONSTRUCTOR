@@ -21,6 +21,7 @@ import PrivateRoute from './PrivateRoute';
 import { Unauthorized } from '../src/pages/Unauthorized';
 import { Error404 } from '../src/pages/Error404';
 import { Loan } from '../src/components/adminDashboard/employees/loan/Loan';
+import { Magazines } from '../src/components/adminDashboard/pricesBank/Magazines';
 
 export const AppRouter = () => {
 	return (
@@ -61,17 +62,17 @@ export const AppRouter = () => {
 							<Route path='/pricesbank' element={<PricesBank />} />
 							<Route
 								path='/pricesbank/magazine'
-								element={<PricesBank />}
+								element={<Magazines />}
 							/>
 							<Route path='/employees' element={<Employees />} />
-							<Route path='/tools' element={<Tools />} />
 							<Route path='/employees/config' element={<Config />} />
 							<Route
 								path='/employees/attendance'
 								element={<Attendance />}
 							/>
 							<Route path='/employees/salary' element={<Salary />} />
-							<Route path='/employees/loan' element={<Loan />} />
+							<Route path='/employees/loan' element={<Loan />} /> s
+							<Route path='/tools' element={<Tools />} />
 						</Route>
 
 						{/* Ruta para usuarios no autorizados */}

@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
 
-import { Box } from '@mui/material';
-
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin');
 
@@ -40,19 +38,23 @@ export default {
 				'.btnprimary': {
 					backgroundColor: '#ffd52b',
 					color: 'black',
-					padding: '6px',
+					padding: '8px',
 					width: 'auto',
 					border: 'none',
-					borderRadius: '6px',
+					text: 'center',
+					display: "flex",  
+					alignItems: "center",  
+					justifyContent: "center",
+					borderRadius: '8px',
 					fontWeight: '600',
 					'&:hover': {
 						backgroundColor: '#fde047',
 						color: 'black',
-						boxShadow: 'none', 
+						boxShadow: 'none',
 						outline: 'none',
 					},
 					'&:focus': {
-						boxShadow: 'none', 
+						boxShadow: 'none',
 						outline: 'none',
 					},
 				},
@@ -65,11 +67,11 @@ export default {
 					border: 'none',
 					'&:hover': {
 						backgroundColor: '#6b7280',
-						boxShadow: 'none', 
+						boxShadow: 'none',
 						outline: 'none',
 					},
 					'&:focus': {
-						boxShadow: 'none', 
+						boxShadow: 'none',
 						outline: 'none',
 					},
 				},
@@ -82,11 +84,11 @@ export default {
 					borderRadius: '0.375rem',
 					'&:hover': {
 						backgroundColor: '#ffd52b',
-						boxShadow: 'none', 
+						boxShadow: 'none',
 						outline: 'none',
 					},
 					'&:focus': {
-						boxShadow: 'none', 
+						boxShadow: 'none',
 						outline: 'none',
 					},
 				},

@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 import { Card } from 'primereact/card';
 import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
-import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
 import PaginatorComponent from '../../../../utils/Paginator';
 import { useLoanActions } from '../../../../hooks/useLoanActions';
@@ -182,9 +180,9 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 			<div className='flex items-center flex-col justify-center flex-wrap'>
 				{paginatedEmployees?.length > 0 ? (
 					<>
-						<div className='flex flex-wrap flex-row items-center justify-center'>
-							<h2 className='text-xl font-semibold'>
-								Suma total por el periodo seleccionado
+						<div className='flex flex-wrap flex-row items-center rounded-md justify-center border-2 border-[#ffd52b] p-2'>
+							<h2 className='text-lg font-semibold'>
+								Total por Periodo Seleccionado
 							</h2>
 							<span className='text-2xl font-bold ml-3'>
 								$ {formatNumber(totalFinalSettlement)}
