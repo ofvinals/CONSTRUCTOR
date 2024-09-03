@@ -48,7 +48,9 @@ export const TreeTable = ({
 		getSubRows: (row) => row.employees,
 		onCreatingRowCancel: () => setValidationErrors({}),
 		onEditingRowCancel: () => setValidationErrors({}),
-		onEditingRowSave: onSave,
+		onEditingRowSave: ({ row, values }) => {
+			onSave({ row, values, table });
+		},
 		renderRowActions: ({ row, table }) => (
 			<Box sx={{ display: 'flex', gap: '1rem' }}>
 				{row.depth > 0 && (
