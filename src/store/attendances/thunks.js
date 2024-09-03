@@ -93,41 +93,39 @@ export const updateAttendance = createAsyncThunk(
 	'attendance/updateEmployeeInAttendance',
 	async ({ id, values }, { dispatch }) => {
 		try {
-			const attendancesRef = collection(db, 'attendances');
-			const querySnapshot = await getDocs(attendancesRef);
-			let attendanceId;
-			let updatedEmployees;
-			for (const docSnapshot of querySnapshot.docs) {
-				const attendanceData = docSnapshot.data();
-				// Verificar si el array de employees contiene el uid del employee
-				const employeeIndex = attendanceData.employees.findIndex(
-					(employee) => employee.uid === id
-				);
-				if (employeeIndex !== -1) {
-					// Encontrar el ID del documento de attendance
-					attendanceId = docSnapshot.id;
-					// Actualizar el array de employees
-					updatedEmployees = attendanceData.employees.map(
-						(employee, index) =>
-							index === employeeIndex
-								? { ...employee, ...values }
-								: employee
-					);
-					// Actualizar el documento en Firestore
-					await updateDoc(docSnapshot.ref, {
-						employees: updatedEmployees,
-					});
-					// Salir del bucle una vez que encontramos y actualizamos el documento
-					break;
-				}
+			// Buscar el documento de asistencia por su ID
+			const attendanceDocRef = doc(db, 'attendances', id);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (!attendanceDocSnapshot.exists()) {
+				throw new Error('No se encontró el documento de asistencia.');
 			}
+			const attendanceData = attendanceDocSnapshot.data();
+			const employeeIndex = attendanceData.employees.findIndex(
+				(employee) => employee.uid === values.employeeId 
+			);
+			if (employeeIndex === -1) {
+				throw new Error(
+					'No se encontró el empleado dentro del documento de asistencia.'
+				);
+			}
+			const updatedEmployees = attendanceData.employees.map((employee) =>
+				employee.uid === values.employeeId
+					? { ...employee, ...values }
+					: employee
+			);
+			await updateDoc(attendanceDocRef, {
+				employees: updatedEmployees,
+			});
+			console.log('Documento actualizado:', id);
+			console.log('Empleados actualizados:', updatedEmployees);
+			dispatch(getAttendances()); 
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Asistencia actualizada exitosamente',
 				})
 			);
-			return { attendanceId, updatedEmployees };
+			return { id, updatedEmployees };
 		} catch (error) {
 			dispatch(
 				showToast({

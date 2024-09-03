@@ -23,7 +23,7 @@ export const TableAttendance = () => {
 		}
 		return '';
 	};
-console.log(attendances)
+
 	const selectOptions = [
 		{
 			value: 'Remedios de Escalada',
@@ -38,12 +38,17 @@ console.log(attendances)
 			label: 'Estados Unidos',
 		},
 	];
-	
 	const handleUpdateAttendance = async ({ values, row, table }) => {
 		try {
-			const id = row.original.uid;
+			let parentRow = row.getParentRow();
+			// Si la fila principal no es encontrada, recorrer los padres hasta encontrarla
+			while (parentRow && parentRow.getParentRow()) {
+				parentRow = parentRow.getParentRow();
+			}
+			const id = parentRow.original.uid;
 			const cleanValues = { ...values };
 			delete cleanValues.date;
+			cleanValues.employeeId = row.original.uid;
 			cleanValues.attendance = cleanValues.startTime ? true : false;
 			await updateAttendance({
 				id,
@@ -122,8 +127,7 @@ console.log(attendances)
 			<hr className='linea text-white mx-3' />
 			<div className='container-lg my-3'>
 				{allAttendanceStatus === 'Cargando' ||
-				attendanceStatusDelete === 'Cargando' ||
-				attendances > 0 ? (
+				attendanceStatusDelete === 'Cargando' ? (
 					<Loader />
 				) : (
 					<div className='table-responsive'>
