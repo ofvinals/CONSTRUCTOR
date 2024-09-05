@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import Loader from '../../../utils/Loader';
@@ -22,7 +22,6 @@ export const CardClients = ({ users }) => {
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [first, setFirst] = useState(0);
 	const [rows, setRows] = useState(10);
-
 	const handleConfirmDisable = async (uid) => {
 		try {
 			await disableUser({ id: uid });
@@ -30,7 +29,6 @@ export const CardClients = ({ users }) => {
 			console.error('Error al deshabilitar usuario:', error);
 		}
 	};
-
 	const handleConfirmEnable = async (uid) => {
 		try {
 			await enableUser({ id: uid });
@@ -38,25 +36,22 @@ export const CardClients = ({ users }) => {
 			console.error('Error al habilitar usuario:', error);
 		}
 	};
-
 	const handleShowDeleteConfirm = (uid) => {
 		setUserId(uid);
 		setShowConfirmDialog(true);
 	};
-
 	const handleDeleteUser = () => {
 		if (userId) {
 			deleteUser({ id: userId });
 			setShowConfirmDialog(false);
 		}
 	};
-
 	const footerContent = (
 		<div>
 			<Button
 				label='No'
 				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={() => setShowConfirmDialog(false)}
+				onClick={ () => setShowConfirmDialog(false) }
 				className='p-button-text hover:bg-red-100 p-2 rounded-md'
 			/>
 			<Button

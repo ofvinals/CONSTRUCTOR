@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DateTime } from './Date';
 import { useAuth } from '../../hooks/useAuth';
-import { Button } from 'primereact/button';
 import Navbar from '../adminDashboard/navbar/Navbar';
 import { Link, useLocation } from 'react-router-dom';
 import { menuOptions } from '../../utils/HeaderOptions';
@@ -32,9 +31,9 @@ export function Header() {
 					className='flex items-start justify-start '
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}>
-					<Button className='hover:opacity-70 duration-200 my-3 selection:ring-0 focus:ring-0'>
+					<div className='hover:opacity-70 duration-200 my-3 selection:ring-0 focus:ring-0'>
 						<img src='/CONSTRUCTOR.png' alt='' width={100} />
-					</Button>
+					</div>
 					{loggedUser && (
 						<div
 							onMouseEnter={handleMouseEnter}

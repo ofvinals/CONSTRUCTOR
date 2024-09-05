@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../services/firebase';
 import {
@@ -60,12 +61,9 @@ export const createLoan = createAsyncThunk(
 	async ({ values }, { dispatch }) => {
 		try {
 			const loansRef = collection(db, 'loans');
-			const loanData = {
-				values,
-			};
+			const loanData = values;
 			const res = await addDoc(loansRef, loanData);
 			dispatch(getLoans());
-
 			dispatch(
 				showToast({
 					type: 'success',
@@ -86,44 +84,30 @@ export const createLoan = createAsyncThunk(
 	}
 );
 
+// Función para limpiar campos vacíos
+const cleanObject = (obj) => {
+	return Object.fromEntries(
+		Object.entries(obj).filter(([key, value]) => value !== undefined)
+	);
+};
+
 export const updateLoan = createAsyncThunk(
-	'loan/updateEmployeeInLoan',
+	'loan/updateLoan',
 	async ({ id, values }, { dispatch }) => {
+		console.log(id, values);
 		try {
-			const loansRef = collection(db, 'loans');
-			const querySnapshot = await getDocs(loansRef);
-			let loanId;
-			let updatedEmployees;
-			for (const docSnapshot of querySnapshot.docs) {
-				const loanData = docSnapshot.data();
-				// Verificar si el array de employees contiene el uid del employee
-				const employeeIndex = loanData.employees.findIndex(
-					(employee) => employee.uid === id
-				);
-				if (employeeIndex !== -1) {
-					// Encontrar el ID del documento de loan
-					loanId = docSnapshot.id;
-					// Actualizar el array de employees
-					updatedEmployees = loanData.employees.map((employee, index) =>
-						index === employeeIndex
-							? { ...employee, ...values }
-							: employee
-					);
-					// Actualizar el documento en Firestore
-					await updateDoc(docSnapshot.ref, {
-						employees: updatedEmployees,
-					});
-					// Salir del bucle una vez que encontramos y actualizamos el documento
-					break;
-				}
-			}
+			const cleanedValues = cleanObject(values);
+			const loansRef = doc(db, 'loans', id);
+			await updateDoc(loansRef, cleanedValues);
+			const loanDoc = await getDoc(doc(db, 'loans', id));
+			dispatch(getLoans());
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Adelanto/Prestamo actualizado exitosamente',
 				})
 			);
-			return { loanId, updatedEmployees };
+			return loanDoc.data();
 		} catch (error) {
 			dispatch(
 				showToast({

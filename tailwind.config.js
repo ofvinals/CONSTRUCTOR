@@ -42,9 +42,9 @@ export default {
 					width: 'auto',
 					border: 'none',
 					text: 'center',
-					display: "flex",  
-					alignItems: "center",  
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					borderRadius: '8px',
 					fontWeight: '600',
 					'&:hover': {
@@ -82,14 +82,18 @@ export default {
 					fontSize: '26px',
 					fontWeight: '600',
 					borderRadius: '0.375rem',
+					boxShadow: 'none',
+					outline: 'none',
 					'&:hover': {
 						backgroundColor: '#ffd52b',
+						border: 'none',
 						boxShadow: 'none',
 						outline: 'none',
 					},
 					'&:focus': {
 						boxShadow: 'none',
 						outline: 'none',
+						border: 'none',
 					},
 				},
 				// Estilo para .title

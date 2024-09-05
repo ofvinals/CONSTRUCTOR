@@ -10,12 +10,11 @@ export const FormInput = ({
 	mode,
 	options,
 	customClass,
-	textareaClass
+	textareaClass,
+	onChange,
 }) => {
-	const isCaratula = name === 'caratula';
-	const isExpte = name === 'nroexpte';
 	const inputClass = `items-center w-full p-2 focus:outline-none text-black ${
-		isCaratula || (isExpte && mode === 'view') || mode === 'view'
+		mode === 'view'
 			? 'border-none bg-transparent'
 			: 'border-2 border-black rounded-md'
 	}`;
@@ -23,17 +22,13 @@ export const FormInput = ({
 	return (
 		<Form.Group
 			className={`flex  mb-3 items-center justify-around ${
-				customClass 
-					? 'w-full flex-row'
-					: 'w-5/12 flex-col '
-			} mt-2 ${
-				textareaClass 
-					? 'w-full mx-3'
-					: ''
-			}`}>
+				customClass ? 'w-full flex-row' : 'w-5/12 flex-col '
+			} mt-2 ${textareaClass ? 'w-full mx-3' : ''}`}>
 			<Form.Label
 				className={`text-start bg-transparent l mb-0   ${
-					customClass || type === 'textarea' ? 'text-black mr-2' : 'text-black mt-2 text-x'
+					customClass || type === 'textarea'
+						? 'text-black mr-2'
+						: 'text-black mt-2 text-x'
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>
@@ -43,24 +38,17 @@ export const FormInput = ({
 					className={inputClass}
 					{...register(name, options)}
 					rows={2}
-					readOnly={
-						isCaratula || (isExpte && mode === 'view') || mode === 'view'
-					}
-					disabled={
-						isCaratula || (isExpte && mode === 'view') || mode === 'view'
-					}
+					readOnly={mode === 'view'}
+					disabled={mode === 'view'}
 				/>
 			) : (
 				<Form.Control
 					className={inputClass}
 					type={type}
 					{...register(name, options)}
-					readOnly={
-						isCaratula || (isExpte && mode === 'view') || mode === 'view'
-					}
-					disabled={
-						isCaratula || (isExpte && mode === 'view') || mode === 'view'
-					}
+					readOnly={mode === 'view'}
+					disabled={mode === 'view'}
+					onChange={onChange}
 				/>
 			)}
 			{errors[name] && (
@@ -80,6 +68,7 @@ export const FormSelect = ({
 	selectOptions,
 	customClass,
 	attendanceClass,
+	onChange,
 }) => {
 	const isCaratula = name === 'caratula';
 	const selectClass = `items-center w-full p-2 focus:outline-none text-black ${
@@ -108,7 +97,8 @@ export const FormSelect = ({
 				className={selectClass}
 				{...register(name, options)}
 				readOnly={mode === 'view'}
-				disabled={mode === 'view'}>
+				disabled={mode === 'view'}
+				onChange={onChange}>
 				<option value=''>Selecciona..</option>
 				{selectOptions.map((option, index) => (
 					<option key={index} value={option.value}>
