@@ -9,19 +9,33 @@ import {
 	createSubcategory as createSubcategoryThunk,
 	updateSubcategory as updateSubcategoryThunk,
 	deleteSubcategory as deleteSubcategoryThunk,
-	createItem as createItemThunk,
-	updateItem as updateItemThunk,
-	deleteItem as deleteItemThunk,
+	getItemPrice as getItemPriceThunk,
+	getCategoryItemsPrice as getCategoryItemsPriceThunk,
+	getSubcategoryItemsPrice as getSubcategoryItemsPriceThunk,
+	createCategoryItemPrice as createCategoryItemPriceThunk,
+	createSubcategoryItemPrice as createSubcategoryItemPriceThunk,
+	updateItemPrice as updateItemPriceThunk,
+	deleteItemPrice as deleteItemPriceThunk,
 } from '../store/prices/thunks';
 import { clearCategory } from '../store/prices/slice';
 
 export const usePriceActions = () => {
 	const categories = useAppSelector((state) => state.prices.categories);
-	const subcategories = useAppSelector((state) => state.prices.subcategories);
 	const category = useAppSelector((state) => state.prices.category);
+	const subcategories = useAppSelector((state) => state.prices.subcategories);
+	const itemPrice = useAppSelector((state) => state.prices.itemPrice);
+	const itemsPriceCategory = useAppSelector(
+		(state) => state.prices.itemsPriceCategory
+	);
+	const itemsPriceSubcategory = useAppSelector(
+		(state) => state.prices.itemsPriceSubcategory
+	);
 	const allCategoriesStatus = useAppSelector((state) => state.prices.status);
 	const statusCategory = useAppSelector(
 		(state) => state.prices.statusCategory
+	);
+	const statusSubcategory = useAppSelector(
+		(state) => state.prices.statusSubcategory
 	);
 	const categoryStatusUpdate = useAppSelector(
 		(state) => state.prices.statusUpdate
@@ -29,24 +43,22 @@ export const usePriceActions = () => {
 	const categoryStatusDelete = useAppSelector(
 		(state) => state.prices.statusDelete
 	);
-	const statusSubcategory = useAppSelector(
-		(state) => state.prices.statusSubcategory
+	const statusPriceCategory = useAppSelector(
+		(state) => state.prices.statusPriceCategory
 	);
-
+	const statusPriceSubcategory = useAppSelector(
+		(state) => state.prices.statusPriceSubcategory
+	);
 	const dispatch = useAppDispatch();
-
 	const getCategory = async ({ id }) => {
 		await dispatch(getCategoryThunk({ id }));
 	};
-
 	const getCategories = async () => {
 		await dispatch(getCategoriesThunk());
 	};
-
 	const createCategory = async ({ values }) => {
 		await dispatch(createCategoryThunk({ values }));
 	};
-
 	const updateCategory = async ({ id, values }) => {
 		await dispatch(updateCategoryThunk({ id, values }));
 	};
@@ -56,35 +68,55 @@ export const usePriceActions = () => {
 	const getSubcategories = async ({ id }) => {
 		await dispatch(getSubcategoriesThunk({ id }));
 	};
-
 	const createSubcategory = async ({ categoryId, values }) => {
 		await dispatch(createSubcategoryThunk({ categoryId, values }));
 	};
-
 	const updateSubcategory = async ({ categoryId, subcategoryId, values }) => {
 		await dispatch(
 			updateSubcategoryThunk({ categoryId, subcategoryId, values })
 		);
 	};
-
 	const deleteSubcategory = async ({ categoryId, subcategoryId }) => {
 		await dispatch(deleteSubcategoryThunk({ categoryId, subcategoryId }));
 	};
-
-	const createItem = async ({ categoryId, subcategoryId, values }) => {
-		await dispatch(createItemThunk({ categoryId, subcategoryId, values }));
+	const getItemPrice = async ({ categoryId, subcategoryId, itemId }) => {
+		await dispatch(getItemPriceThunk({ categoryId, subcategoryId, itemId }));
 	};
-
-	const updateItem = async ({ categoryId, subcategoryId, itemId, values }) => {
+	const getCategoryItemsPrice = async ({ categoryId }) => {
+		await dispatch(getCategoryItemsPriceThunk({ categoryId }));
+	};
+	const getSubcategoryItemsPrice = async ({ categoryId, subcategoryId }) => {
 		await dispatch(
-			updateItemThunk({ categoryId, subcategoryId, itemId, values })
+			getSubcategoryItemsPriceThunk({ categoryId, subcategoryId })
 		);
 	};
-
-	const deleteItem = async ({ categoryId, subcategoryId, itemId }) => {
-		await dispatch(deleteItemThunk({ categoryId, subcategoryId, itemId }));
+	const createCategoryItemPrice = async ({ categoryId, values }) => {
+		await dispatch(createCategoryItemPriceThunk({ categoryId, values }));
 	};
-
+	const createSubcategoryItemPrice = async ({
+		categoryId,
+		subcategoryId,
+		values,
+	}) => {
+		await dispatch(
+			createSubcategoryItemPriceThunk({ categoryId, subcategoryId, values })
+		);
+	};
+	const updateItemPrice = async ({
+		categoryId,
+		subcategoryId,
+		itemId,
+		values,
+	}) => {
+		await dispatch(
+			updateItemPriceThunk({ categoryId, subcategoryId, itemId, values })
+		);
+	};
+	const deleteItemPrice = async ({ categoryId, subcategoryId, itemId }) => {
+		await dispatch(
+			deleteItemPriceThunk({ categoryId, subcategoryId, itemId })
+		);
+	};
 	const clearStateCategory = () => {
 		dispatch(clearCategory());
 	};
@@ -97,19 +129,28 @@ export const usePriceActions = () => {
 		categoryStatusDelete,
 		category,
 		statusCategory,
+		statusSubcategory,
+		itemPrice,
+		itemsPriceCategory,
+		itemsPriceSubcategory,
+		statusPriceSubcategory,
+		statusPriceCategory,
 		getCategory,
 		getCategories,
 		createCategory,
 		updateCategory,
 		deleteCategory,
 		clearStateCategory,
-		statusSubcategory,
 		getSubcategories,
 		createSubcategory,
 		updateSubcategory,
 		deleteSubcategory,
-		createItem,
-		updateItem,
-		deleteItem,
+		getItemPrice,
+		getCategoryItemsPrice,
+		getSubcategoryItemsPrice,
+		createCategoryItemPrice,
+		createSubcategoryItemPrice,
+		updateItemPrice,
+		deleteItemPrice,
 	};
 };

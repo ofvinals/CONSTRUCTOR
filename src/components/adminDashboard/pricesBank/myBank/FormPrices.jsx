@@ -1,12 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import { Button } from 'primereact/button';
+import { useEffect } from 'react';
 import { Form, FormControl, FormSelect, Table } from 'react-bootstrap';
 import { useForm, useFieldArray } from 'react-hook-form';
+import { usePriceActions } from '../../../../hooks/usePriceActions';
+// import Loader from '../../../../utils/Loader';
 
-export const FormPrices = () => {
+export const FormPrices = ({
+	id,
+	onClose,
+	mode,
+	subcategoryId,
+	categoryId,
+	type,
+}) => {
+	const {
+		getItemPrice,
+		itemPrice,
+		// itemsPrice,
+		updateItemPrice,
+		createCategoryItemPrice,
+		createSubcategoryItemPrice,
+	} = usePriceActions();
 	const {
 		register,
 		handleSubmit,
 		control,
+		setValue,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
@@ -19,39 +40,92 @@ export const FormPrices = () => {
 					itemUnit: '',
 					itemCant: '',
 					itemPrice: '',
-					itemtotalPrice: '',
+					itemTotalPrice: '',
 				},
 			],
 		},
 	});
 
+	useEffect(() => {
+		if (mode === 'edit' || mode === 'view') {
+			const itemId = id;
+			getItemPrice({ categoryId, subcategoryId, itemId });
+		}
+	}, [id]);
+
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'items',
 	});
-	const onSubmit = handleSubmit(async ({ values }) => {
+
+	useEffect(() => {
+		if (itemPrice && (mode === 'edit' || mode === 'view')) {
+			setValue('shortDescription', itemPrice.shortDescription);
+			setValue('largeDescription', itemPrice.largeDescription);
+			setValue('unitType', itemPrice.unitType);
+			setValue('unitPrice', itemPrice.unitPrice);
+
+			setValue('itemDescription', itemPrice.itemDescription);
+			setValue('itemUnit', itemPrice.itemUnit);
+			setValue('itemCant', itemPrice.itemCant);
+			setValue('itemPrice', itemPrice.itemPrice);
+			setValue('itemtotalPrice', itemPrice.itemtotalPrice);
+			setValue('FinalPrice', itemPrice.FinalPrice);
+		}
+	}, [itemPrice]);
+
+	const onSubmit = handleSubmit(async (values) => {
 		try {
 			console.log(values);
-			// await loginEmail({ email, password });
+			if (mode === 'edit') {
+				await updateItemPrice({
+					categoryId,
+					subcategoryId,
+					itemId: id,
+					values,
+				});
+				onClose();
+			} else if (type === 'category' && mode === 'create') {
+				await createCategoryItemPrice({ categoryId, values });
+				onClose();
+			} else if (type === 'subcategory' && mode === 'create') {
+				await createSubcategoryItemPrice({
+					categoryId,
+					subcategoryId,
+					values,
+				});
+				onClose();
+			}
 		} catch (error) {
 			console.error(error);
 		}
 	});
+
+	// if (itemPriceStatus === 'Cargando' || itemPriceStatusUpdate === 'Cargando') {
+	// 	return <Loader />;
+	// }
+
 	return (
 		<div>
 			<Form
 				id='ItemForm'
-				className='flex flex-col justify-center items-center bg-background rounded-xl py-4'
+				className='flex flex-col justify-center items-center bg-background rounded-xl  '
 				onSubmit={onSubmit}>
-				<div className='flex flex-row justify-center items-center w-full'>
-					<div className='w-1/3 flex flex-col items-center justify-around'>
+				<div className='w-full flex items-end justify-end bg-slate-300 rounded-md'>
+					<button onClick={onSubmit} className='btnprimary my-3 mr-4'>
+						<i className='pi pi-save mr-2 font-bold'></i>
+						Guardar Registro
+					</button>
+				</div>
+				<div className='flex flex-row justify-center items-center w-full border-1 my-2  border-b-slate-400'>
+					<div className='w-1/3 flex flex-col items-center justify-around border-1 h-[500px] border-r-slate-400 min-h-full '>
+						<h2 className='text-xl font-bold mb-2'>Mano de Obra</h2>
 						<Form.Group className='flex flex-col w-full items-start justify-around px-2'>
-							<Form.Label className=' bg-transparent  text-neutral-800 font-medium '>
+							<Form.Label className=' bg-transparent  text-neutral-800 font-bold '>
 								Descripcion Corta
 							</Form.Label>
 							<FormControl
-								style={{ outline: 'none', boxShadow: 'none' }}
-								className=' rounded-md p-2 focus:outline-none border-2 border-black'
+								className=' rounded-md p-2  border-1 border-black'
 								type='text'
 								name='shortDescription'
 								{...register('shortDescription', {
@@ -69,154 +143,228 @@ export const FormPrices = () => {
 						</Form.Group>
 
 						<Form.Group className='flex flex-col w-full items-start justify-around mt-3 px-2'>
-							<Form.Label className='bg-transparent  text-neutral-800  font-medium'>
+							<Form.Label className='bg-transparent  text-neutral-800  font-bold'>
 								Descripcion Larga
 							</Form.Label>
 							<FormControl
 								as='textarea'
 								name='largeDescription'
-								className=' text-black p-2 rounded-md focus:outline-none border-2 border-black'
+								className=' text-black p-2 rounded-md focus:outline-none border-1 border-black'
 								{...register('largeDescription')}
 							/>
 						</Form.Group>
+						<div className='flex flex-row items-center justify-center mb-3'>
+							<Form.Group className='flex flex-col w-full items-start justify-around mt-3 px-2'>
+								<Form.Label className=' bg-transparent  text-neutral-800 font-bold '>
+									Precio Unitario
+								</Form.Label>
+								<FormControl
+									className=' rounded-md p-2  border-2 border-black'
+									type='number'
+									name='unitPrice'
+									{...register('unitPrice', {
+										required: {
+											value: true,
+											message: 'El precio unitario es obligatorio',
+										},
+									})}
+								/>
+								{errors.unitPrice && (
+									<span className='error-message'>
+										{errors.unitPrice.message}
+									</span>
+								)}
+							</Form.Group>
+							<Form.Group className='flex flex-col w-full items-start justify-around mt-3 px-2'>
+								<Form.Label className=' bg-transparent  text-neutral-800 font-bold '>
+									Unidad de Medida
+								</Form.Label>
+								<FormSelect
+									className='rounded-md p-2 w-fit  border-1 border-black'
+									type='text'
+									{...register(`unitType`, {
+										required: 'La unidad de medida es obligatoria',
+									})}
+									name='unitType'>
+									<option value=''></option>
+									<option value='Pa'>Costes</option>
+									<option value='Mt'>Metro</option>
+									<option value='Ml'>Metro Lineal</option>
+									<option value='M2'>Metro Cuadrado</option>
+									<option value='M3'>Metro Cubico</option>
+									<option value='Un'>Unidad</option>
+									<option value='Kg'>Kilogramos</option>
+									<option value='Gl'>Global</option>
+								</FormSelect>
+								{errors.unitType && (
+									<span className='error-message'>
+										{errors.unitType.message}
+									</span>
+								)}
+							</Form.Group>
+						</div>
 					</div>
 
-					<div className='w-2/3 flex flex-row flex-wrap items-center justify-around border-none'>
-						<Table striped bordered hover responsive>
-							<thead className='border-none'>
-								<tr className='border-none'>
-									<th className='bg-transparent border-none'>Tipo</th>
-									<th className='bg-transparent border-none'>
-										Descripcion
-									</th>
-									<th className='bg-transparent border-none'>
-										Unidad
-									</th>
-									<th className='bg-transparent border-none'>
-										Cantidad
-									</th>
-									<th className='bg-transparent border-none'>
-										Precio
-									</th>
-									<th className='bg-transparent border-none'>Total</th>
-									<th className='bg-transparent border-none'>
-										Acciones
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{fields.map((field, index) => (
-									<tr key={field.id}>
-										<td>
-											<FormSelect
-												className='rounded-md p-2 w-fit'
-												type='text'
-												{...register(`items.${index}.type`, {
-													required:
-														'El tipo de item es obligatorio',
-												})}
-												defaultValue={field.type}>
-												<option value=''></option>
-												<option value='Costes'>Costes</option>
-												<option value='Material'>Material</option>
-												<option value='Mano de obra'>
-													Mano de obra
-												</option>
-												<option value='Maquinaria'>
-													Maquinaria
-												</option>
-												<option value='Adicional'>Adicional</option>
-											</FormSelect>
-											{errors.items?.[index]?.type && (
-												<span className='error-message'>
-													{errors.items[index].type.message}
-												</span>
-											)}
-										</td>
-										<td>
-											<FormControl
-												as='textarea'
-												className='rounded-md p-2 min-w-[220px]'
-												{...register(
-													`items.${index}.itemDescription`
-												)}
-												defaultValue={field.itemDescription}
-											/>
-										</td>
-										<td>
-											<FormSelect
-												className='rounded-md p-2 w-fit'
-												type='text'
-												{...register(`items.${index}.itemUnit`)}
-												defaultValue={field.itemUnit}>
-												<option value=''></option>
-												<option value='Pa'>Costes</option>
-												<option value='Mt'>Metro</option>
-												<option value='Ml'>Metro Lineal</option>
-												<option value='M2'>Metro Cuadrado</option>
-												<option value='M3'>Metro Cubico</option>
-												<option value='Un'>Unidad</option>
-												<option value='Kg'>Kilogramos</option>
-												<option value='Gl'>Global</option>
-											</FormSelect>
-										</td>
-										<td>
-											<FormControl
-												className='rounded-md p-2 min-w-[70px]'
-												type='number'
-												{...register(`items.${index}.itemCant`)}
-												defaultValue={field.itemCant}
-											/>
-										</td>
-										<td>
-											<FormControl
-												className='rounded-md p-2 min-w-[80px]'
-												type='number'
-												{...register(`items.${index}.itemPrice`)}
-												defaultValue={field.itemPrice}
-											/>
-										</td>
-										<td>
-											<FormControl
-												className='rounded-md p-2 min-w-[80px]'
-												type='number'
-												{...register(
-													`items.${index}.itemtotalPrice`
-												)}
-												defaultValue={field.itemtotalPrice}
-												readOnly
-											/>
-										</td>
-										<td className='flex items-center justify-center'>
-											<Button
-												icon='pi pi-trash font-bold text-xl'
-												className=' text-red-500 m-auto'
-												onClick={() => remove(index)}></Button>
-										</td>
+					<div className='w-2/3 flex flex-row flex-wrap items-center justify-around h-[500px] border-none'>
+						<h2 className='text-xl font-bold h-[10%] mt-2'>
+							Materiales y Maquinaria
+						</h2>
+						<div className='h-[350px] overflow-y-scroll mx-2'>
+							<Table hover responsive>
+								<thead className='border-none'>
+									<tr className='border-none'>
+										<th className='bg-transparent border-none'>
+											Tipo
+										</th>
+										<th className='bg-transparent border-none'>
+											Descripcion
+										</th>
+										<th className='bg-transparent border-none'>
+											Unidad
+										</th>
+										<th className='bg-transparent border-none'>
+											Cantidad
+										</th>
+										<th className='bg-transparent border-none'>
+											Precio
+										</th>
+										<th className='bg-transparent border-none'>
+											Total
+										</th>
+										<th className='bg-transparent border-none'>
+											Acciones
+										</th>
 									</tr>
-								))}
-							</tbody>
-						</Table>
-						<Button
-							className='btnprimary mt-3'
-							onClick={() =>
-								append({
-									type: '',
-									itemDescription: '',
-									itemUnit: '',
-									itemCant: '',
-									itemPrice: '',
-									itemtotalPrice: '',
-								})
-							}>
-							<i className='pi pi-plus mr-2 font-bold '></i>
-							Agregar Ítem
-						</Button>
+								</thead>
+								<tbody>
+									{fields.map((field, index) => (
+										<tr key={field.id}>
+											<td>
+												<FormSelect
+													className='rounded-md p-2 w-fit  border-1 border-black'
+													type='text'
+													{...register(`items.${index}.type`)}
+													defaultValue={field.type}>
+													<option value=''></option>
+													<option value='Costes'>Costes</option>
+													<option value='Material'>
+														Materiales
+													</option>
+													<option value='Maquinaria'>
+														Maquinarias
+													</option>
+													<option value='Adicional'>
+														Adicionales
+													</option>
+												</FormSelect>
+											</td>
+											<td>
+												<FormControl
+													as='textarea'
+													className='rounded-md p-2 min-w-[220px]  border-1 border-black'
+													{...register(
+														`items.${index}.itemDescription`
+													)}
+													defaultValue={field.itemDescription}
+												/>
+											</td>
+											<td>
+												<FormSelect
+													className='rounded-md p-2 w-fit  border-1 border-black'
+													type='text'
+													{...register(`items.${index}.itemUnit`)}
+													defaultValue={field.itemUnit}>
+													<option value=''></option>
+													<option value='Pa'>Costes</option>
+													<option value='Mt'>Metro</option>
+													<option value='Ml'>Metro Lineal</option>
+													<option value='M2'>
+														Metro Cuadrado
+													</option>
+													<option value='M3'>Metro Cubico</option>
+													<option value='Un'>Unidad</option>
+													<option value='Kg'>Kilogramos</option>
+													<option value='Gl'>Global</option>
+												</FormSelect>
+											</td>
+											<td>
+												<FormControl
+													className='rounded-md p-2 min-w-[70px]  border-1 border-black'
+													type='number'
+													{...register(`items.${index}.itemCant`)}
+													defaultValue={field.itemCant}
+												/>
+											</td>
+											<td>
+												<FormControl
+													className='rounded-md p-2 min-w-[80px]  border-1 border-black'
+													type='number'
+													{...register(`items.${index}.itemPrice`)}
+													defaultValue={field.itemPrice}
+												/>
+											</td>
+											<td>
+												<FormControl
+													className='rounded-md p-2 min-w-[80px]  border-1 border-black'
+													type='number'
+													{...register(
+														`items.${index}.itemTotalPrice`
+													)}
+													defaultValue={field.itemTotalPrice}
+													readOnly
+												/>
+											</td>
+											<td className='flex items-center justify-center'>
+												<Button
+													icon='pi pi-trash font-bold text-xl'
+													className=' text-red-500 m-auto'
+													onClick={() => remove(index)}></Button>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</Table>
+						</div>
+						<div className='h-[10%]'>
+							<Button
+								type='button'
+								className='btnprimary  '
+								onClick={() =>
+									append({
+										type: '',
+										itemDescription: '',
+										itemUnit: '',
+										itemCant: '',
+										itemPrice: '',
+										itemtotalPrice: '',
+									})
+								}>
+								<i className='pi pi-plus mr-2 font-bold '></i>
+								Agregar Ítem
+							</Button>
+						</div>
 					</div>
 				</div>
-				<div className='w-full'>
-          
-        </div>
+				<div className='w-full flex flex-row items-center justify-around my-3'>
+					<div className='w-1/3 h-[120px] flex mx-2 flex-wrap flex-col items-center justify-center border-2 rounded-md border-slate-400'>
+						<p className='font-bold text-center h-[50%] text-xl'>
+							Costo Mano de Obra
+						</p>
+						<span className='mt-3 font-semibold text-xl'>$ </span>
+					</div>
+					<div className='w-1/3 h-[120px] flex mx-2 flex-wrap flex-col items-center justify-center border-2 rounded-md border-slate-400'>
+						<p className='font-bold text-center h-[50%] text-xl'>
+							Costo Materiales y Maquinaria
+						</p>{' '}
+						<span className='mt-3 font-semibold text-xl'>$ </span>
+					</div>
+					<div className='w-1/3 h-[120px] flex mx-2 flex-wrap flex-col items-center justify-center border-2 rounded-md border-slate-400'>
+						<p className='font-bold text-center h-[50%] text-xl'>
+							Costo Total
+						</p>{' '}
+						<span className='mt-3 font-semibold text-xl'>$ </span>
+					</div>
+				</div>
 			</Form>
 		</div>
 	);

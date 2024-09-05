@@ -2,15 +2,21 @@ import { createSlice } from '@reduxjs/toolkit';
 import { priceExtraReducers } from './extraReducers';
 
 const initialState = {
-	categories: [],
-	category: null,
+	categories: {},
 	subcategories: {},
+	items: {},
+	category: null,
 	subcategory: null,
+	itemsPriceCategory: {},
+	itemsPriceSubcategory: {},
+	itemPrice: null,
 	status: 'Inactivo',
 	statusCategory: 'Inactivo',
 	statusSubcategory: 'Inactivo',
 	statusUpdate: 'Inactivo',
 	statusDelete: 'Inactivo',
+	statusPriceCategory: 'Inactivo',
+	statusPriceSubcategory: 'Inactivo',
 	error: null,
 };
 

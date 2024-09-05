@@ -13,30 +13,26 @@ export const AccordionPrices = () => {
 	const [deleteItem, setDeleteItem] = useState({ type: '', id: '' });
 	const [loadingCategoryId, setLoadingCategoryId] = useState(null);
 	const {
-		createCategory,
-		createSubcategory,
-		getSubcategories,
 		categories,
 		subcategories,
 		statusCategory,
+		createCategory,
+		createSubcategory,
+		getSubcategories,
 		updateCategory,
 		updateSubcategory,
 		deleteCategory,
 		deleteSubcategory,
 	} = usePriceActions();
-
 	const handleCategoryClick = async (categoryId) => {
 		setLoadingCategoryId(categoryId);
 		await getSubcategories({ id: categoryId });
 		setLoadingCategoryId(null);
 	};
-	console.log(categories);
-	console.log(subcategories);
 	const getCategoryNumber = (categoryId) => {
 		const index = categories.findIndex((cat) => cat.uid === categoryId) + 1;
 		return index.toString();
 	};
-
 	const getSubcategoryNumber = (categoryId, subcategoryId) => {
 		const subcategoriesList = subcategories[categoryId] || [];
 		const index =
@@ -44,7 +40,6 @@ export const AccordionPrices = () => {
 			1;
 		return `${getCategoryNumber(categoryId)}.${index}`;
 	};
-
 	const addCategory = async () => {
 		const newCategory = {
 			title: 'Introduce el nombre del rubro',
@@ -52,19 +47,16 @@ export const AccordionPrices = () => {
 		};
 		await createCategory({ values: newCategory });
 	};
-
 	const addSubcategory = async (categoryId) => {
 		const newSubcategory = {
 			title: 'Introduce el nombre del subrubro',
 		};
 		await createSubcategory({ values: newSubcategory, categoryId });
 	};
-
 	const handleDelete = (type, id) => {
 		setDeleteItem({ type, id });
 		setShowDialog(true);
 	};
-
 	const confirmDelete = async () => {
 		if (deleteItem.type === 'rubro') {
 			await deleteCategory({ id: deleteItem.id });
@@ -77,7 +69,6 @@ export const AccordionPrices = () => {
 		setShowDialog(false);
 		setDeleteItem({ type: '', id: '' });
 	};
-
 	const footerContent = (
 		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
 			<Button
@@ -94,7 +85,6 @@ export const AccordionPrices = () => {
 			/>
 		</div>
 	);
-
 	const handleCheckboxChange = (type, id) => {
 		if (type === 'rubro') {
 			const category = categories.find((cat) => cat.uid === id);
@@ -118,9 +108,7 @@ export const AccordionPrices = () => {
 			}));
 		}
 	};
-
 	const isSelected = (type, id) => !!selectedItems[`${type}-${id}`];
-
 	const handleTitleChange = async (type, id, newTitle, categoryId) => {
 		if (type === 'rubro') {
 			await updateCategory({ id, values: { title: newTitle } });
@@ -169,7 +157,6 @@ export const AccordionPrices = () => {
 				</Button>
 			</div>
 			<Dialog
-				fullscreen={true}
 				visible={showDialog}
 				onHide={() => setShowDialog(false)}
 				header='Confirmar Eliminación'

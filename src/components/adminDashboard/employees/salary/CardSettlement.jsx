@@ -14,8 +14,6 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 	const { attendances } = useAttendanceActions();
 	const { configState } = useEmployeeActions();
 	const { loans } = useLoanActions();
-	console.log(loans);
-	console.log(attendances);
 
 	useEffect(() => {
 		if (startDate && endDate) {
@@ -24,7 +22,6 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 			const end = new Date(endDate);
 			const startDateString = start.toISOString().split('T')[0];
 			const endDateString = end.toISOString().split('T')[0];
-
 			// Filtrar las asistencias que estén dentro del rango de fechas
 			const filteredAttendances = attendances.filter((attendance) => {
 				// Convertir la fecha de la asistencia a formato YYYY-MM-DD
@@ -36,9 +33,7 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 					attendanceDateString <= endDateString
 				);
 			});
-
 			const valuePresentism = configState[0]?.presentism?.hourlyRate || 0;
-
 			// Inicializar el mapa para acumular datos por empleado
 			const employeeMap = {};
 			// Recorrer las asistencias filtradas
@@ -65,7 +60,6 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 					const endTime = employee.endTime
 						? new Date(`1970-01-01T${employee.endTime}:00Z`)
 						: null;
-
 					// Calcular las horas trabajadas para este día
 					let hoursWorked = 0;
 					if (startTime && endTime) {
@@ -73,15 +67,12 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 						if (endTime < startTime) {
 							endTime.setDate(endTime.getDate() + 1);
 						}
-
 						hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-
 						// Si el rango horario abarca las 12 PM, restar una hora
 						if (startTime.getHours() < 12 && endTime.getHours() >= 12) {
 							hoursWorked -= 1;
 						}
 					}
-
 					const totalHoursValue = hoursWorked * employee.valuePosition;
 					// Actualizar los datos del empleado en el mapa
 					if (employee.attendance) {
@@ -109,7 +100,6 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 						employeeMap[employee.uid].travelCostTotal;
 				});
 			});
-
 			// Filtrar los vencimientos de préstamos y adelantos que estén dentro del rango de fechas
 			const filteredLoans = loans.filter((loan) => {
 				// Manejar préstamos con fechas de vencimiento en dueDates
@@ -126,8 +116,6 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 				}
 				return false;
 			});
-			console.log(filteredLoans);
-
 			// Añadir los préstamos al mapa de empleados
 			filteredLoans.forEach((loan) => {
 				const employeeId = loan.values.employeeId;
@@ -139,40 +127,33 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 					});
 				}
 			});
-
 			// Restar el total de préstamos de la liquidación final de cada empleado
 			Object.values(employeeMap).forEach((employee) => {
 				const totalLoans = employee.loans.reduce(
 					(total, loan) => total + parseFloat(loan.valueLoan),
 					0
 				);
-				console.log(totalLoans);
 				employee.finalSettlement -= totalLoans; // Restar los préstamos del total final
 			});
-
 			// Convertir el mapa de empleados en un array y actualizar el estado
 			const employeesArray = Object.values(employeeMap);
 			setFilteredAttendances(employeesArray);
 			setEmployeeData(employeesArray);
 		}
 	}, [startDate, endDate, attendances, configState]);
-
 	// Calcular la suma total de todas las liquidaciones finales
 	const totalFinalSettlement = filteredAttendances.reduce(
 		(acc, employee) => acc + employee.finalSettlement,
 		0
 	);
-
 	const formatNumber = (value) => {
 		const number = Number(value);
 		return number.toLocaleString('es-AR');
 	};
-
 	const onPageChange = (event) => {
 		setFirst(event.first);
 		setRows(event.rows);
 	};
-
 	const paginatedEmployees = filteredAttendances.slice(first, first + rows);
 
 	return (

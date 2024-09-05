@@ -28,7 +28,7 @@ export const FormInput = ({
 				className={`text-start bg-transparent l mb-0   ${
 					customClass || type === 'textarea'
 						? 'text-black mr-2'
-						: 'text-black mt-2 text-x'
+						: 'text-black mt-2 '
 				}  w-full font-medium`}>
 				{label}
 			</Form.Label>
@@ -71,10 +71,10 @@ export const FormSelect = ({
 	onChange,
 }) => {
 	const isCaratula = name === 'caratula';
-	const selectClass = `items-center w-full p-2 focus:outline-none text-black ${
-		isCaratula || mode === 'view'
+	const selectClass = `items-center w-full p-2 text-black ${
+		mode === 'view'
 			? 'border-none shadow-none bg-transparent'
-			: 'border-2 border-black rounded-md'
+			: 'border-1 border-black rounded-md'
 	}`;
 
 	return (
