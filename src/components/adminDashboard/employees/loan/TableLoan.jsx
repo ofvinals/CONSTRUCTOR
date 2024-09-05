@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useState } from 'react';
 import { useLoanActions } from '../../../../hooks/useLoanActions';
 import Loader from '../../../../utils/Loader';
@@ -66,11 +65,10 @@ export const TableLoan = () => {
 			setShowConfirmDialog(false);
 		}
 	};
-
 	const columns = useMemo(
 		() => [
 			{
-				accessorKey: 'values.date',
+				accessorKey: 'date',
 				header: 'Fecha',
 				enableEditing: false,
 				enableSorting: true,
@@ -78,30 +76,30 @@ export const TableLoan = () => {
 				Cell: ({ cell }) => formatDate(cell.getValue()),
 			},
 			{
-				accessorKey: 'values.employee',
+				accessorKey: 'employee',
 				header: 'Empleado',
 				enableEditing: false,
 				size: 10,
 			},
 			{
-				accessorKey: 'values.typeLoan',
+				accessorKey: 'typeLoan',
 				header: 'Tipo',
 				enableEditing: false,
 				size: 10,
 			},
 			{
-				accessorKey: 'values.valueLoan',
+				accessorKey: 'valueLoan',
 				header: 'Monto',
 				size: 10,
 				Cell: ({ cell }) => formatCurrency(cell.getValue()),
 			},
 			{
-				accessorKey: 'values.quoteLoan',
+				accessorKey: 'quoteLoan',
 				header: 'Cuotas',
 				size: 10,
 			},
 			{
-				accessorKey: 'values.dueDates',
+				accessorKey: 'dueDates',
 				header: 'Vencimientos',
 				size: 10,
 				Cell: ({ cell }) => {

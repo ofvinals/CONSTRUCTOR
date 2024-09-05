@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserActions } from '../../hooks/useUserActions';
-import { AccordionPrices } from '../../components/adminDashboard/pricesBank/AccordionPrices';
+import { AccordionPrices } from '../../components/adminDashboard/pricesBank/myBank/AccordionPrices';
 
 export const PricesBank = () => {
 	const [searchQuery, setSearchQuery] = useState('');

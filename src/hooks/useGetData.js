@@ -7,6 +7,7 @@ import { getEmployees } from '../store/employees/thunks';
 import { getConfig } from '../store/employees/thunks';
 import { getAttendances } from '../store/attendances/thunks';
 import { getLoans } from '../store/loans/thunks';
+import { getCategories } from '../store/prices/thunks';
 
 export const useGetData = () => {
 	const dispatch = useAppDispatch();
@@ -18,6 +19,7 @@ export const useGetData = () => {
 		dispatch(getConfig());
 		dispatch(getAttendances());
 		dispatch(getLoans());
+		dispatch(getCategories());
 	}, []);
 
 	return {};

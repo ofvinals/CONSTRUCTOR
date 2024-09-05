@@ -12,13 +12,13 @@ import { useForm } from 'react-hook-form';
 import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
 import Loader from '../../../../utils/Loader.jsx';
 import { useLoanActions } from '../../../../hooks/useLoanActions.js';
-import { formatISO, parseISO } from 'date-fns';
 
 export const FormLoan = ({ id, onClose, mode }) => {
 	const {
 		register,
 		handleSubmit,
 		setValue,
+		getValues,
 		formState: { errors },
 		watch,
 	} = useForm();
@@ -41,16 +41,17 @@ export const FormLoan = ({ id, onClose, mode }) => {
 			getLoan({ id });
 		}
 	}, [id]);
-
+	console.log(loan);
 	useEffect(() => {
 		if (loan && (mode === 'edit' || mode === 'view')) {
-			setValue('date', loan.values.date);
-			setValue('employee', loan.values.employee);
-			setValue('employeeId', loan.values.employeeId);
-			setValue('typeLoan', loan.values.typeLoan);
-			setValue('valueLoan', loan.values.valueLoan);
-			setValue('quoteLoan', loan.values.quoteLoan);
-			setValue('quoteDateLoan', loan.values.quoteDateLoan);
+			setValue('date', loan.date);
+			setValue('employee', loan.employee);
+			setValue('employeeId', loan.employeeId);
+			setValue('typeLoan', loan.typeLoan);
+			setValue('valueLoan', loan.valueLoan);
+			setValue('quoteLoan', loan.quoteLoan);
+			setValue('quoteDateLoan', loan.quoteDateLoan);
+			setValue('dueDates', loan.dueDates);
 		}
 	}, [loan, mode]);
 
@@ -76,16 +77,17 @@ export const FormLoan = ({ id, onClose, mode }) => {
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
+			console.log(values);
 			// Procesar los vencimientos y almacenarlos en el array `dueDates`
 			const updatedDueDates = dueDates.map(
-				(_, index) => values[`quoteDateLoan-${index}`] || ''
+				(_, index) => getValues(`dueDates[${index}]`) || ''
 			);
-
+			console.log(updatedDueDates);
 			const updatedValues = {
 				...values,
-				dueDates: typeLoan === 'Prestamo' ? updatedDueDates : [],
+				dueDates: updatedDueDates,
 			};
-
+			console.log(updatedValues);
 			if (mode === 'edit') {
 				await updateLoan({ id, values: updatedValues });
 				onClose();
@@ -99,15 +101,17 @@ export const FormLoan = ({ id, onClose, mode }) => {
 	});
 
 	const handleDateChange = (index, date) => {
+		console.log(date);
 		const updatedDates = [...dueDates];
 		updatedDates[index] = date;
+		console.log(updatedDates);
 		setDueDates(updatedDates);
 	};
 
 	if (loanStatus === 'Cargando' || loanStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}
-	console.log(loan);
+
 	return (
 		<div>
 			<Form
@@ -207,7 +211,7 @@ export const FormLoan = ({ id, onClose, mode }) => {
 				{typeLoan === 'Adelanto' ? (
 					<FormInput
 						label='Vencimiento'
-						name='quoteDateLoan'
+						name='dueDates[0]'
 						type='date'
 						value={dueDates[0] || ''}
 						onChange={(e) => handleDateChange(0, e.target.value)}
@@ -217,27 +221,25 @@ export const FormLoan = ({ id, onClose, mode }) => {
 						readOnly={mode === 'view'}
 					/>
 				) : (
-					numQuotes > 0 && (
-						<>
-							{console.log(dueDates)}
-							{dueDates.map((date, index) => (
-								<FormInput
-									key={index}
-									label={`Vencimiento ${index + 1}`}
-									name={`quoteDateLoan-${index}`}
-									type='date'
-									value={date || ''}
-									onChange={(e) =>
-										handleDateChange(index, e.target.value)
-									}
-									register={register}
-									errors={errors}
-									mode={mode}
-									readOnly={mode === 'view'}
-								/>
-							))}
-						</>
-					)
+					dueDates.map((date, index) => {
+						console.log(date);
+						return (
+							<FormInput
+								key={index}
+								label={`Vencimiento ${index + 1}`}
+								name={`dueDates[${index}]`}
+								type='date'
+								value={date || ''}
+								onChange={(e) =>
+									handleDateChange(index, e.target.value)
+								}
+								register={register}
+								errors={errors}
+								mode={mode}
+								readOnly={mode === 'view'}
+							/>
+						);
+					})
 				)}
 
 				<FormInput
