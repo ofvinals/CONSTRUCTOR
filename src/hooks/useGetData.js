@@ -20,6 +20,7 @@ export const useGetData = () => {
 		dispatch(getAttendances());
 		dispatch(getLoans());
 		dispatch(getCategories());
+
 	}, []);
 
 	return {};

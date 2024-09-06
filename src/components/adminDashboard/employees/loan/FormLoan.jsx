@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useEmployeeActions } from '../../../../hooks/useEmployeeActions';
 import Loader from '../../../../utils/Loader.jsx';
 import { useLoanActions } from '../../../../hooks/useLoanActions.js';
+import { InputGroup } from 'react-bootstrap';
 
 export const FormLoan = ({ id, onClose, mode }) => {
 	const {
@@ -32,16 +33,13 @@ export const FormLoan = ({ id, onClose, mode }) => {
 		loanStatusUpdate,
 	} = useLoanActions();
 	const [dueDates, setDueDates] = useState([]);
-
-	const typeLoan = watch('typeLoan');
-	const numQuotes = watch('quoteLoan');
-
 	useEffect(() => {
 		if (mode === 'edit' || mode === 'view') {
 			getLoan({ id });
 		}
-	}, [id]);
-	console.log(loan);
+	}, [id, mode]);
+	const typeLoan = watch('typeLoan');
+	const numQuotes = watch('quoteLoan');
 	useEffect(() => {
 		if (loan && (mode === 'edit' || mode === 'view')) {
 			setValue('date', loan.date);
@@ -53,8 +51,7 @@ export const FormLoan = ({ id, onClose, mode }) => {
 			setValue('quoteDateLoan', loan.quoteDateLoan);
 			setValue('dueDates', loan.dueDates);
 		}
-	}, [loan, mode]);
-
+	}, [loan, mode, setValue]);
 	useEffect(() => {
 		if (numQuotes !== undefined) {
 			setDueDates((prevDueDates) => {
@@ -74,7 +71,6 @@ export const FormLoan = ({ id, onClose, mode }) => {
 			});
 		}
 	}, [numQuotes, typeLoan]);
-
 	const onSubmit = handleSubmit(async (values) => {
 		try {
 			console.log(values);
@@ -99,7 +95,6 @@ export const FormLoan = ({ id, onClose, mode }) => {
 			console.error('Error al editar el prestamo:', error);
 		}
 	});
-
 	const handleDateChange = (index, date) => {
 		console.log(date);
 		const updatedDates = [...dueDates];
@@ -107,7 +102,6 @@ export const FormLoan = ({ id, onClose, mode }) => {
 		console.log(updatedDates);
 		setDueDates(updatedDates);
 	};
-
 	if (loanStatus === 'Cargando' || loanStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}
@@ -144,7 +138,6 @@ export const FormLoan = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-
 				<FormInput
 					label='Fecha'
 					name='date'
@@ -160,13 +153,13 @@ export const FormLoan = ({ id, onClose, mode }) => {
 						},
 					}}
 				/>
-
 				<FormSelect
 					label='Tipo'
 					name='typeLoan'
 					register={register}
 					errors={errors}
 					mode={mode}
+					onChange={(e) => setValue('typeLoan', e.target.value)}
 					selectOptions={[
 						{ label: 'Prestamo', value: 'Prestamo' },
 						{ label: 'Adelanto', value: 'Adelanto' },
@@ -179,22 +172,32 @@ export const FormLoan = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
+				<Form.Group className='mb-2'
+					>
+					<Form.Label>Monto</Form.Label>
+					<InputGroup className={`items-center w-[150px] text-black ${
+						mode === 'view'
+							? 'border-1 border-black bg-transparent'
+							: 'border-1 border-black rounded-md bg-white'
+					}`}>
+						<InputGroup.Text>$</InputGroup.Text>
+						<Form.Control
+							type='number'
+							name='valueLoan'
+							{...register('valueLoan', {
+								required: 'El monto es obligatorio.',
+							})}
+							isInvalid={!!errors.valueLoan}
+							readOnly={mode === 'view'}
+							placeholder='Monto'
+							className='py-2'
+						/>
 
-				<FormInput
-					label='Monto'
-					name='valueLoan'
-					type='number'
-					register={register}
-					errors={errors}
-					mode={mode}
-					options={{
-						required: {
-							value: true,
-							message: 'El monto es obligatorio.',
-						},
-					}}
-					readOnly={mode === 'view'}
-				/>
+					</InputGroup>
+					<Form.Control.Feedback type='invalid'>
+						{errors.valueLoan?.message}
+					</Form.Control.Feedback>
+				</Form.Group>
 
 				{typeLoan !== 'Adelanto' && (
 					<FormInput
@@ -203,11 +206,11 @@ export const FormLoan = ({ id, onClose, mode }) => {
 						type='number'
 						register={register}
 						errors={errors}
+						onChange={(e) => setValue('quoteLoan', e.target.value)}
 						mode={mode}
 						readOnly={mode === 'view'}
 					/>
 				)}
-
 				{typeLoan === 'Adelanto' ? (
 					<FormInput
 						label='Vencimiento'
@@ -241,7 +244,6 @@ export const FormLoan = ({ id, onClose, mode }) => {
 						);
 					})
 				)}
-
 				<FormInput
 					label='Observaciones'
 					name='text'
@@ -252,7 +254,6 @@ export const FormLoan = ({ id, onClose, mode }) => {
 					mode={mode}
 					readOnly={mode === 'view'}
 				/>
-
 				<Form.Group className='flex flex-wrap items-center w-full justify-around'>
 					{mode !== 'view' && (
 						<SaveButton

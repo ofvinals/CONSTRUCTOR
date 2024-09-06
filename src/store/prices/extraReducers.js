@@ -8,9 +8,13 @@ import {
 	createSubcategory,
 	updateSubcategory,
 	deleteSubcategory,
-	createItem,
-	updateItem,
-	deleteItem,
+	getItemPrice,
+	getCategoryItemsPrice,
+	getSubcategoryItemsPrice,
+	createCategoryItemPrice,
+	createSubcategoryItemPrice,
+	updateItemPrice,
+	deleteItemPrice,
 } from './thunks';
 
 export const priceExtraReducers = (builder) => {
@@ -26,7 +30,6 @@ export const priceExtraReducers = (builder) => {
 			state.status = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(getCategory.pending, (state) => {
 			state.statusCategory = 'Cargando';
@@ -39,7 +42,6 @@ export const priceExtraReducers = (builder) => {
 			state.statusCategory = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(createCategory.pending, (state) => {
 			state.statusCategory = 'Cargando';
@@ -52,7 +54,6 @@ export const priceExtraReducers = (builder) => {
 			state.statusCategory = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(updateCategory.pending, (state) => {
 			state.statusUpdate = 'Cargando';
@@ -71,28 +72,26 @@ export const priceExtraReducers = (builder) => {
 		})
 		.addCase(deleteCategory.fulfilled, (state, action) => {
 			state.statusDelete = 'Exitoso';
-			state.category = action.payload ;
+			state.category = action.payload;
 		})
 		.addCase(deleteCategory.rejected, (state, action) => {
 			state.statusDelete = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(getSubcategories.pending, (state) => {
-			state.status = 'Cargando'; 
+			state.status = 'Cargando';
 		})
 		.addCase(getSubcategories.fulfilled, (state, action) => {
-			console.log('Subcategories fetched:', action.payload);
+			// console.log('Subcategories fetched:', action.payload);
 			const { categoryId, subcategories } = action.payload;
 			state.status = 'Exitoso';
 			state.subcategories[categoryId] = subcategories;
 		})
 		.addCase(getSubcategories.rejected, (state, action) => {
-			state.state = 'Fallido'; 
+			state.state = 'Fallido';
 			state.error = action.error.message;
 		});
-
 	builder
 		.addCase(createSubcategory.pending, (state) => {
 			state.statusSubcategory = 'Cargando';
@@ -105,7 +104,6 @@ export const priceExtraReducers = (builder) => {
 			state.statusSubcategory = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(updateSubcategory.pending, (state) => {
 			state.statusSubcategory = 'Cargando';
@@ -118,7 +116,6 @@ export const priceExtraReducers = (builder) => {
 			state.statusSubcategory = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(deleteSubcategory.pending, (state) => {
 			state.statusSubcategory = 'Cargando';
@@ -132,38 +129,86 @@ export const priceExtraReducers = (builder) => {
 			state.error = action.payload;
 		});
 	builder
-		.addCase(createItem.pending, (state) => {
-			state.statusCategory = 'Cargando';
+		.addCase(getCategoryItemsPrice.pending, (state) => {
+			state.statusPriceCategory = 'Cargando';
 		})
-		.addCase(createItem.fulfilled, (state, action) => {
-			state.statusCategory = 'Exitoso';
-			state.category = action.payload;
+		.addCase(getCategoryItemsPrice.fulfilled, (state, action) => {
+			state.statusPriceCategory = 'Exitoso';
+			state.itemsPriceCategory = action.payload;
 		})
-		.addCase(createItem.rejected, (state, action) => {
-			state.statusCategory = 'Fallido';
+		.addCase(getCategoryItemsPrice.rejected, (state, action) => {
+			state.statusPriceCategory = 'Fallido';
 			state.error = action.payload;
 		});
 	builder
-		.addCase(updateItem.pending, (state) => {
+		.addCase(getSubcategoryItemsPrice.pending, (state) => {
+			state.statusPriceSubcategory = 'Cargando';
+		})
+		.addCase(getSubcategoryItemsPrice.fulfilled, (state, action) => {
+			state.statusPriceSubcategory = 'Exitoso';
+			state.itemsPriceSubcategory = action.payload;
+		})
+		.addCase(getSubcategoryItemsPrice.rejected, (state, action) => {
+			state.statusPriceSubcategory = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(getItemPrice.pending, (state) => {
+			state.statusPrice = 'Cargando';
+		})
+		.addCase(getItemPrice.fulfilled, (state, action) => {
+			state.statusPrice = 'Exitoso';
+			state.itemPrice = action.payload;
+		})
+		.addCase(getItemPrice.rejected, (state, action) => {
+			state.statusPrice = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(createCategoryItemPrice.pending, (state) => {
+			state.statusPriceCategory = 'Cargando';
+		})
+		.addCase(createCategoryItemPrice.fulfilled, (state, action) => {
+			state.statusPriceCategory = 'Exitoso';
+			state.itemPrice = action.payload;
+		})
+		.addCase(createCategoryItemPrice.rejected, (state, action) => {
+			state.statusPriceCategory = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(createSubcategoryItemPrice.pending, (state) => {
+			state.statusPriceSubcategory = 'Cargando';
+		})
+		.addCase(createSubcategoryItemPrice.fulfilled, (state, action) => {
+			state.statusPriceSubcategory = 'Exitoso';
+			state.itemPrice = action.payload;
+		})
+		.addCase(createSubcategoryItemPrice.rejected, (state, action) => {
+			state.statusPriceSubcategory = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(updateItemPrice.pending, (state) => {
 			state.statusUpdate = 'Cargando';
 		})
-		.addCase(updateItem.fulfilled, (state, action) => {
+		.addCase(updateItemPrice.fulfilled, (state, action) => {
 			state.statusUpdate = 'Exitoso';
-			state.category = action.payload;
+			state.itemPriec = action.payload;
 		})
-		.addCase(updateItem.rejected, (state, action) => {
+		.addCase(updateItemPrice.rejected, (state, action) => {
 			state.statusUpdate = 'Fallido';
 			state.error = action.payload;
 		});
 	builder
-		.addCase(deleteItem.pending, (state) => {
+		.addCase(deleteItemPrice.pending, (state) => {
 			state.statusDelete = 'Cargando';
 		})
-		.addCase(deleteItem.fulfilled, (state, action) => {
+		.addCase(deleteItemPrice.fulfilled, (state, action) => {
 			state.statusDelete = 'Exitoso';
-			state.categories = action.payload;
+			state.itemsPrice = action.payload;
 		})
-		.addCase(deleteItem.rejected, (state, action) => {
+		.addCase(deleteItemPrice.rejected, (state, action) => {
 			state.statusDelete = 'Fallido';
 			state.error = action.payload;
 		});
