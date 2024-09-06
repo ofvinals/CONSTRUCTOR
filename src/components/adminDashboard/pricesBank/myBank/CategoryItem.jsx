@@ -8,7 +8,8 @@ import HashLoader from 'react-spinners/HashLoader';
 import Modals from '../../../../utils/Modals';
 import { FormPrices } from './FormPrices';
 import useModal from '../../../../hooks/useModal';
-import { Dialog } from 'primereact/dialog';
+import ConfirmDialog from '../../../../utils/ConfirmDialog';
+import TableActions from './TableActions';
 
 const CategoryItem = ({
 	category,
@@ -17,12 +18,10 @@ const CategoryItem = ({
 	onDelete,
 	onTitleChange,
 	isSelected,
-	handleCheckboxChange,
 	getCategoryNumber,
 	getSubcategoryNumber,
 	onClick,
 }) => {
-	const [title, setTitle] = useState(category.title);
 	const {
 		categoryStatusUpdate,
 		statusPriceCategory,
@@ -34,22 +33,100 @@ const CategoryItem = ({
 	const editModal = useModal();
 	const viewModal = useModal();
 	const [isOpen, setIsOpen] = useState(false);
+	const [selectAll, setSelectAll] = useState(false);
+	const [title, setTitle] = useState(category.title);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [itemIdToDelete, setItemIdToDelete] = useState(null);
 	const [itemIdToEdit, setItemIdToEdit] = useState(null);
+	const [selectedItemsCategory, setSelectedItemsCategory] = useState({});
+	const [selectedItemsSubcategory, setSelectedItemsSubcategory] = useState({});
 	const handleBlur = (e) => {
 		const newTitle = e.target.value;
 		if (newTitle !== category.title) {
 			onTitleChange('rubro', category.uid, newTitle);
 		} else return;
 	};
-
 	useEffect(() => {
 		if (isOpen) {
 			getCategoryItemsPrice({ categoryId: category.uid });
 		}
 	}, [isOpen, category.uid]);
-
+	useEffect(() => {
+		if (itemsPriceCategory?.items?.length > 0) {
+			const allSelected = itemsPriceCategory.items.every(
+				(item) =>
+					selectedItemsCategory[category.uid]?.includes(item.uid) ||
+					selectAll
+			);
+			setSelectAll(allSelected);
+		}
+	}, [itemsPriceCategory, selectedItemsCategory, selectAll]);
+	const handleSelectAllChange = () => {
+		const newSelectAll = !selectAll;
+		setSelectAll(newSelectAll);
+		if (itemsPriceCategory?.items) {
+			itemsPriceCategory.items.forEach((item) => {
+				handleCheckboxChange({
+					type: 'rubro',
+					categoryId: category.uid,
+					itemId: item.uid,
+					isChecked: newSelectAll,
+				});
+			});
+		}
+	};
+	const handleItemCheckboxChange = (itemUid, isChecked) => {
+		handleCheckboxChange({
+			type: 'rubro',
+			categoryId: category.uid,
+			itemId: itemUid,
+			isChecked,
+		});
+	};
+	const handleCheckboxChange = ({
+		categoryId,
+		subcategoryId,
+		itemId,
+		isChecked,
+	}) => {
+		setSelectedItemsCategory((prevState) => {
+			const updatedItems = { ...prevState };
+			if (!updatedItems[categoryId]) {
+				updatedItems[categoryId] = [];
+			}
+			if (isChecked) {
+				// Añadir itemId si está marcado
+				if (!updatedItems[categoryId].includes(itemId)) {
+					updatedItems[categoryId].push(itemId);
+				}
+			} else {
+				// Eliminar itemId si está desmarcado
+				updatedItems[categoryId] = updatedItems[categoryId].filter(
+					(id) => id !== itemId
+				);
+			}
+			console.log(updatedItems);
+			return updatedItems;
+		});
+		setSelectedItemsSubcategory((prevState) => {
+			const updatedItems = { ...prevState };
+			if (!updatedItems[subcategoryId]) {
+				updatedItems[subcategoryId] = [];
+			}
+			if (isChecked) {
+				// Añadir itemId si está marcado
+				if (!updatedItems[subcategoryId].includes(itemId)) {
+					updatedItems[subcategoryId].push(itemId);
+				}
+			} else {
+				// Eliminar itemId si está desmarcado
+				updatedItems[subcategoryId] = updatedItems[subcategoryId].filter(
+					(id) => id !== itemId
+				);
+			}
+			return updatedItems;
+		});
+	};
 	const handleDeleteItem = () => {
 		if (itemIdToDelete) {
 			onDelete({ id: itemIdToDelete });
@@ -57,23 +134,6 @@ const CategoryItem = ({
 		}
 	};
 
-	const footerContent = (
-		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2 '
-				onClick={() => setShowConfirmDialog(false)}
-				className=' hover:bg-red-100 p-2 rounded-md shadow-none focus:shadow-none'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2 shadow-none'
-				onClick={handleDeleteItem}
-				className='p-button-text hover:bg-green-200 p-2 rounded-md'
-			/>
-		</div>
-	);
-	console.log(itemIdToEdit);
 	return (
 		<>
 			<Accordion.Item
@@ -89,11 +149,9 @@ const CategoryItem = ({
 						<div className='flex flex-row items-center justify-start'>
 							<input
 								type='checkbox'
-								checked={isSelected('rubro', category.uid)}
-								onChange={(e) => {
-									handleCheckboxChange('rubro', category.uid),
-										e.stopPropagation();
-								}}
+								checked={selectAll}
+								onChange={handleSelectAllChange}
+								onClick={(e) => e.stopPropagation()}
 								className='ml-2 rounded-md size-4'
 							/>
 							<input
@@ -111,18 +169,20 @@ const CategoryItem = ({
 								onClick={(e) => e.stopPropagation()}
 							/>
 						</div>
-						<Button
-							type='button'
-							className='bg-transparent border-none flex items-end text-black'
-							onClick={(e) => {
-								e.stopPropagation();
-								onDelete({
-									type: 'rubro',
-									categoryId: category.uid,
-								});
-							}}>
-							<i className='pi pi-trash ml-2 p-2 rounded-md hover:text-red-500 font-semibold text-lg'></i>
-						</Button>
+						<div>
+							<Button
+								type='button'
+								className='bg-transparent border-none flex items-end text-black'
+								onClick={(e) => {
+									e.stopPropagation();
+									onDelete({
+										type: 'rubro',
+										categoryId: category.uid,
+									});
+								}}>
+								<i className='pi pi-trash ml-2 p-2 rounded-md hover:text-red-500 font-semibold text-lg'></i>
+							</Button>
+						</div>
 					</div>
 				</Accordion.Header>
 				<Accordion.Body className='flex flex-col flex-wrap items-start space-y-3'>
@@ -135,6 +195,7 @@ const CategoryItem = ({
 							<Table striped bordered hover responsive>
 								<thead>
 									<tr>
+										<th>#</th>
 										<th>Descripción</th>
 										<th>Unidad</th>
 										<th>Precio</th>
@@ -144,34 +205,42 @@ const CategoryItem = ({
 								<tbody>
 									{itemsPriceCategory?.items?.map((item, index) => (
 										<tr key={index}>
+											<td>
+												<input
+													type='checkbox'
+													checked={
+														selectedItemsCategory[
+															category.uid
+														]?.includes(item.uid) || false
+													}
+													onClick={(e) => e.stopPropagation()}
+													onChange={(e) =>
+														handleItemCheckboxChange(
+															item.uid,
+															e.target.checked
+														)
+													}
+													className='ml-2 rounded-md size-4'
+												/>
+											</td>
 											<td>{item.shortDescription}</td>
 											<td>{item.unitType}</td>
 											<td>$ {item.unitPrice}</td>
 											<td className='flex  items-center justify-around '>
-												<Button
-													className=' bg-transparent border-none py-0 mx-1'
-													onClick={() => {
+												<TableActions
+													onEdit={() => {
 														editModal.openModal(),
 															setItemIdToEdit(item.uid);
-													}}>
-													<i className='pi pi-pen-to-square font-bold text-xl text-green-500 hover:text-green-300'></i>
-												</Button>
-												<Button
-													className=' bg-transparent border-none py-0 mx-1'
-													onClick={() => {
+													}}
+													onView={() => {
 														viewModal.openModal(),
 															setItemIdToEdit(item.uid);
-													}}>
-													<i className='pi pi-eye font-bold text-xl text-blue-500 hover:text-blue-300'></i>
-												</Button>
-												<Button
-													className=' bg-transparent border-none py-0 mx-1'
-													onClick={() => {
+													}}
+													onDelete={() => {
 														setShowConfirmDialog(true),
 															setItemIdToDelete(item.uid);
-													}}>
-													<i className='pi pi-trash font-bold text-xl text-red-500 hover:text-red-300'></i>
-												</Button>
+													}}
+												/>
 											</td>
 										</tr>
 									))}
@@ -203,70 +272,76 @@ const CategoryItem = ({
 							<HashLoader size={25} />
 						</div>
 					) : (
-						<Accordion className='w-full'>
-							{subcategories.map((subcategory) => (
-								<SubcategoryItem
-									key={subcategory.uid}
-									subcategory={subcategory}
-									categoryId={category.uid}
-									onTitleChange={onTitleChange}
-									onDelete={onDelete}
-									isSelected={isSelected}
-									handleCheckboxChange={handleCheckboxChange}
-									getSubcategoryNumber={getSubcategoryNumber}
-								/>
-							))}
-						</Accordion>
+						<div className='w-full'>
+							<Accordion>
+								{subcategories.map((subcategory) => (
+									<SubcategoryItem
+										key={subcategory.uid}
+										subcategory={subcategory}
+										categoryId={category.uid}
+										onTitleChange={onTitleChange}
+										selectedItemsSubcategory={
+											selectedItemsSubcategory
+										}
+										onDelete={onDelete}
+										isSelected={isSelected}
+										handleCheckboxChange={handleCheckboxChange}
+										getSubcategoryNumber={getSubcategoryNumber}
+									/>
+								))}
+							</Accordion>
+						</div>
 					)}
 				</Accordion.Body>
 			</Accordion.Item>
-			<Modals
-				fullscreen={true}
-				isOpen={newModal.isOpen}
-				onClose={newModal.closeModal}
-				title='Ingresar Nuevo Item de Rubro'>
-				<FormPrices
+			<div>
+				<Modals
+					fullscreen={true}
+					isOpen={newModal.isOpen}
 					onClose={newModal.closeModal}
-					categoryId={category.uid}
-					mode='create'
-					type='category'
-				/>
-			</Modals>
-			<Modals
-				fullscreen={true}
-				isOpen={editModal.isOpen}
-				onClose={editModal.closeModal}
-				title='Editar Item de Rubro'>
-				<FormPrices
-					id={itemIdToEdit}
+					title='Ingresar Nuevo Item de Rubro'>
+					<FormPrices
+						onClose={newModal.closeModal}
+						categoryId={category.uid}
+						mode='create'
+						type='category'
+					/>
+				</Modals>
+				<Modals
+					fullscreen={true}
+					isOpen={editModal.isOpen}
 					onClose={editModal.closeModal}
-					categoryId={category.uid}
-					mode='edit'
-					type='category'
-				/>
-			</Modals>
-			<Modals
-				fullscreen={true}
-				isOpen={viewModal.isOpen}
-				onClose={viewModal.closeModal}
-				title='Ver Item de Rubro'>
-				<FormPrices
-					id={itemIdToEdit}
+					title='Editar Item de Rubro'>
+					<FormPrices
+						id={itemIdToEdit}
+						onClose={editModal.closeModal}
+						categoryId={category.uid}
+						mode='edit'
+						type='category'
+					/>
+				</Modals>
+				<Modals
+					fullscreen={true}
+					isOpen={viewModal.isOpen}
 					onClose={viewModal.closeModal}
-					categoryId={category.uid}
-					mode='view'
-					type='category'
+					title='Ver Item de Rubro'>
+					<FormPrices
+						id={itemIdToEdit}
+						onClose={viewModal.closeModal}
+						categoryId={category.uid}
+						mode='view'
+						type='category'
+					/>
+				</Modals>
+				<ConfirmDialog
+					header='Confirmar Eliminacion'
+					visible={showConfirmDialog}
+					onHide={() => setShowConfirmDialog(false)}
+					onConfirm={handleDeleteItem}
+					message='¿Estás seguro de que quieres eliminar el item?'
 				/>
-			</Modals>
-			<Dialog
-				visible={showConfirmDialog}
-				onHide={() => setShowConfirmDialog(false)}
-				header='Confirmar Eliminación'
-				footer={footerContent}>
-				<p>¿Estás seguro de que quieres eliminar el item?</p>
-			</Dialog>
+			</div>
 		</>
 	);
 };
-
 export default CategoryItem;

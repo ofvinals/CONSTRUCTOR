@@ -53,12 +53,11 @@
 .custom-accordion .accordion-button:hover {
 	background-color: #ffe57c !important;
 }
-
-.custom-accordion .accordion-button:active {
+.custom-accordion .accordion-button:focus {
 	background-color: #ffd52b !important;
 }
 .custom-accordion .accordion-button::after {
-	margin: 0px 20px 0px ;
+	margin: 0px 20px 0px;
 }
 
 .modal-header {

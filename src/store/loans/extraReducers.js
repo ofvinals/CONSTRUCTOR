@@ -3,6 +3,8 @@ import {
 	getLoans,
 	createLoan,
 	updateLoan,
+	deleteLoan,
+	payLoan
 } from './thunks';
 
 export const loanExtraReducers = (builder) => {
@@ -18,7 +20,6 @@ export const loanExtraReducers = (builder) => {
 			state.status = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(getLoan.pending, (state) => {
 			state.statusLoan = 'Cargando';
@@ -31,7 +32,6 @@ export const loanExtraReducers = (builder) => {
 			state.statusLoan = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(createLoan.pending, (state) => {
 			state.statusLoan = 'Cargando';
@@ -44,7 +44,6 @@ export const loanExtraReducers = (builder) => {
 			state.statusLoan = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(updateLoan.pending, (state) => {
 			state.statusUpdate = 'Cargando';
@@ -54,6 +53,30 @@ export const loanExtraReducers = (builder) => {
 			state.loan = action.payload;
 		})
 		.addCase(updateLoan.rejected, (state, action) => {
+			state.statusUpdate = 'Fallido';
+			state.error = action.payload;
+		});
+		builder
+		.addCase(deleteLoan.pending, (state) => {
+			state.statusUpdate = 'Cargando';
+		})
+		.addCase(deleteLoan.fulfilled, (state, action) => {
+			state.statusUpdate = 'Exitoso';
+			state.loans = action.payload;
+		})
+		.addCase(deleteLoan.rejected, (state, action) => {
+			state.statusUpdate = 'Fallido';
+			state.error = action.payload;
+		});
+		builder
+		.addCase(payLoan.pending, (state) => {
+			state.statusUpdate = 'Cargando';
+		})
+		.addCase(payLoan.fulfilled, (state, action) => {
+			state.statusUpdate = 'Exitoso';
+			state.loan = action.payload;
+		})
+		.addCase(payLoan.rejected, (state, action) => {
 			state.statusUpdate = 'Fallido';
 			state.error = action.payload;
 		});

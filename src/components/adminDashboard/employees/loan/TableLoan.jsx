@@ -8,22 +8,31 @@ import {
 	Edit as EditIcon,
 	Visibility as VisibilityIcon,
 	Delete as DeleteIcon,
+	Paid as PaidIcon,
 } from '@mui/icons-material';
 import Modals from '../../../../utils/Modals';
 import { FormLoan } from './FormLoan';
 import useModal from '../../../../hooks/useModal';
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
+import ConfirmDialog from '../../../../utils/ConfirmDialog';
+import { useAuth } from '../../../../hooks/useAuth';
 
 export const TableLoan = () => {
-	const { loans, updateLoan, deleteLoan, allLoanStatus, loanStatusDelete } =
-		useLoanActions();
+	const {
+		loans,
+		updateLoan,
+		deleteLoan,
+		allLoanStatus,
+		loanStatusDelete,
+		payLoan,
+	} = useLoanActions();
+	const { loggedUser } = useAuth();
+	const superAdmin = loggedUser.superAdmin;
 	const [validationErrors, setValidationErrors] = useState({});
 	const [rowId, setRowId] = useState(null);
 	const viewModal = useModal();
 	const editModal = useModal();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
+	const [showConfirmPayDialog, setShowConfirmPayDialog] = useState(false);
 	const formatDate = (date) => {
 		const parsedDate = DateTime.fromISO(date, {
 			zone: 'America/Argentina/Buenos_Aires',
@@ -33,7 +42,7 @@ export const TableLoan = () => {
 		}
 		return '';
 	};
-
+	const filteredLoans = loans.filter((loan) => loan.isPay === false);
 	const formatCurrency = (value) => {
 		const numberValue = parseFloat(value);
 		if (!isNaN(numberValue)) {
@@ -45,7 +54,6 @@ export const TableLoan = () => {
 		}
 		return value;
 	};
-
 	const handleUpdateLoan = async ({ values, row, table }) => {
 		try {
 			const id = row.original.uid;
@@ -58,11 +66,16 @@ export const TableLoan = () => {
 			console.error('Error al actualizar el prestamo:', error);
 		}
 	};
-
 	const handleDeleteLoan = () => {
 		if (rowId) {
 			deleteLoan({ id: rowId });
 			setShowConfirmDialog(false);
+		}
+	};
+	const handlePayLoan = () => {
+		if (rowId) {
+			payLoan({ id: rowId });
+			setShowConfirmPayDialog(false);
 		}
 	};
 	const columns = useMemo(
@@ -116,7 +129,6 @@ export const TableLoan = () => {
 		],
 		[]
 	);
-
 	const actions = (row) => [
 		{
 			text: 'Ver',
@@ -130,40 +142,29 @@ export const TableLoan = () => {
 			text: 'Editar',
 			icon: <EditIcon color='success' cursor='pointer' />,
 			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					editModal.openModal();
-				}
+				setRowId(row.original.uid);
+				editModal.openModal();
+			},
+		},
+		{
+			text: 'Marcar Pagado',
+			icon: <PaidIcon color='black' cursor='pointer' />,
+			onClick: () => {
+				setRowId(row.original.uid);
+				setShowConfirmPayDialog(true);
 			},
 		},
 		{
 			text: 'Eliminar',
-			icon: <DeleteIcon color='error' cursor='pointer' />,
+			icon: superAdmin ? (
+				<DeleteIcon color='error' cursor='pointer' />
+			) : null,
 			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					setShowConfirmDialog(true);
-				}
+				setRowId(row.original.uid);
+				setShowConfirmDialog(true);
 			},
 		},
 	];
-
-	const footerContent = (
-		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={() => setShowConfirmDialog(false)}
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={handleDeleteLoan}
-				className='p-button-text hover:bg-green-200 p-2 rounded-md'
-			/>
-		</div>
-	);
 
 	return (
 		<section className='bg-background pb-3'>
@@ -175,7 +176,7 @@ export const TableLoan = () => {
 					<div className='table-responsive'>
 						<Table
 							columns={columns}
-							data={loans}
+							data={filteredLoans}
 							actions={actions}
 							validationErrors={validationErrors}
 							setValidationErrors={setValidationErrors}
@@ -197,13 +198,20 @@ export const TableLoan = () => {
 				title='Ver Datos del Adelanto/Prestamo'>
 				<FormLoan id={rowId} onClose={viewModal.closeModal} mode='view' />
 			</Modals>
-			<Dialog
+			<ConfirmDialog
+				header='Confirmar Eliminacion'
 				visible={showConfirmDialog}
 				onHide={() => setShowConfirmDialog(false)}
-				header='Confirmar Eliminación'
-				footer={footerContent}>
-				<p>¿Estás seguro de que quieres eliminar el adelanto/prestamo?</p>
-			</Dialog>
+				onConfirm={handleDeleteLoan}
+				message='¿Estás seguro de que quieres eliminar el adelanto?'
+			/>
+			<ConfirmDialog
+				header='Confirmar Pago'
+				visible={showConfirmPayDialog}
+				onHide={() => setShowConfirmPayDialog(false)}
+				onConfirm={handlePayLoan}
+				message='¿Estás seguro de que quieres confirmar el pago?'
+			/>
 		</section>
 	);
 };

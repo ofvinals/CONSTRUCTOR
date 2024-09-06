@@ -9,6 +9,7 @@ import {
 	query,
 	collection,
 	updateDoc,
+	deleteDoc,
 } from 'firebase/firestore';
 import { showToast } from '../toast/slice';
 
@@ -117,6 +118,62 @@ export const updateLoan = createAsyncThunk(
 			);
 			console.error('Error:', error);
 			throw error;
+		}
+	}
+);
+
+export const deleteLoan = createAsyncThunk(
+	'employee/deleteLoan',
+	async ({ id }, { dispatch }) => {
+		try {
+			await deleteDoc(doc(db, 'loans', id));
+			dispatch(getLoans());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Adelanto eliminado exitosamente',
+				})
+			);
+			return;
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al eliminar el adelanto',
+				})
+			);
+			console.error('Error al eliminar el adelanto:', error);
+			throw error;
+		}
+	}
+);
+export const payLoan = createAsyncThunk(
+	'employee/payLoan',
+	async ({ id }, { rejectWithValue, dispatch }) => {
+		try {
+			const LoanDoc = doc(db, 'loans', id);
+			await updateDoc(LoanDoc, { isPay: true });
+			const updatedLoan = await getDoc(LoanDoc);
+			dispatch(getLoans());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Pago registrado exitosamente',
+				})
+			);
+			if (updatedLoan.exists()) {
+				return { uid: updatedLoan.uid, ...updatedLoan.data() };
+			} else {
+				return null;
+			}
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al registrar el pago',
+				})
+			);
+			return rejectWithValue(error.message);
 		}
 	}
 );

@@ -14,8 +14,7 @@ import { Table } from '../../../utils/Table';
 import Modals from '../../../utils/Modals';
 import { FormEmployees } from './FormEmployees';
 import { useAuth } from '../../../hooks/useAuth';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
+import ConfirmDialog from '../../../utils/ConfirmDialog';
 
 export const TableEmployees = ({ employees }) => {
 	const {
@@ -27,8 +26,6 @@ export const TableEmployees = ({ employees }) => {
 	} = useEmployeeActions();
 	const { loggedUser } = useAuth();
 	const superAdmin = loggedUser.superAdmin;
-	const admin = loggedUser.admin;
-	const coadmin = loggedUser.coadmin;
 	const [rowId, setRowId] = useState(null);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -101,15 +98,10 @@ export const TableEmployees = ({ employees }) => {
 		},
 		{
 			text: 'Editar',
-			icon:
-				admin || coadmin ? (
-					<EditIcon color='success' cursor='pointer' />
-				) : null,
+			icon: <EditIcon color='success' cursor='pointer' />,
 			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					editModal.openModal();
-				}
+				setRowId(row.original.uid);
+				editModal.openModal();
 			},
 		},
 		{
@@ -118,10 +110,8 @@ export const TableEmployees = ({ employees }) => {
 				<DeleteIcon color='error' cursor='pointer' />
 			) : null,
 			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					setShowConfirmDialog(true);
-				}
+				setRowId(row.original.uid);
+				setShowConfirmDialog(true);
 			},
 		},
 		{
@@ -141,23 +131,6 @@ export const TableEmployees = ({ employees }) => {
 		},
 	];
 
-	const footerContent = (
-		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={() => setShowConfirmDialog(false)}
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={handleDeleteEmployee}
-				className='p-button-text hover:bg-green-200 p-2 rounded-md'
-			/>
-		</div>
-	);
-
 	return (
 		<>
 			<section className='bg-background pb-3 '>
@@ -168,7 +141,11 @@ export const TableEmployees = ({ employees }) => {
 						<Loader />
 					) : (
 						<div className='table-responsive'>
-							<Table columns={columns} data={employees} actions={actions} />
+							<Table
+								columns={columns}
+								data={employees}
+								actions={actions}
+							/>
 						</div>
 					)}
 				</div>
@@ -177,7 +154,7 @@ export const TableEmployees = ({ employees }) => {
 					<Modals
 						isOpen={editModal.isOpen}
 						onClose={editModal.closeModal}
-						title='Editar Datos del Cliente'>
+						title='Editar Datos del Empleado'>
 						<FormEmployees
 							id={rowId}
 							onClose={editModal.closeModal}
@@ -187,20 +164,20 @@ export const TableEmployees = ({ employees }) => {
 					<Modals
 						isOpen={viewModal.isOpen}
 						onClose={viewModal.closeModal}
-						title='Ver Datos del Cliente'>
+						title='Ver Datos del Empleado'>
 						<FormEmployees
 							id={rowId}
 							onClose={viewModal.closeModal}
 							mode='view'
 						/>
 					</Modals>
-					<Dialog
-						visible={showConfirmDialog}
-						onHide={() => setShowConfirmDialog(false)}
-						header='Confirmar Eliminación'
-						footer={footerContent}>
-						<p>¿Estás seguro de que quieres eliminar este empleado?</p>
-					</Dialog>
+					<ConfirmDialog
+				header='Confirmar Eliminacion'
+				visible={showConfirmDialog}
+				onHide={() => setShowConfirmDialog(false)}
+				onConfirm={handleDeleteEmployee}
+				message='¿Estás seguro de que quieres eliminar el empleado?'
+			/>
 				</div>
 			</section>
 		</>
