@@ -62,16 +62,16 @@ export const FormPrices = ({
 
 	useEffect(() => {
 		if (itemPrice && (mode === 'edit' || mode === 'view')) {
-			setValue('shortDescription', itemPrice.shortDescription);
-			setValue('largeDescription', itemPrice.largeDescription);
-			setValue('unitType', itemPrice.unitType);
-			setValue('unitPrice', itemPrice.unitPrice);
-			setValue('itemDescription', itemPrice.items.itemDescription);
-			setValue('itemUnit', itemPrice.items.itemUnit);
-			setValue('itemCant', itemPrice.items.itemCant);
-			setValue('itemPrice', itemPrice.items.itemPrice);
-			setValue('itemtotalPrice', itemPrice.items.itemtotalPrice);
-			setValue('FinalPrice', itemPrice.FinalPrice);
+			setValue('shortDescription', itemPrice?.shortDescription);
+			setValue('largeDescription', itemPrice?.largeDescription);
+			setValue('unitType', itemPrice?.unitType);
+			setValue('unitPrice', itemPrice?.unitPrice);
+			setValue('itemDescription', itemPrice.items?.itemDescription);
+			setValue('itemUnit', itemPrice.items?.itemUnit);
+			setValue('itemCant', itemPrice.items?.itemCant);
+			setValue('itemPrice', itemPrice.items?.itemPrice);
+			setValue('itemtotalPrice', itemPrice.items?.itemtotalPrice);
+			setValue('FinalPrice', itemPrice?.FinalPrice);
 		}
 	}, [itemPrice]);
 

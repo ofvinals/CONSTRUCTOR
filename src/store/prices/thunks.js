@@ -138,7 +138,6 @@ export const deleteCategory = createAsyncThunk(
 		console.log(id);
 		try {
 			const categoryRef = doc(db, 'categories', id);
-
 			// Eliminar subcategorías e items
 			const subcategoriesSnapshot = await getDocs(
 				collection(categoryRef, 'subcategories')
@@ -394,7 +393,6 @@ export const getItemPrice = createAsyncThunk(
 	async ({ categoryId, subcategoryId, itemId, type }, { dispatch }) => {
 		try {
 			let itemRef;
-
 			// Determina la referencia del documento según el nivel
 			if (type === 'subcategory') {
 				// Buscar en una subcategoría

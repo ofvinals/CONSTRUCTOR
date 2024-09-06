@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { Accordion } from 'react-bootstrap';
 import CategoryItem from './CategoryItem';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
+import ConfirmDialog from '../../../../utils/ConfirmDialog';
 import { usePriceActions } from '../../../../hooks/usePriceActions';
 import '../../../../styles/Custom.css';
 import HashLoader from 'react-spinners/HashLoader';
 
 export const AccordionPrices = () => {
-	const [selectedItems, setSelectedItems] = useState({});
-	const [showDialog, setShowDialog] = useState(false);
+	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [deleteItem, setDeleteItem] = useState({
 		type: '',
 		categoryId: '',
@@ -58,8 +57,8 @@ export const AccordionPrices = () => {
 		await createSubcategory({ values: newSubcategory, categoryId });
 	};
 	const handleDelete = (type, id) => {
-		setDeleteItem( type, id );
-		setShowDialog(true);
+		setDeleteItem(type, id);
+		setShowConfirmDialog(true);
 	};
 	const confirmDelete = async () => {
 		if (deleteItem.type === 'rubro') {
@@ -70,49 +69,9 @@ export const AccordionPrices = () => {
 				subcategoryId: deleteItem.subcategoryId,
 			});
 		}
-		setShowDialog(false);
+		setShowConfirmDialog(false);
 		setDeleteItem({ type: '', id: '' });
 	};
-	const footerContent = (
-		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={() => setShowDialog(false)}
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={confirmDelete}
-				className='p-button-text hover:bg-green-200 p-2 rounded-md'
-			/>
-		</div>
-	);
-	const handleCheckboxChange = (type, id) => {
-		if (type === 'rubro') {
-			const category = categories.find((cat) => cat.uid === id);
-			const isChecked = !selectedItems[`${type}-${id}`];
-			setSelectedItems((prevSelectedItems) => {
-				const updatedSelectedItems = {
-					...prevSelectedItems,
-					[`${type}-${id}`]: isChecked,
-				};
-				if (category.subcategories.length > 0) {
-					category.subcategories.forEach((subcat) => {
-						updatedSelectedItems[`subcategory-${subcat.uid}`] = isChecked;
-					});
-				}
-				return updatedSelectedItems;
-			});
-		} else if (type === 'subrubro') {
-			setSelectedItems((prevSelectedItems) => ({
-				...prevSelectedItems,
-				[`${type}-${id}`]: !prevSelectedItems[`${type}-${id}`],
-			}));
-		}
-	};
-	const isSelected = (type, id) => !!selectedItems[`${type}-${id}`];
 	const handleTitleChange = async (type, id, newTitle, categoryId) => {
 		if (type === 'rubro') {
 			await updateCategory({ id, values: { title: newTitle } });
@@ -138,10 +97,6 @@ export const AccordionPrices = () => {
 							onDelete={handleDelete}
 							onTitleChange={handleTitleChange}
 							getCategoryNumber={getCategoryNumber}
-							isSelected={isSelected}
-							handleCheckboxChange={() =>
-								handleCheckboxChange('rubro', category.uid)
-							}
 							getSubcategoryNumber={getSubcategoryNumber}
 							onClick={() => handleCategoryClick(category.uid)}
 							loadingCategoryId={loadingCategoryId}
@@ -160,13 +115,13 @@ export const AccordionPrices = () => {
 					)}
 				</Button>
 			</div>
-			<Dialog
-				visible={showDialog}
-				onHide={() => setShowDialog(false)}
-				header='Confirmar Eliminación'
-				footer={footerContent}>
-				<p>{`¿Estás seguro de que quieres eliminar el ${deleteItem.type}?`}</p>
-			</Dialog>
+			<ConfirmDialog
+				header='Confirmar Eliminacion'
+				visible={showConfirmDialog}
+				onHide={() => setShowConfirmDialog(false)}
+				onConfirm={confirmDelete}
+				message='¿Estás seguro de que quieres eliminar el adelanto?'
+			/>
 		</>
 	);
 };

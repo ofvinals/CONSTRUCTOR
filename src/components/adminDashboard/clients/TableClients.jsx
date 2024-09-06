@@ -13,8 +13,7 @@ import { Table } from '../../../utils/Table';
 import Modals from '../../../utils/Modals';
 import { FormClients } from './FormClients';
 import { useAuth } from '../../../hooks/useAuth';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
+import ConfirmDialog from '../../../utils/ConfirmDialog';
 import { useUserActions } from '../../../hooks/useUserActions';
 
 export const TableClients = ({ users }) => {
@@ -27,21 +26,16 @@ export const TableClients = ({ users }) => {
 	} = useUserActions();
 	const { loggedUser } = useAuth();
 	const superAdmin = loggedUser.superAdmin;
-	const admin = loggedUser.admin;
-	const coadmin = loggedUser.coadmin;
 	const [rowId, setRowId] = useState(null);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
 	const viewModal = useModal();
 	const editModal = useModal();
-
 	const handleDeleteUser = () => {
 		if (rowId) {
 			deleteUser({ id: rowId });
 			setShowConfirmDialog(false);
 		}
 	};
-
 	const handleConfirmDisable = async (uid) => {
 		try {
 			await disableUser({ id: uid });
@@ -49,7 +43,6 @@ export const TableClients = ({ users }) => {
 			console.error('Error al deshabilitar usuario:', error);
 		}
 	};
-
 	const handleConfirmEnable = async (uid) => {
 		try {
 			await enableUser({ id: uid });
@@ -57,7 +50,6 @@ export const TableClients = ({ users }) => {
 			console.error('Error al habilitar usuario:', error);
 		}
 	};
-
 	const columns = React.useMemo(
 		() => [
 			{
@@ -89,7 +81,6 @@ export const TableClients = ({ users }) => {
 		],
 		[]
 	);
-
 	const actions = (row) => [
 		{
 			text: 'Ver',
@@ -101,15 +92,10 @@ export const TableClients = ({ users }) => {
 		},
 		{
 			text: 'Editar',
-			icon:
-				admin || coadmin ? (
-					<EditIcon color='success' cursor='pointer' />
-				) : null,
+			icon: <EditIcon color='success' cursor='pointer' />,
 			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					editModal.openModal();
-				}
+				setRowId(row.original.uid);
+				editModal.openModal();
 			},
 		},
 		{
@@ -118,10 +104,8 @@ export const TableClients = ({ users }) => {
 				<DeleteIcon color='error' cursor='pointer' />
 			) : null,
 			onClick: () => {
-				if (!row.original.admin) {
-					setRowId(row.original.uid);
-					setShowConfirmDialog(true);
-				}
+				setRowId(row.original.uid);
+				setShowConfirmDialog(true);
 			},
 		},
 		{
@@ -141,23 +125,6 @@ export const TableClients = ({ users }) => {
 		},
 	];
 
-	const footerContent = (
-		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={() => setShowConfirmDialog(false)}
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={handleDeleteUser}
-				className='p-button-text hover:bg-green-200 p-2 rounded-md'
-			/>
-		</div>
-	);
-
 	return (
 		<>
 			<section className='bg-background pb-3 '>
@@ -172,7 +139,6 @@ export const TableClients = ({ users }) => {
 						</div>
 					)}
 				</div>
-
 				<div>
 					<Modals
 						isOpen={editModal.isOpen}
@@ -194,13 +160,13 @@ export const TableClients = ({ users }) => {
 							mode='view'
 						/>
 					</Modals>
-					<Dialog
+					<ConfirmDialog
+						header='Confirmar Eliminacion'
 						visible={showConfirmDialog}
 						onHide={() => setShowConfirmDialog(false)}
-						header='Confirmar Eliminación'
-						footer={footerContent}>
-						<p>¿Estás seguro de que quieres eliminar este usuario?</p>
-					</Dialog>
+						onConfirm={handleDeleteUser}
+						message='¿Estás seguro de que quieres eliminar el cliente?'
+					/>
 				</div>
 			</section>
 		</>

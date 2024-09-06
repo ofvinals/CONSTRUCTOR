@@ -7,7 +7,7 @@ import Loader from '../../../utils/Loader';
 import useModal from '../../../hooks/useModal';
 import Modals from '../../../utils/Modals';
 import { FormEmployees } from './FormEmployees';
-import { Dialog } from 'primereact/dialog';
+import ConfirmDialog from '../../../utils/ConfirmDialog';
 import Avatar from 'react-avatar';
 import '../../../styles/Custom.css';
 import { useAuth } from '../../../hooks/useAuth';
@@ -26,7 +26,6 @@ export const CardEmployees = ({ employees }) => {
 	const [employeeId, setEmployeeId] = useState(null);
 	const editModal = useModal();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
 	const handleConfirmDisable = async (uid) => {
 		try {
 			await disableEmployee({ id: uid });
@@ -34,7 +33,6 @@ export const CardEmployees = ({ employees }) => {
 			console.error('Error al deshabilitar usuario:', error);
 		}
 	};
-
 	const handleConfirmEnable = async (uid) => {
 		try {
 			await enableEmployee({ id: uid });
@@ -42,45 +40,23 @@ export const CardEmployees = ({ employees }) => {
 			console.error('Error al habilitar usuario:', error);
 		}
 	};
-
 	const handleShowDeleteConfirm = (uid) => {
 		setEmployeeId(uid);
 		setShowConfirmDialog(true);
 	};
-
 	const handleDeleteEmployee = () => {
 		if (employeeId) {
 			deleteEmployee({ id: employeeId });
 			setShowConfirmDialog(false);
 		}
 	};
-
-	const footerContent = (
-		<div>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={() => setShowConfirmDialog(false)}
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={handleDeleteEmployee}
-				className='p-button-text hover:bg-green-100 p-2 rounded-md'
-			/>
-		</div>
-	);
-
 	const onPageChange = (event) => {
 		setFirst(event.first);
 		setRows(event.rows);
 	};
-
 	if (allEmployeesStatus === 'Cargando') {
 		return <Loader />;
 	}
-
 	const paginatedEmployees = employees.slice(first, first + rows);
 
 	return (
@@ -192,13 +168,13 @@ export const CardEmployees = ({ employees }) => {
 					mode='edit'
 				/>
 			</Modals>
-			<Dialog
+			<ConfirmDialog
+				header='Confirmar Eliminacion'
 				visible={showConfirmDialog}
 				onHide={() => setShowConfirmDialog(false)}
-				header='Confirmar Eliminación'
-				footer={footerContent}>
-				<p>¿Estás seguro de que quieres eliminar este empleado?</p>
-			</Dialog>
+				onConfirm={handleDeleteEmployee}
+				message='¿Estás seguro de que quieres eliminar el empleado?'
+			/>
 		</>
 	);
 };

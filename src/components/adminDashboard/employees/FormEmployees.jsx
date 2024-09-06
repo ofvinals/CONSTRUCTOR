@@ -28,13 +28,11 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 		employeeStatusUpdate,
 		configState,
 	} = useEmployeeActions();
-
 	useEffect(() => {
 		if (mode === 'edit' || mode === 'view') {
 			getEmployee({ id });
 		}
 	}, [id]);
-
 	useEffect(() => {
 		if (employee && (mode === 'edit' || mode === 'view')) {
 			setValue('nombre', employee.nombre);
@@ -51,22 +49,18 @@ export const FormEmployees = ({ id, onClose, mode }) => {
 			setValue('cel', employee.cel);
 		}
 	}, [employee]);
-
 	const onSubmit = handleSubmit(async (values) => {
 		try {
 			const { nombre, apellido, position } = values;
 			const displayName = `${nombre} ${apellido}`;
-
 			// Parse the position field to get label and hourlyRate
 			const parsedPosition = JSON.parse(position);
-
 			const updatedValues = {
 				...values,
 				displayName,
 				position: parsedPosition.label,
 				valuePosition: parsedPosition.hourlyRate,
 			};
-console.log(updatedValues)
 			if (mode === 'edit') {
 				await updateEmployee({ id, values: updatedValues });
 				onClose();
@@ -78,7 +72,6 @@ console.log(updatedValues)
 			console.error('Error al editar el empleado:', error);
 		}
 	});
-
 	if (employeeStatus === 'Cargando' || employeeStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}

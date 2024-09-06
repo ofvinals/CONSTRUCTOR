@@ -22,13 +22,11 @@ export const FormClients = ({ id, onClose, mode }) => {
 		updateUser,
 		userStatusUpdate,
 	} = useUserActions();
-
 	useEffect(() => {
 		if (mode === 'edit' || mode === 'view') {
 			getUser({ id });
 		}
 	}, [id]);
-
 	useEffect(() => {
 		if (user && (mode === 'edit' || mode === 'view')) {
 			setValue('nombre', user.nombre);
@@ -39,7 +37,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 			setValue('cel', user.cel)
 		}
 	}, [user]);
-
 	const onSubmit = handleSubmit(async (values) => {
 		try {
 			const { nombre, apellido } = values;
@@ -56,7 +53,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 			console.error('Error al editar el usuario:', error);
 		}
 	});
-
 	if (userStatus === 'Cargando' || userStatusUpdate === 'Cargando') {
 		return <Loader />;
 	}
@@ -81,7 +77,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-
 				<FormInput
 					label='Apellido'
 					name='apellido'
@@ -91,7 +86,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 					mode={mode}
 					readOnly={mode === 'view'}
 				/>
-
 				<FormInput
 					label='DNI/CUIT'
 					name='dni'
@@ -113,7 +107,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-
 				<FormInput
 					label='Email'
 					name='email'
@@ -133,7 +126,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-
 				<FormInput
 					label='Domicilio'
 					name='domicilio'
@@ -149,7 +141,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-
 				<FormInput
 					label='Celular'
 					name='cel'
@@ -173,7 +164,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-
 				{mode !== 'view' && mode !== 'edit' && (
 					<FormInput
 						label='Contraseña'
@@ -196,7 +186,6 @@ export const FormClients = ({ id, onClose, mode }) => {
 						disabled={mode === 'view' && mode === 'edit'}
 					/>
 				)}
-
 				<Form.Group className='flex flex-wrap items-center w-full justify-around'>
 					{mode !== 'view' && (
 						<SaveButton

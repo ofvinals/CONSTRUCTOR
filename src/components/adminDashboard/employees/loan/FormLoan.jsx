@@ -82,6 +82,7 @@ export const FormLoan = ({ id, onClose, mode }) => {
 			const updatedValues = {
 				...values,
 				dueDates: updatedDueDates,
+				isPay: false,
 			};
 			console.log(updatedValues);
 			if (mode === 'edit') {
@@ -172,14 +173,14 @@ export const FormLoan = ({ id, onClose, mode }) => {
 					}}
 					readOnly={mode === 'view'}
 				/>
-				<Form.Group className='mb-2'
-					>
+				<Form.Group className='mb-2'>
 					<Form.Label>Monto</Form.Label>
-					<InputGroup className={`items-center w-[150px] text-black ${
-						mode === 'view'
-							? 'border-1 border-black bg-transparent'
-							: 'border-1 border-black rounded-md bg-white'
-					}`}>
+					<InputGroup
+						className={`items-center w-[150px] text-black ${
+							mode === 'view'
+								? 'border-1 border-black bg-transparent'
+								: 'border-1 border-black rounded-md bg-white'
+						}`}>
 						<InputGroup.Text>$</InputGroup.Text>
 						<Form.Control
 							type='number'
@@ -192,13 +193,11 @@ export const FormLoan = ({ id, onClose, mode }) => {
 							placeholder='Monto'
 							className='py-2'
 						/>
-
 					</InputGroup>
 					<Form.Control.Feedback type='invalid'>
 						{errors.valueLoan?.message}
 					</Form.Control.Feedback>
 				</Form.Group>
-
 				{typeLoan !== 'Adelanto' && (
 					<FormInput
 						label='Cuotas'
