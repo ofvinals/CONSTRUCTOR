@@ -83,7 +83,7 @@ export const priceExtraReducers = (builder) => {
 			state.status = 'Cargando';
 		})
 		.addCase(getSubcategories.fulfilled, (state, action) => {
-			console.log('Subcategories fetched:', action.payload);
+			// console.log('Subcategories fetched:', action.payload);
 			const { categoryId, subcategories } = action.payload;
 			state.status = 'Exitoso';
 			state.subcategories[categoryId] = subcategories;

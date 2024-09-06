@@ -10,7 +10,11 @@ import HashLoader from 'react-spinners/HashLoader';
 export const AccordionPrices = () => {
 	const [selectedItems, setSelectedItems] = useState({});
 	const [showDialog, setShowDialog] = useState(false);
-	const [deleteItem, setDeleteItem] = useState({ type: '', id: '' });
+	const [deleteItem, setDeleteItem] = useState({
+		type: '',
+		categoryId: '',
+		subcategoryId: '',
+	});
 	const [loadingCategoryId, setLoadingCategoryId] = useState(null);
 	const {
 		categories,
@@ -54,16 +58,16 @@ export const AccordionPrices = () => {
 		await createSubcategory({ values: newSubcategory, categoryId });
 	};
 	const handleDelete = (type, id) => {
-		setDeleteItem({ type, id });
+		setDeleteItem( type, id );
 		setShowDialog(true);
 	};
 	const confirmDelete = async () => {
 		if (deleteItem.type === 'rubro') {
-			await deleteCategory({ id: deleteItem.id });
+			await deleteCategory({ id: deleteItem.categoryId });
 		} else if (deleteItem.type === 'subrubro') {
 			await deleteSubcategory({
-				categoryId: deleteItem.id,
-				subcategoryId: deleteItem.id,
+				categoryId: deleteItem.categoryId,
+				subcategoryId: deleteItem.subcategoryId,
 			});
 		}
 		setShowDialog(false);
@@ -145,7 +149,7 @@ export const AccordionPrices = () => {
 					))}
 				</Accordion>
 			</div>
-			<div className='m-2'>
+			<div className='m-4'>
 				<Button className='btnprimary w-[180px]' onClick={addCategory}>
 					{statusCategory === 'Cargando' ? (
 						<HashLoader size={25} />

@@ -48,7 +48,7 @@
 	padding: 1px;
 	border-radius: 5px;
 	display: flex;
-	justify-content:space-between ;
+	justify-content: space-between;
 }
 .custom-accordion .accordion-button:hover {
 	background-color: #ffe57c !important;
@@ -57,12 +57,20 @@
 .custom-accordion .accordion-button:active {
 	background-color: #ffd52b !important;
 }
-.custom-accordion .accordion-button::after{
-	margin: 0px;
+.custom-accordion .accordion-button::after {
+	margin: 0px 20px 0px ;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.modal-header {
+	background-color: #979595;
+}
+.modal-body {
+	background-color: #cccccc;
+	border-radius: 0px 0px 10px 10px;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }

@@ -13,10 +13,10 @@ export const FormInput = ({
 	textareaClass,
 	onChange,
 }) => {
-	const inputClass = `items-center w-full p-2 focus:outline-none text-black ${
+	const inputClass = `items-center w-full p-2 text-black ${
 		mode === 'view'
-			? 'border-none bg-transparent'
-			: 'border-2 border-black rounded-md'
+			? 'border-1 border-black bg-transparent'
+			: 'border-1 border-black rounded-md bg-white'
 	}`;
 
 	return (
@@ -73,8 +73,8 @@ export const FormSelect = ({
 	const isCaratula = name === 'caratula';
 	const selectClass = `items-center w-full p-2 text-black ${
 		mode === 'view'
-			? 'border-none shadow-none bg-transparent'
-			: 'border-1 border-black rounded-md'
+			? 'border-1 border-black bg-transparent '
+			: 'border-1 border-black rounded-md bg-white'
 	}`;
 
 	return (

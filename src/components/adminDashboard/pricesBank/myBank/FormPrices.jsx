@@ -2,10 +2,15 @@
 /* eslint-disable react/prop-types */
 import { Button } from 'primereact/button';
 import { useEffect } from 'react';
-import { Form, FormControl, FormSelect, Table } from 'react-bootstrap';
+import {
+	Form,
+	FormControl,
+	FormSelect,
+	InputGroup,
+	Table,
+} from 'react-bootstrap';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { usePriceActions } from '../../../../hooks/usePriceActions';
-// import Loader from '../../../../utils/Loader';
 
 export const FormPrices = ({
 	id,
@@ -18,7 +23,6 @@ export const FormPrices = ({
 	const {
 		getItemPrice,
 		itemPrice,
-		// itemsPrice,
 		updateItemPrice,
 		createCategoryItemPrice,
 		createSubcategoryItemPrice,
@@ -45,13 +49,11 @@ export const FormPrices = ({
 			],
 		},
 	});
-
 	useEffect(() => {
-		if (mode === 'edit' || mode === 'view') {
-			const itemId = id;
-			getItemPrice({ categoryId, subcategoryId, itemId });
+		if ((mode === 'edit' || mode === 'view') && id && type) {
+			getItemPrice({ categoryId, subcategoryId, itemId: id, type });
 		}
-	}, [id]);
+	}, [id, type, mode, categoryId]);
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -64,12 +66,11 @@ export const FormPrices = ({
 			setValue('largeDescription', itemPrice.largeDescription);
 			setValue('unitType', itemPrice.unitType);
 			setValue('unitPrice', itemPrice.unitPrice);
-
-			setValue('itemDescription', itemPrice.itemDescription);
-			setValue('itemUnit', itemPrice.itemUnit);
-			setValue('itemCant', itemPrice.itemCant);
-			setValue('itemPrice', itemPrice.itemPrice);
-			setValue('itemtotalPrice', itemPrice.itemtotalPrice);
+			setValue('itemDescription', itemPrice.items.itemDescription);
+			setValue('itemUnit', itemPrice.items.itemUnit);
+			setValue('itemCant', itemPrice.items.itemCant);
+			setValue('itemPrice', itemPrice.items.itemPrice);
+			setValue('itemtotalPrice', itemPrice.items.itemtotalPrice);
 			setValue('FinalPrice', itemPrice.FinalPrice);
 		}
 	}, [itemPrice]);
@@ -82,6 +83,7 @@ export const FormPrices = ({
 					categoryId,
 					subcategoryId,
 					itemId: id,
+					type,
 					values,
 				});
 				onClose();
@@ -109,16 +111,16 @@ export const FormPrices = ({
 		<div>
 			<Form
 				id='ItemForm'
-				className='flex flex-col justify-center items-center bg-background rounded-xl  '
+				className='flex flex-col justify-center items-center  rounded-xl  '
 				onSubmit={onSubmit}>
-				<div className='w-full flex items-end justify-end bg-slate-300 rounded-md'>
+				<div className='w-full flex items-end justify-end  rounded-md'>
 					<button onClick={onSubmit} className='btnprimary my-3 mr-4'>
 						<i className='pi pi-save mr-2 font-bold'></i>
 						Guardar Registro
 					</button>
 				</div>
-				<div className='flex flex-row justify-center items-center w-full border-1 my-2  border-b-slate-400'>
-					<div className='w-1/3 flex flex-col items-center justify-around border-1 h-[500px] border-r-slate-400 min-h-full '>
+				<div className='flex flex-row justify-center items-center w-full border-b-2 my-2  border-b-slate-400'>
+					<div className='w-1/3 flex flex-col items-center justify-around border-r-2 h-[500px] border-r-slate-400 min-h-full '>
 						<h2 className='text-xl font-bold mb-2'>Mano de Obra</h2>
 						<Form.Group className='flex flex-col w-full items-start justify-around px-2'>
 							<Form.Label className=' bg-transparent  text-neutral-800 font-bold '>
@@ -153,22 +155,32 @@ export const FormPrices = ({
 								{...register('largeDescription')}
 							/>
 						</Form.Group>
-						<div className='flex flex-row items-center justify-center mb-3'>
+						<div className='flex flex-row flex-wrap items-center justify-center mb-3'>
 							<Form.Group className='flex flex-col w-full items-start justify-around mt-3 px-2'>
 								<Form.Label className=' bg-transparent  text-neutral-800 font-bold '>
 									Precio Unitario
 								</Form.Label>
-								<FormControl
-									className=' rounded-md p-2  border-2 border-black'
-									type='number'
-									name='unitPrice'
-									{...register('unitPrice', {
-										required: {
-											value: true,
-											message: 'El precio unitario es obligatorio',
-										},
-									})}
-								/>
+								<InputGroup
+									className={`items-center w-[150px] text-black ${
+										mode === 'view'
+											? 'border-1 border-black bg-transparent'
+											: 'border-1 border-black rounded-md bg-white'
+									}`}>
+									<InputGroup.Text>$</InputGroup.Text>
+									<FormControl
+										className=' rounded-md p-2  '
+										type='number'
+										name='unitPrice'
+										{...register('unitPrice', {
+											required: {
+												value: true,
+												message:
+													'El precio unitario es obligatorio',
+											},
+										})}
+									/>
+								</InputGroup>
+
 								{errors.unitPrice && (
 									<span className='error-message'>
 										{errors.unitPrice.message}
@@ -212,7 +224,7 @@ export const FormPrices = ({
 						<div className='h-[350px] overflow-y-scroll mx-2'>
 							<Table hover responsive>
 								<thead className='border-none'>
-									<tr className='border-none'>
+									<tr className='border-b-2 border-slate-400'>
 										<th className='bg-transparent border-none'>
 											Tipo
 										</th>
@@ -239,7 +251,7 @@ export const FormPrices = ({
 								<tbody>
 									{fields.map((field, index) => (
 										<tr key={field.id}>
-											<td>
+											<td className='bg-transparent border-none'>
 												<FormSelect
 													className='rounded-md p-2 w-fit  border-1 border-black'
 													type='text'
@@ -258,7 +270,7 @@ export const FormPrices = ({
 													</option>
 												</FormSelect>
 											</td>
-											<td>
+											<td className='bg-transparent border-none'>
 												<FormControl
 													as='textarea'
 													className='rounded-md p-2 min-w-[220px]  border-1 border-black'
@@ -268,7 +280,7 @@ export const FormPrices = ({
 													defaultValue={field.itemDescription}
 												/>
 											</td>
-											<td>
+											<td className='bg-transparent border-none'>
 												<FormSelect
 													className='rounded-md p-2 w-fit  border-1 border-black'
 													type='text'
@@ -287,7 +299,7 @@ export const FormPrices = ({
 													<option value='Gl'>Global</option>
 												</FormSelect>
 											</td>
-											<td>
+											<td className='bg-transparent border-none'>
 												<FormControl
 													className='rounded-md p-2 min-w-[70px]  border-1 border-black'
 													type='number'
@@ -295,7 +307,7 @@ export const FormPrices = ({
 													defaultValue={field.itemCant}
 												/>
 											</td>
-											<td>
+											<td className='bg-transparent border-none'>
 												<FormControl
 													className='rounded-md p-2 min-w-[80px]  border-1 border-black'
 													type='number'
@@ -303,7 +315,7 @@ export const FormPrices = ({
 													defaultValue={field.itemPrice}
 												/>
 											</td>
-											<td>
+											<td className='bg-transparent border-none'>
 												<FormControl
 													className='rounded-md p-2 min-w-[80px]  border-1 border-black'
 													type='number'
@@ -314,10 +326,10 @@ export const FormPrices = ({
 													readOnly
 												/>
 											</td>
-											<td className='flex items-center justify-center'>
-												<Button
+											<td className='bg-transparent border-none flex items-center justify-center h-full'>
+											<Button
 													icon='pi pi-trash font-bold text-xl'
-													className=' text-red-500 m-auto'
+													className=' text-red-500 '
 													onClick={() => remove(index)}></Button>
 											</td>
 										</tr>

@@ -100,30 +100,31 @@ export const CardSettlement = ({ startDate, endDate, setEmployeeData }) => {
 						employeeMap[employee.uid].travelCostTotal;
 				});
 			});
+			console.log(loans)
 			// Filtrar los vencimientos de préstamos y adelantos que estén dentro del rango de fechas
 			const filteredLoans = loans.filter((loan) => {
 				// Manejar préstamos con fechas de vencimiento en dueDates
-				if (loan.values.dueDates && loan.values.dueDates.length > 0) {
-					return loan.values.dueDates.some((date) => {
+				if (loan.dueDates && loan.dueDates.length > 0) {
+					return loan.dueDates.some((date) => {
 						const dueDate = new Date(date);
 						return dueDate >= start && dueDate <= end;
 					});
 				}
 				// Manejar adelantos con fecha de vencimiento en quoteDateLoan
-				if (loan.values.quoteDateLoan) {
-					const dueDate = new Date(loan.values.quoteDateLoan);
+				if (loan.quoteDateLoan) {
+					const dueDate = new Date(loan.quoteDateLoan);
 					return dueDate >= start && dueDate <= end;
 				}
 				return false;
 			});
 			// Añadir los préstamos al mapa de empleados
 			filteredLoans.forEach((loan) => {
-				const employeeId = loan.values.employeeId;
+				const employeeId = loan.employeeId;
 				if (employeeMap[employeeId]) {
 					employeeMap[employeeId].loans.push({
-						quoteDateLoan: loan.values.quoteDateLoan,
-						valueLoan: loan.values.valueLoan,
-						typeLoan: loan.values.typeLoan,
+						quoteDateLoan: loan.quoteDateLoan,
+						valueLoan: loan.valueLoan,
+						typeLoan: loan.typeLoan,
 					});
 				}
 			});

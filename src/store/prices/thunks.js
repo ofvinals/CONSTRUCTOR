@@ -20,7 +20,6 @@ export const getCategories = createAsyncThunk(
 			querySnapshot.forEach((doc) => {
 				arrayAux.push({ uid: doc.id, ...doc.data() });
 			});
-			console.log(arrayAux);
 			return arrayAux;
 		} catch (error) {
 			dispatch(
@@ -136,6 +135,7 @@ export const updateCategory = createAsyncThunk(
 export const deleteCategory = createAsyncThunk(
 	'category/deleteCategory',
 	async ({ id }, { dispatch }) => {
+		console.log(id);
 		try {
 			const categoryRef = doc(db, 'categories', id);
 
@@ -181,10 +181,10 @@ export const getSubcategories = createAsyncThunk(
 	'category/getSubcategories',
 	async ({ id }, { dispatch, getState }) => {
 		const { subcategories } = getState().prices;
-		if (subcategories[id]) {
-			// Si las subcategorías ya están en el estado, no hacer nada
-			return { categoryId: id, subcategories: subcategories[id] };
-		}
+		// if (subcategories[id]) {
+		// 	// Si las subcategorías ya están en el estado, no hacer nada
+		// 	return { categoryId: id, subcategories: subcategories[id] };
+		// }
 		try {
 			const categoryRef = doc(db, 'categories', id);
 			const subcategoriesSnapshot = await getDocs(
@@ -307,6 +307,7 @@ export const deleteSubcategory = createAsyncThunk(
 				itemsSnapshot.docs.map((itemDoc) => deleteDoc(itemDoc.ref))
 			);
 			dispatch(getCategories());
+			dispatch(getSubcategories({ id: categoryId }));
 			await deleteDoc(subcategoryRef);
 			dispatch(
 				showToast({
@@ -332,7 +333,6 @@ export const deleteSubcategory = createAsyncThunk(
 export const getCategoryItemsPrice = createAsyncThunk(
 	'category/getCategoryItemsPrice',
 	async ({ categoryId }, { dispatch }) => {
-		console.log(categoryId);
 		try {
 			const itemsRef = collection(db, 'categories', categoryId, 'items');
 			const itemsSnapshot = await getDocs(itemsRef);
@@ -340,7 +340,6 @@ export const getCategoryItemsPrice = createAsyncThunk(
 				uid: doc.id,
 				...doc.data(),
 			}));
-			console.log(items);
 			return { categoryId, items };
 		} catch (error) {
 			dispatch(
@@ -392,17 +391,29 @@ export const getSubcategoryItemsPrice = createAsyncThunk(
 // Obtener detalles de un ítem específico
 export const getItemPrice = createAsyncThunk(
 	'category/getItemPrice',
-	async ({ categoryId, subcategoryId, itemId }, { dispatch }) => {
+	async ({ categoryId, subcategoryId, itemId, type }, { dispatch }) => {
 		try {
-			const itemRef = doc(
-				db,
-				'categories',
-				categoryId,
-				'subcategories',
-				subcategoryId,
-				'items',
-				itemId
-			);
+			let itemRef;
+
+			// Determina la referencia del documento según el nivel
+			if (type === 'subcategory') {
+				// Buscar en una subcategoría
+				itemRef = doc(
+					db,
+					'categories',
+					categoryId,
+					'subcategories',
+					subcategoryId,
+					'items',
+					itemId
+				);
+			} else if (type === 'category') {
+				// Buscar en una categoría directamente
+				itemRef = doc(db, 'categories', categoryId, 'items', itemId);
+			} else {
+				throw new Error('Nivel de búsqueda inválido');
+			}
+
 			const itemSnapshot = await getDoc(itemRef);
 			if (itemSnapshot.exists()) {
 				return {
@@ -493,19 +504,37 @@ export const createSubcategoryItemPrice = createAsyncThunk(
 // Actualizar un ítem de precio
 export const updateItemPrice = createAsyncThunk(
 	'category/updateItemPrice',
-	async ({ categoryId, subcategoryId, itemId, values }, { dispatch }) => {
+	async (
+		{ categoryId, subcategoryId, itemId, type, values },
+		{ dispatch }
+	) => {
+		console.log(categoryId, subcategoryId, itemId, type, values)
 		try {
-			const itemRef = doc(
-				db,
-				'categories',
-				categoryId,
-				'subcategories',
-				subcategoryId,
-				'items',
-				itemId
-			);
-			await updateDoc(itemRef, values);
-			dispatch(getItemPrice({ categoryId, subcategoryId, itemId }));
+			// Validar `type`
+			if (!['subcategory', 'category'].includes(type)) {
+				throw new Error('Nivel de búsqueda inválido');
+			}
+			let itemRef;
+			// Determina la referencia del documento según el nivel
+			if (type === 'subcategory') {
+				itemRef = doc(
+					db,
+					'categories',
+					categoryId,
+					'subcategories',
+					subcategoryId,
+					'items',
+					itemId
+				);
+			} else if (type === 'category') {
+				itemRef = doc(db, 'categories', categoryId, 'items', itemId);
+			}
+			const cleanedValues = cleanObject(values);
+			// Actualiza el documento
+			await updateDoc(itemRef, cleanedValues);
+			// Actualiza el estado del ítem
+			dispatch(getItemPrice({ categoryId, subcategoryId, itemId, type }));
+			// Muestra un mensaje de éxito
 			dispatch(
 				showToast({
 					type: 'success',
@@ -528,18 +557,26 @@ export const deleteItemPrice = createAsyncThunk(
 	'category/deleteItemPrice',
 	async ({ categoryId, subcategoryId, itemId }, { dispatch }) => {
 		try {
-			const itemRef = doc(
-				db,
-				'categories',
-				categoryId,
-				'subcategories',
-				subcategoryId,
-				'items',
-				itemId
-			);
+			// Determina la referencia del documento según si es subcategoría o categoría
+			const itemRef = subcategoryId
+				? doc(
+						db,
+						'categories',
+						categoryId,
+						'subcategories',
+						subcategoryId,
+						'items',
+						itemId
+				  )
+				: doc(db, 'categories', categoryId, 'items', itemId);
+			// Elimina el documento
 			await deleteDoc(itemRef);
+			// Actualiza el estado de los ítems
 			dispatch(getCategoryItemsPrice(categoryId));
-			dispatch(getSubcategoryItemsPrice({ categoryId, subcategoryId }));
+			if (subcategoryId) {
+				dispatch(getSubcategoryItemsPrice({ categoryId, subcategoryId }));
+			}
+			// Muestra un mensaje de éxito
 			dispatch(
 				showToast({
 					type: 'success',
@@ -556,3 +593,10 @@ export const deleteItemPrice = createAsyncThunk(
 		}
 	}
 );
+
+// Función para limpiar campos vacíos
+const cleanObject = (obj) => {
+	return Object.fromEntries(
+		Object.entries(obj).filter(([key, value]) => value !== undefined)
+	);
+};

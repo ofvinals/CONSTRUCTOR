@@ -29,7 +29,6 @@ const CategoryItem = ({
 		itemsPriceCategory,
 		categoryStatusDelete,
 		getCategoryItemsPrice,
-		deleteItem,
 	} = usePriceActions();
 	const newModal = useModal();
 	const editModal = useModal();
@@ -53,7 +52,7 @@ const CategoryItem = ({
 
 	const handleDeleteItem = () => {
 		if (itemIdToDelete) {
-			deleteItem({ id: itemIdToDelete });
+			onDelete({ id: itemIdToDelete });
 			setShowConfirmDialog(false);
 		}
 	};
@@ -62,19 +61,19 @@ const CategoryItem = ({
 		<div className='flex flex-row flex-wrap items-center gap-4 justify-around'>
 			<Button
 				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
+				icon='pi pi-times text-red-500 font-bold mr-2 '
 				onClick={() => setShowConfirmDialog(false)}
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
+				className=' hover:bg-red-100 p-2 rounded-md shadow-none focus:shadow-none'
 			/>
 			<Button
 				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
+				icon='pi pi-check text-green-500 font-bold mr-2 shadow-none'
 				onClick={handleDeleteItem}
 				className='p-button-text hover:bg-green-200 p-2 rounded-md'
 			/>
 		</div>
 	);
-
+	console.log(itemIdToEdit);
 	return (
 		<>
 			<Accordion.Item
@@ -104,7 +103,7 @@ const CategoryItem = ({
 								readOnly
 							/>
 							<input
-								className='p-2 w-[300px] rounded-md hover:border-1 bg-transparent focus:border-black focus:bg-white'
+								className='p-2 w-[300px] font-semibold rounded-md hover:border-1 bg-transparent focus:border-black focus:bg-white'
 								type='text'
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
@@ -117,7 +116,10 @@ const CategoryItem = ({
 							className='bg-transparent border-none flex items-end text-black'
 							onClick={(e) => {
 								e.stopPropagation();
-								onDelete('rubro', category.uid);
+								onDelete({
+									type: 'rubro',
+									categoryId: category.uid,
+								});
 							}}>
 							<i className='pi pi-trash ml-2 p-2 rounded-md hover:text-red-500 font-semibold text-lg'></i>
 						</Button>
@@ -129,7 +131,7 @@ const CategoryItem = ({
 							<HashLoader size={25} />
 						</div>
 					) : (
-						<div className='w-full text-center'>
+						<div className='w-full '>
 							<Table striped bordered hover responsive>
 								<thead>
 									<tr>
@@ -144,10 +146,10 @@ const CategoryItem = ({
 										<tr key={index}>
 											<td>{item.shortDescription}</td>
 											<td>{item.unitType}</td>
-											<td>{item.unitPrice}</td>
-											<td className='flex gap-1 items-center justify-around '>
+											<td>$ {item.unitPrice}</td>
+											<td className='flex  items-center justify-around '>
 												<Button
-													className=' bg-transparent border-none'
+													className=' bg-transparent border-none py-0 mx-1'
 													onClick={() => {
 														editModal.openModal(),
 															setItemIdToEdit(item.uid);
@@ -155,18 +157,19 @@ const CategoryItem = ({
 													<i className='pi pi-pen-to-square font-bold text-xl text-green-500 hover:text-green-300'></i>
 												</Button>
 												<Button
-													className=' bg-transparent border-none'
+													className=' bg-transparent border-none py-0 mx-1'
 													onClick={() => {
 														viewModal.openModal(),
-															setItemIdToDelete(item.id);
+															setItemIdToEdit(item.uid);
 													}}>
 													<i className='pi pi-eye font-bold text-xl text-blue-500 hover:text-blue-300'></i>
 												</Button>
 												<Button
-													className=' bg-transparent border-none'
-													onClick={() =>
-														setShowConfirmDialog(true)
-													}>
+													className=' bg-transparent border-none py-0 mx-1'
+													onClick={() => {
+														setShowConfirmDialog(true),
+															setItemIdToDelete(item.uid);
+													}}>
 													<i className='pi pi-trash font-bold text-xl text-red-500 hover:text-red-300'></i>
 												</Button>
 											</td>
@@ -176,13 +179,12 @@ const CategoryItem = ({
 							</Table>
 						</div>
 					)}
-					<div
-						onClick={() => {
-							newModal.openModal();
-						}}
-						className='flex flex-col flex-wrap items-start justify-center gap-3'>
+					<div className='flex flex-col flex-wrap items-start justify-center gap-3'>
 						<button
 							type='button'
+							onClick={() => {
+								newModal.openModal();
+							}}
 							className='flex items-center flex-row hover:bg-[#ffe57c] p-1 rounded-md text-sm'>
 							<i className='pi pi-plus text-xs font-semibold mr-2'></i>
 							Nuevo Item de Rubro

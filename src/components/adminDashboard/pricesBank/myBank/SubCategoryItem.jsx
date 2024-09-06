@@ -24,7 +24,6 @@ const SubCategoryItem = ({
 		statusPriceSubcategory,
 		itemsPriceSubcategory,
 		getSubcategoryItemsPrice,
-		deleteItem,
 	} = usePriceActions();
 	const newModal = useModal();
 	const editModal = useModal();
@@ -51,7 +50,7 @@ const SubCategoryItem = ({
 
 	const handleDeleteItem = () => {
 		if (itemIdToDelete) {
-			deleteItem({ id: itemIdToDelete });
+			onDelete({ id: itemIdToDelete });
 			setShowConfirmDialog(false);
 		}
 	};
@@ -102,7 +101,7 @@ const SubCategoryItem = ({
 								readOnly
 							/>
 							<input
-								className='p-2 w-[300px] rounded-md hover:border-1 bg-transparent focus:border-black focus:bg-black'
+								className='p-2 w-[300px] font-semibold rounded-md hover:border-1 bg-transparent focus:border-black focus:bg-black'
 								type='text'
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
@@ -112,10 +111,14 @@ const SubCategoryItem = ({
 						</div>
 						<Button
 							type='button'
-							className='bg-transparent border-none flex items-end text-black'
+							className='bg-transparent border-none flex items-end text-black shadow-none'
 							onClick={(e) => {
 								e.stopPropagation();
-								onDelete('subrubro', subcategory.uid, categoryId);
+								onDelete({
+									type: 'subrubro',
+									categoryId,
+									subcategoryId: subcategory.uid,
+								});
 							}}>
 							<i className='pi pi-trash ml-2 p-2 rounded-md hover:text-red-500 font-semibold text-lg'></i>
 						</Button>
@@ -157,16 +160,16 @@ const SubCategoryItem = ({
 												className=' bg-transparent border-none'
 												onClick={() => {
 													viewModal.openModal(),
-														setItemIdToEdit(item.id);
+														setItemIdToEdit(item.uid);
 												}}>
 												<i className='pi pi-eye font-bold text-xl text-blue-500 hover:text-blue-300'></i>
 											</Button>
 											<Button
 												type='button'
-												className=' bg-transparent border-none'
+												className=' bg-transparent focus:border-none focus:shadow-none'
 												onClick={() => {
 													setShowConfirmDialog(true),
-														setItemIdToDelete(item.id);
+														setItemIdToDelete(item.uid);
 												}}>
 												<i className='pi pi-trash font-bold text-xl text-red-500 hover:text-red-300'></i>
 											</Button>

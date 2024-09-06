@@ -79,8 +79,10 @@ export const usePriceActions = () => {
 	const deleteSubcategory = async ({ categoryId, subcategoryId }) => {
 		await dispatch(deleteSubcategoryThunk({ categoryId, subcategoryId }));
 	};
-	const getItemPrice = async ({ categoryId, subcategoryId, itemId }) => {
-		await dispatch(getItemPriceThunk({ categoryId, subcategoryId, itemId }));
+	const getItemPrice = async ({ categoryId, subcategoryId, itemId, type }) => {
+		await dispatch(
+			getItemPriceThunk({ categoryId, subcategoryId, itemId, type })
+		);
 	};
 	const getCategoryItemsPrice = async ({ categoryId }) => {
 		await dispatch(getCategoryItemsPriceThunk({ categoryId }));
@@ -106,15 +108,27 @@ export const usePriceActions = () => {
 		categoryId,
 		subcategoryId,
 		itemId,
+		type,
 		values,
 	}) => {
 		await dispatch(
-			updateItemPriceThunk({ categoryId, subcategoryId, itemId, values })
+			updateItemPriceThunk({
+				categoryId,
+				subcategoryId,
+				itemId,
+				type,
+				values,
+			})
 		);
 	};
-	const deleteItemPrice = async ({ categoryId, subcategoryId, itemId }) => {
+	const deleteItemPrice = async ({
+		categoryId,
+		subcategoryId,
+		itemId,
+		type,
+	}) => {
 		await dispatch(
-			deleteItemPriceThunk({ categoryId, subcategoryId, itemId })
+			deleteItemPriceThunk({ categoryId, subcategoryId, itemId, type })
 		);
 	};
 	const clearStateCategory = () => {
