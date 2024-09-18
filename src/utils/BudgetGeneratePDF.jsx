@@ -1,11 +1,11 @@
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+// import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { useBudgetDetailsActions } from '../hooks/useBudgetDetailsActions';
 
 // Asignar fuentes virtuales a pdfMake
-pdfMake.vfs = {
-	...pdfFonts.pdfMake.vfs, // Incluye las fuentes por defecto
-};
+// pdfMake.vfs = {
+// 	...pdfFonts.pdfMake.vfs, // Incluye las fuentes por defecto
+// };
 
 export const BudgetGeneratePDF = () => {
 	const { categories } = useBudgetDetailsActions();
