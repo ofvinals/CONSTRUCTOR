@@ -3,16 +3,15 @@ import '../../styles/Custom.css';
 import Form from 'react-bootstrap/Form';
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
-import { ProgressSpinner } from 'primereact/progressspinner';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FormControl } from 'react-bootstrap';
+import HashLoader from 'react-spinners/HashLoader';
 
 export function Login() {
 	const { loginGoogle, loginEmail, statusAuth } = useAuth();
 	const [showPassword, setShowPassword] = useState(false);
 	const toggleShowPassword = () => setShowPassword(!showPassword);
-
 	const {
 		register,
 		handleSubmit,
@@ -39,8 +38,8 @@ export function Login() {
 	return (
 		<main className='flex flex-col items-center justify-center mb-5'>
 			<div className='max-w-1/2'>
-				<div className='flex flex-col flex-wrap items-center justify-center p-2'>
-					<h1 className='yellowtitle'>CONSTRUCTOR </h1>
+				<div className='flex flex-col pt-5 flex-wrap items-center justify-center p-2'>
+					<h1 className='yellowtitle text-[40px]'>CONSTRUCTOR </h1>
 					<h2 className='title'>Bienvenido de nuevo!</h2>
 				</div>
 				<Form
@@ -77,7 +76,6 @@ export function Login() {
 							</span>
 						)}
 					</Form.Group>
-
 					<Form.Group className='flex flex-col w-full items-center mt-3'>
 						<Form.Label className='text-start  bg-transparent text-xl text-neutral-800 w-6/12 font-medium'>
 							Contraseña
@@ -99,7 +97,6 @@ export function Login() {
 									},
 								})}
 							/>
-
 							<Button
 								type='button'
 								onClick={toggleShowPassword}
@@ -116,7 +113,6 @@ export function Login() {
 							</span>
 						)}
 					</Form.Group>
-
 					<Form.Group className='mt-2'>
 						<Button className='link bg-transparent border-none text-neutral-800 mt-2 text-sm font-semibold text-decoration-underline hover:text-yellow-500'>
 							¿ Olvidaste tu contraseña ?
@@ -127,15 +123,9 @@ export function Login() {
 							<Button
 								className='m-3 btnprimary w-[142px]  flex items-center justify-center '
 								type='submit'>
-								<ProgressSpinner
-									style={{
-										width: '30px',
-										height: '30px',
-									}}
-									strokeWidth='8'
-									fill='var(--surface-ground)'
-									animationDuration='.6s'
-								/>
+								<div className='mr-2'>
+									<HashLoader size={25} />
+								</div>
 								Cargando
 							</Button>
 						</Form.Group>
@@ -161,7 +151,6 @@ export function Login() {
 							</Button>
 						</Form.Group>
 					)}
-
 					<p className='mt-6 text-neutral-800 text-sm text-center'>
 						No tienes una cuenta?<br></br>
 						<Link

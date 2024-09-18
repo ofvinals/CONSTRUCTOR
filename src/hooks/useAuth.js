@@ -17,7 +17,7 @@ export const useAuth = () => {
 			).unwrap();
 			const user = userAction;
 			if (user.admin || user.coadmin) {
-				navigate('/admin');
+				navigate('/proyects');
 			} else {
 				navigate('/client');
 			}

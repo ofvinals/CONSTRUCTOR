@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FormContact } from '../../components/home/FormContact';
+import { FormContact } from '../../pages/home/FormContact';
 import { format } from 'date-fns';
 
 export function Footer() {
@@ -14,16 +14,16 @@ export function Footer() {
 
 	return (
 		<footer className='mt-auto w-full bg-gray-500 text-neutral-300'>
-			<section className='flex flex-col items-center py-5 gap-2'>
+			<section className='flex flex-col items-center py-3 gap-2'>
 				<div className='flex items-center'>
 					<Link
 						to='/'
 						className='text-white text-3xl font-bold hover:opacity-80 duration-200'>
-						<img src='/CONSTRU.png' alt='' width={120} />
+						<img src='/CONSTRU.png' alt='' width={70} />
 					</Link>
 				</div>
 				<div className='flex flex-col lg:flex-row items-center justify-between w-full lg:px-8'>
-					<div className='flex items-center gap-8 lg:w-1/3 my-3'>
+					<div className='flex items-center gap-8 lg:w-1/3 my-1'>
 						<Link
 							to='https://www.facebook.com/?locale=es_LA'
 							target='_blank'>

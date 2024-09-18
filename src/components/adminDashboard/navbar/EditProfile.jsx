@@ -48,7 +48,7 @@ export const EditProfile = () => {
 		}
 	};
 
-	const onSubmit = async (values, fileImage) => {
+	const onSubmit = async (values) => {
 		try {
 			const { nombre, apellido } = values;
 			const displayName = `${nombre} ${apellido}`;

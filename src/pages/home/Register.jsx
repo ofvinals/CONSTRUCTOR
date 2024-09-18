@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../hooks/useAuth';
 import Modals from '../../utils/Modals';
-import { Login } from './Login';
+import { Login } from '../../components/home/Login';
 // import { useMails } from '../../hooks/useMails';
 import '../../styles/Custom.css';
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Button } from 'primereact/button';
-import { CardSettlement } from './CardSettlement';
+import { CardSettlement } from '../../../components/adminDashboard/employees/salary/CardSettlement';
 import { format } from 'date-fns';
-import { SalaryGeneratePDF } from '../../../../utils/SalaryGeneratePDF';
+import { SalaryGeneratePDF } from '../../../utils/SalaryGeneratePDF';
 
 export const Salary = () => {
 	const [startDate, setStartDate] = useState(new Date());

@@ -114,7 +114,7 @@ export const FormSelect = ({
 };
 
 export const SaveButton = ({ onSubmit, label }) => (
-	<Button type='submit' className='btnprimary w-[190px]' onClick={onSubmit}>
+	<Button type='submit' className='btnprimary ' onClick={onSubmit}>
 		<i className='pi pi-save mr-1'></i>
 		{label}
 	</Button>

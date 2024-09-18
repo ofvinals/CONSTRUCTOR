@@ -6,7 +6,7 @@ import Loader from '../../../utils/Loader';
 import useModal from '../../../hooks/useModal';
 import Modals from '../../../utils/Modals';
 import { FormClients } from './FormClients';
-import { Dialog } from 'primereact/dialog';
+import ConfirmDialog from '../../../utils/ConfirmDialog';
 import Avatar from 'react-avatar';
 import PaginatorComponent from '../../../utils/Paginator';
 import '../../../styles/Custom.css';
@@ -46,22 +46,6 @@ export const CardClients = ({ users }) => {
 			setShowConfirmDialog(false);
 		}
 	};
-	const footerContent = (
-		<div>
-			<Button
-				label='No'
-				icon='pi pi-times text-red-500 font-bold mr-2'
-				onClick={ () => setShowConfirmDialog(false) }
-				className='p-button-text hover:bg-red-100 p-2 rounded-md'
-			/>
-			<Button
-				label='Sí'
-				icon='pi pi-check text-green-500 font-bold mr-2'
-				onClick={handleDeleteUser}
-				className='p-button-text hover:bg-green-100 p-2 rounded-md'
-			/>
-		</div>
-	);
 
 	const onPageChange = (event) => {
 		setFirst(event.first);
@@ -173,13 +157,13 @@ export const CardClients = ({ users }) => {
 					mode='edit'
 				/>
 			</Modals>
-			<Dialog
-				visible={showConfirmDialog}
-				onHide={() => setShowConfirmDialog(false)}
-				header='Confirmar Eliminación'
-				footer={footerContent}>
-				<p>¿Estás seguro de que quieres eliminar este usuario?</p>
-			</Dialog>
+			<ConfirmDialog
+						header='Confirmar Eliminacion'
+						visible={showConfirmDialog}
+						onHide={() => setShowConfirmDialog(false)}
+						onConfirm={handleDeleteUser}
+						message='¿Estás seguro de que quieres eliminar el cliente?'
+					/>
 		</div>
 	);
 };

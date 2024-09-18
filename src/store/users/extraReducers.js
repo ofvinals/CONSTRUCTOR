@@ -22,7 +22,6 @@ export const userExtraReducers = (builder) => {
 			state.status = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(getUser.pending, (state) => {
 			state.statusUser = 'Cargando';
@@ -35,7 +34,6 @@ export const userExtraReducers = (builder) => {
 			state.statusUser = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(createUser.pending, (state) => {
 			state.statusUser = 'Cargando';
@@ -48,7 +46,6 @@ export const userExtraReducers = (builder) => {
 			state.statusUser = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(deleteUser.pending, (state) => {
 			state.statusDelete = 'Cargando';
@@ -61,7 +58,6 @@ export const userExtraReducers = (builder) => {
 			state.statusDelete = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(updateUser.pending, (state) => {
 			state.statusUpdate = 'Cargando';
@@ -74,7 +70,6 @@ export const userExtraReducers = (builder) => {
 			state.statusUpdate = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(enableUser.pending, (state) => {
 			state.statusUpdate = 'Cargando';
@@ -89,7 +84,6 @@ export const userExtraReducers = (builder) => {
 			state.statusUpdate = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(disableUser.pending, (state) => {
 			state.statusUpdate = 'Cargando';
@@ -104,7 +98,6 @@ export const userExtraReducers = (builder) => {
 			state.statusUpdate = 'Fallido';
 			state.error = action.payload;
 		});
-
 	builder
 		.addCase(getUserbyGoogle.pending, (state) => {
 			state.statusUser = 'Cargando';

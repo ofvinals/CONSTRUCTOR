@@ -1,17 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { Button, Accordion, Table } from 'react-bootstrap';
-import SubcategoryItem from './SubCategoryItem';
+import { Accordion } from 'react-bootstrap';
+import SubcategoryBudget from './SubCategoryBudget';
 import { useEffect, useState } from 'react';
-import { usePriceActions } from '../../../../hooks/usePriceActions';
+import { useBudgetDetailsActions } from '../../../../hooks/useBudgetDetailsActions';
 import HashLoader from 'react-spinners/HashLoader';
 import Modals from '../../../../utils/Modals';
-import { FormPrices } from './FormPrices';
+import { FormPrices } from '../formDetailBudget/FormPrices';
 import useModal from '../../../../hooks/useModal';
-import ConfirmDialog from '../../../../utils/ConfirmDialog';
-import TableActions from './TableActions';
+import { formatCurrency } from '../../../../utils/FormatCurrency';
+import { TableBudget } from './TableBudget';
 
-const CategoryItem = ({
+export const CategoryBudget = ({
+	budgetId,
 	category,
 	subcategories,
 	onAddSubcategory,
@@ -20,69 +21,70 @@ const CategoryItem = ({
 	isSelected,
 	getCategoryNumber,
 	getSubcategoryNumber,
-	onClick,
+	finalCategoryPrice,
 }) => {
 	const {
-		categoryStatusUpdate,
-		statusPriceCategory,
-		itemsPriceCategory,
-		categoryStatusDelete,
-		getCategoryItemsPrice,
-	} = usePriceActions();
+		statusUpdate,
+		itemsCategory,
+		statusDelete,
+		allCategoriesStatus,
+		getItemsPrice,
+	} = useBudgetDetailsActions();
 	const newModal = useModal();
-	const editModal = useModal();
-	const viewModal = useModal();
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectAll, setSelectAll] = useState(false);
 	const [title, setTitle] = useState(category.title);
-	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-	const [itemIdToDelete, setItemIdToDelete] = useState(null);
-	const [itemIdToEdit, setItemIdToEdit] = useState(null);
 	const [selectedItemsCategory, setSelectedItemsCategory] = useState({});
 	const [selectedItemsSubcategory, setSelectedItemsSubcategory] = useState({});
 	const handleBlur = (e) => {
 		const newTitle = e.target.value;
 		if (newTitle !== category.title) {
-			onTitleChange('rubro', category.uid, newTitle);
-		} else return;
-	};
-	useEffect(() => {
-		if (isOpen) {
-			getCategoryItemsPrice({ categoryId: category.uid });
+			onTitleChange(category.uid, null, newTitle);
 		}
-	}, [isOpen, category.uid]);
+	};
+
 	useEffect(() => {
-		if (itemsPriceCategory?.items?.length > 0) {
-			const allSelected = itemsPriceCategory.items.every(
+		getItemsPrice({ budgetId, categoryId: category.uid });
+	}, [isOpen, category.uid]);
+
+	useEffect(() => {
+		if (category?.items?.length > 0) {
+			const allSelected = category.items.every(
 				(item) =>
 					selectedItemsCategory[category.uid]?.includes(item.uid) ||
 					selectAll
 			);
 			setSelectAll(allSelected);
 		}
-	}, [itemsPriceCategory, selectedItemsCategory, selectAll]);
+	}, [itemsCategory, selectedItemsCategory, selectAll]);
+
 	const handleSelectAllChange = () => {
 		const newSelectAll = !selectAll;
 		setSelectAll(newSelectAll);
-		if (itemsPriceCategory?.items) {
-			itemsPriceCategory.items.forEach((item) => {
+		// Actualiza ítems de la categoría
+		category.items.forEach((item) => {
+			handleCheckboxChange({
+				type: 'category',
+				categoryId: category.uid,
+				itemId: item.uid,
+				isChecked: newSelectAll,
+			});
+		});
+		// Actualiza ítems de las subcategorías
+		subcategories.forEach((subcat) => {
+			const subcatItems = subcat?.items || [];
+			subcatItems.forEach((item) => {
 				handleCheckboxChange({
-					type: 'rubro',
+					type: 'subcategory',
 					categoryId: category.uid,
+					subcategoryId: subcat.uid,
 					itemId: item.uid,
 					isChecked: newSelectAll,
 				});
 			});
-		}
-	};
-	const handleItemCheckboxChange = (itemUid, isChecked) => {
-		handleCheckboxChange({
-			type: 'rubro',
-			categoryId: category.uid,
-			itemId: itemUid,
-			isChecked,
 		});
 	};
+
 	const handleCheckboxChange = ({
 		categoryId,
 		subcategoryId,
@@ -127,24 +129,43 @@ const CategoryItem = ({
 			return updatedItems;
 		});
 	};
-	const handleDeleteItem = () => {
-		if (itemIdToDelete) {
-			onDelete({ id: itemIdToDelete });
-			setShowConfirmDialog(false);
-		}
+
+	const calculateFinalPrice = (items) => {
+		return items.reduce((total, item) => {
+			const itemPrice = parseFloat(item.finalPrice) || 0;
+			const measurement = parseFloat(item.measurement) || 1;
+			return total + itemPrice * measurement;
+		}, 0);
+	};
+
+	const mapedSubcategories = subcategories.map((subcategory) => {
+		const items = subcategory.items || [];
+		const finalPrice = calculateFinalPrice(items);
+		return { ...subcategory, finalPrice };
+	});
+
+	const calculateTotalSubcategoryPrices = () => {
+		const totalSubcategoryPrices =
+			category?.subcategories?.reduce((total, subcategory) => {
+				const finalPrice = calculateFinalPrice(subcategory.items || []);
+				return total + finalPrice;
+			}, 0) || 0;
+		// Retorna 0 si el total de subcategorías es 0
+		return totalSubcategoryPrices === 0
+			? 0
+			: totalSubcategoryPrices + finalCategoryPrice;
 	};
 
 	return (
-		<>
+		<div className=''>
 			<Accordion.Item
 				eventKey={category.uid}
 				className='custom-accordion mx-2 px-2 border-none'
 				onClick={(e) => {
-					setIsOpen(!isOpen), e.stopPropagation();
+					setIsOpen(!isOpen);
+					e.stopPropagation();
 				}}>
-				<Accordion.Header
-					onClick={() => onClick(category.uid)}
-					className='w-full flex flex-row items-center justify-between'>
+				<Accordion.Header className='w-full flex flex-row items-center justify-between'>
 					<div className='w-full flex flex-row flex-wrap items-center justify-between'>
 						<div className='flex flex-row items-center justify-start'>
 							<input
@@ -155,13 +176,13 @@ const CategoryItem = ({
 								className='ml-2 rounded-md size-4'
 							/>
 							<input
-								className='ml-2 p-2 w-[40px] bg-transparent border-none outline-none '
+								className='ml-2 p-2 w-[30px] bg-transparent border-none outline-none font-semibold'
 								type='text'
-								value={`${getCategoryNumber(category.uid)} `}
+								value={`${getCategoryNumber(category.uid)}. `}
 								readOnly
 							/>
 							<input
-								className='p-2 w-[300px] font-semibold rounded-md hover:border-1 bg-transparent focus:border-black focus:bg-white'
+								className='p-2 font-semibold rounded-md hover:border-1 bg-transparent focus:border-black focus:bg-white'
 								type='text'
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
@@ -169,91 +190,55 @@ const CategoryItem = ({
 								onClick={(e) => e.stopPropagation()}
 							/>
 						</div>
-						<div>
-							<Button
+						<div className='flex items-center'>
+							<span className='ml-4 font-semibold'>
+								Total Subrubro:
+								{formatCurrency(finalCategoryPrice)}
+							</span>
+							{calculateTotalSubcategoryPrices() > 0 ? (
+								<span className='ml-4 font-semibold'>
+									Total Rubro:
+									{formatCurrency(calculateTotalSubcategoryPrices())}
+								</span>
+							) : null}
+							<div
 								type='button'
-								className='bg-transparent border-none flex items-end text-black'
+								className='bg-transparent shadow-none border-none flex items-end text-black'
 								onClick={(e) => {
 									e.stopPropagation();
 									onDelete({
-										type: 'rubro',
+										budgetId,
 										categoryId: category.uid,
 									});
 								}}>
 								<i className='pi pi-trash ml-2 p-2 rounded-md hover:text-red-500 font-semibold text-lg'></i>
-							</Button>
+							</div>
 						</div>
 					</div>
 				</Accordion.Header>
-				<Accordion.Body className='flex flex-col flex-wrap items-start space-y-3'>
-					{statusPriceCategory === 'Cargando' ? (
+				<Accordion.Body className='flex flex-col flex-wrap items-start space-y-2 '>
+					{allCategoriesStatus === 'Cargando' ||
+					statusDelete === 'Cargando' ? (
 						<div className='flex items-center justify-center w-full'>
 							<HashLoader size={25} />
 						</div>
 					) : (
-						<div className='w-full '>
-							<Table striped bordered hover responsive>
-								<thead>
-									<tr>
-										<th>#</th>
-										<th>Descripción</th>
-										<th>Unidad</th>
-										<th>Precio</th>
-										<th className='w-[70px]'>Acciones</th>
-									</tr>
-								</thead>
-								<tbody>
-									{itemsPriceCategory?.items?.map((item, index) => (
-										<tr key={index}>
-											<td>
-												<input
-													type='checkbox'
-													checked={
-														selectedItemsCategory[
-															category.uid
-														]?.includes(item.uid) || false
-													}
-													onClick={(e) => e.stopPropagation()}
-													onChange={(e) =>
-														handleItemCheckboxChange(
-															item.uid,
-															e.target.checked
-														)
-													}
-													className='ml-2 rounded-md size-4'
-												/>
-											</td>
-											<td>{item.shortDescription}</td>
-											<td>{item.unitType}</td>
-											<td>$ {item.unitPrice}</td>
-											<td className='flex  items-center justify-around '>
-												<TableActions
-													onEdit={() => {
-														editModal.openModal(),
-															setItemIdToEdit(item.uid);
-													}}
-													onView={() => {
-														viewModal.openModal(),
-															setItemIdToEdit(item.uid);
-													}}
-													onDelete={() => {
-														setShowConfirmDialog(true),
-															setItemIdToDelete(item.uid);
-													}}
-												/>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</Table>
-						</div>
+						<TableBudget
+							selectedItemsCategory={selectedItemsCategory}
+							selectedItemsSubcategory={selectedItemsSubcategory}
+							handleCheckboxChange={handleCheckboxChange}
+							budgetId={budgetId}
+							category={category}
+							categoryId={category.uid}
+							subcategory={null}
+							subcategories={subcategories}
+							isSubcategory={false}
+						/>
 					)}
 					<div className='flex flex-col flex-wrap items-start justify-center gap-3'>
 						<button
 							type='button'
-							onClick={() => {
-								newModal.openModal();
-							}}
+							onClick={() => newModal.openModal()}
 							className='flex items-center flex-row hover:bg-[#ffe57c] p-1 rounded-md text-sm'>
 							<i className='pi pi-plus text-xs font-semibold mr-2'></i>
 							Nuevo Item de Rubro
@@ -266,19 +251,21 @@ const CategoryItem = ({
 							Nuevo SubRubro
 						</button>
 					</div>
-					{categoryStatusUpdate === 'Cargando' ||
-					categoryStatusDelete === 'Cargando' ? (
+					{statusUpdate === 'Cargando' || statusDelete === 'Cargando' ? (
 						<div className='flex items-center justify-center w-full'>
 							<HashLoader size={25} />
 						</div>
 					) : (
 						<div className='w-full'>
 							<Accordion>
-								{subcategories.map((subcategory) => (
-									<SubcategoryItem
+								{mapedSubcategories.map((subcategory) => (
+									<SubcategoryBudget
+										budgetId={budgetId}
 										key={subcategory.uid}
 										subcategory={subcategory}
 										categoryId={category.uid}
+										category={category}
+										subcategories={subcategories}
 										onTitleChange={onTitleChange}
 										selectedItemsSubcategory={
 											selectedItemsSubcategory
@@ -287,6 +274,7 @@ const CategoryItem = ({
 										isSelected={isSelected}
 										handleCheckboxChange={handleCheckboxChange}
 										getSubcategoryNumber={getSubcategoryNumber}
+										finalSubcategoryPrice={subcategory.finalPrice}
 									/>
 								))}
 							</Accordion>
@@ -301,47 +289,13 @@ const CategoryItem = ({
 					onClose={newModal.closeModal}
 					title='Ingresar Nuevo Item de Rubro'>
 					<FormPrices
+						budgetId={budgetId}
 						onClose={newModal.closeModal}
 						categoryId={category.uid}
 						mode='create'
-						type='category'
 					/>
 				</Modals>
-				<Modals
-					fullscreen={true}
-					isOpen={editModal.isOpen}
-					onClose={editModal.closeModal}
-					title='Editar Item de Rubro'>
-					<FormPrices
-						id={itemIdToEdit}
-						onClose={editModal.closeModal}
-						categoryId={category.uid}
-						mode='edit'
-						type='category'
-					/>
-				</Modals>
-				<Modals
-					fullscreen={true}
-					isOpen={viewModal.isOpen}
-					onClose={viewModal.closeModal}
-					title='Ver Item de Rubro'>
-					<FormPrices
-						id={itemIdToEdit}
-						onClose={viewModal.closeModal}
-						categoryId={category.uid}
-						mode='view'
-						type='category'
-					/>
-				</Modals>
-				<ConfirmDialog
-					header='Confirmar Eliminacion'
-					visible={showConfirmDialog}
-					onHide={() => setShowConfirmDialog(false)}
-					onConfirm={handleDeleteItem}
-					message='¿Estás seguro de que quieres eliminar el item?'
-				/>
 			</div>
-		</>
+		</div>
 	);
 };
-export default CategoryItem;

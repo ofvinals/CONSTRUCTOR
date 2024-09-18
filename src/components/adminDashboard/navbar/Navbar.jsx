@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { Menu } from 'primereact/menu';
 import '../../../styles/Custom.css';
-import { Profile } from './Profile';
 import { createItemsNavbar } from '../../../utils/CreateItemsNavbar';
 
 export const Navbar = ({ visible, onHide, setVisible }) => {
@@ -30,7 +29,6 @@ export const Navbar = ({ visible, onHide, setVisible }) => {
 					<div className='flex-grow'>
 						<Menu model={itemsNavbar} className='mt-5' />
 					</div>
-					<Profile setVisible={setVisible} />
 				</div>
 			</Sidebar>
 		</nav>

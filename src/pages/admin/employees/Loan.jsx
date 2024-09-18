@@ -1,8 +1,8 @@
 import { Button } from 'primereact/button';
-import { TableLoan } from './TableLoan';
-import Modals from '../../../../utils/Modals';
-import { FormLoan } from './FormLoan';
-import useModal from '../../../../hooks/useModal';
+import { TableLoan } from '../../../components/adminDashboard/employees/loan/TableLoan';
+import Modals from '../../../utils/Modals';
+import { FormLoan } from '../../../components/adminDashboard/employees/loan/FormLoan';
+import useModal from '../../../hooks/useModal';
 
 export const Loan = () => {
 	const addModal = useModal();

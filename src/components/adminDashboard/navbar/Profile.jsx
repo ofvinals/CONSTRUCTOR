@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useRef } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { OverlayPanel } from 'primereact/overlaypanel';
@@ -6,7 +7,7 @@ import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
 
-export const Profile = ({ setVisible }) => {
+export const Profile = ({ sidebarVisible }) => {
 	const { loggedUser, logoutUser } = useAuth();
 	const op = useRef(null);
 	const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const Profile = ({ setVisible }) => {
 				'rounded-md hover:bg-[#ffd52b] hover:font-bold p-1 text-black',
 			command: () => {
 				navigate('/profile');
-				setVisible(false);
+				sidebarVisible(false);
 			},
 		},
 		{
@@ -34,10 +35,10 @@ export const Profile = ({ setVisible }) => {
 	];
 
 	return (
-		<div className='flex flex-row items-center justify-center'>
+		<div className='flex flex-col items-center justify-center'>
 			<Button
 				onClick={(e) => op.current.toggle(e)}
-				className='w-12 h-12 rounded-full m-3 ring-2 ring-[#ffd52b] cursor-pointer'>
+				className='w-11 h-11 rounded-full my-3 ring-2 ring-[#ffd52b] cursor-pointer hover:opacity-60'>
 				{loggedUser.photoProfile ? (
 					<img
 						src={loggedUser.photoProfile}
@@ -53,7 +54,6 @@ export const Profile = ({ setVisible }) => {
 					/>
 				)}
 			</Button>
-			<p className='font-semibold text-wrap'>{loggedUser.displayName}</p>
 			<OverlayPanel ref={op} dismissable>
 				<Menu model={userMenuItems} className='rounded-md ' />
 			</OverlayPanel>
