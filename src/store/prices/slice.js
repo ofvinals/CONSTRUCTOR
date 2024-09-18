@@ -2,17 +2,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import { priceExtraReducers } from './extraReducers';
 
 const initialState = {
-	categories: {},
-	subcategories: {},
-	items: {},
+	categories: [],
 	category: null,
-	subcategory: null,
-	itemsPriceCategory: {},
-	itemsPriceSubcategory: {},
+	items: [],
 	itemPrice: null,
+	selectedItems: {},
+	subcategories: [],
 	status: 'Inactivo',
 	statusCategory: 'Inactivo',
-	statusSubcategory: 'Inactivo',
 	statusUpdate: 'Inactivo',
 	statusDelete: 'Inactivo',
 	statusPriceCategory: 'Inactivo',
@@ -26,10 +23,25 @@ export const priceSlice = createSlice({
 	reducers: {
 		clearCategory(state) {
 			state.category = null;
+			state.itemPrice = null;
+		},
+		setSelectedItems(state, action) {
+			state.selectedItems = action.payload;
+		},
+		setCategoryData(state, action) {
+			state.category = action.payload;
+		},
+		setSubcategoriesData(state, action) {
+			state.subcategories = action.payload;
 		},
 	},
 	extraReducers: priceExtraReducers,
 });
 
 export default priceSlice.reducer;
-export const { clearCategory } = priceSlice.actions;
+export const {
+	clearCategory,
+	setSelectedItems,
+	setCategoryData,
+	setSubcategoriesData,
+} = priceSlice.actions;

@@ -96,7 +96,7 @@ export default {
 						border: 'none',
 					},
 				},
-				// Estilo para .title
+				// Estilo para titles
 				'.yellowtitle': {
 					color: '#ffd52b',
 					padding: '10px',

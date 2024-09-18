@@ -6,6 +6,8 @@ import employeeReducer from './employees/slice';
 import attendanceReducer from './attendances/slice';
 import loanReducer from './loans/slice';
 import priceReducer from './prices/slice';
+import budgetReducer from './budgets/slice';
+import budgetDetailReducer from './budgetDetails/slice';
 
 export const store = configureStore({
 	reducer: {
@@ -16,5 +18,7 @@ export const store = configureStore({
 		attendances: attendanceReducer,
 		loans: loanReducer,
 		prices: priceReducer,
+		budgets: budgetReducer,
+		budgetDetails: budgetDetailReducer,
 	},
 });

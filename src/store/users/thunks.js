@@ -64,11 +64,7 @@ export const getUserbyGoogle = createAsyncThunk(
 	async ({ id }, { dispatch }) => {
 		try {
 			const querySnapshot = await getDoc(doc(db, 'users', id));
-			if (querySnapshot.exists()) {
-				return { uid: querySnapshot.id, ...querySnapshot.data() };
-			} else {
-				return null;
-			}
+			return { uid: querySnapshot.id, ...querySnapshot.data() };
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -196,11 +192,7 @@ export const disableUser = createAsyncThunk(
 					message: 'Cliente inhabilitado exitosamente',
 				})
 			);
-			if (updatedUser.exists()) {
-				return { uid: updatedUser.uid, ...updatedUser.data() };
-			} else {
-				return null;
-			}
+			return { uid: updatedUser.uid, ...updatedUser.data() };
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
@@ -221,11 +213,7 @@ export const enableUser = createAsyncThunk(
 					message: 'Cliente habilitado exitosamente',
 				})
 			);
-			if (updatedCategory.exists()) {
-				return { uid: updatedCategory.id, ...updatedCategory.data() };
-			} else {
-				return null;
-			}
+			return { uid: updatedCategory.id, ...updatedCategory.data() };
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}

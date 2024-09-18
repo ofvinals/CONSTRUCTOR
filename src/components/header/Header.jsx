@@ -1,51 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { DateTime } from './Date';
-import { useAuth } from '../../hooks/useAuth';
-import Navbar from '../adminDashboard/navbar/Navbar';
 import { Link, useLocation } from 'react-router-dom';
 import { menuOptions } from '../../utils/HeaderOptions';
+import { useAuth } from '../../hooks/useAuth';
 
 export function Header() {
-	const { loggedUser } = useAuth();
 	const location = useLocation();
-	const [sidebarVisible, setSidebarVisible] = useState(false);
-
-	const handleMouseEnter = () => {
-		if (loggedUser) {
-			setSidebarVisible(true);
-		}
-	};
-
-	const handleMouseLeave = () => {
-		setSidebarVisible(false);
-	};
-
 	useEffect(() => {}, [location]);
-
 	const currentMenuOptions = menuOptions[location.pathname] || [];
+	const { loggedUser } = useAuth();
 
 	return (
-		<header className='bg-background text-white '>
-    <section className='flex items-center w-full justify-around md:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto h-full'>
-				<div
-					className='flex items-start justify-start '
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}>
-					<div className='hover:opacity-70 duration-200 my-3 selection:ring-0 focus:ring-0'>
-						<img src='/CONSTRUCTOR.png' alt='' width={100} />
+		<header className='bg-[#cccccc] text-white '>
+			<section className='flex items-center  justify-around md:justify-between flex-wrap flex-row sm:pb-0 px-4 mx-auto min-h-[9vh]'>
+				{!loggedUser ? (
+					<div className='flex flex-row flex-wrap items-center justify-center text-xl text-[#ffd52b] font-bold'>
+						<img
+							className='mx-3'
+							src='/CONSTRU.png'
+							width={50}
+							alt='Logo de marca'
+						/>
 					</div>
-					{loggedUser && (
-						<div
-							onMouseEnter={handleMouseEnter}
-							onMouseLeave={handleMouseLeave}>
-							<Navbar
-								visible={sidebarVisible}
-								onHide={() => setSidebarVisible(false)}
-								setVisible={setSidebarVisible}
-							/>
-						</div>
-					)}
-				</div>
+				) : null}
 				<div className='flex flex-row flex-wrap m-2 space-x-4 items-center lg:w-9/12 justify-center lg:justify-start'>
 					{currentMenuOptions.map((option) => (
 						<Link

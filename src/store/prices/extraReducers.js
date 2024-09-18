@@ -1,23 +1,30 @@
 import {
+	exportSelectedItems,
 	getCategories,
 	getCategory,
 	createCategory,
 	updateCategory,
 	deleteCategory,
-	getSubcategories,
-	createSubcategory,
-	updateSubcategory,
-	deleteSubcategory,
 	getItemPrice,
-	getCategoryItemsPrice,
-	getSubcategoryItemsPrice,
-	createCategoryItemPrice,
-	createSubcategoryItemPrice,
+	getItemsPrice,
+	createItemPrice,
 	updateItemPrice,
 	deleteItemPrice,
 } from './thunks';
 
 export const priceExtraReducers = (builder) => {
+	builder
+		.addCase(exportSelectedItems.pending, (state) => {
+			state.status = 'Cargando';
+		})
+		.addCase(exportSelectedItems.fulfilled, (state, action) => {
+			state.status = 'Exitoso';
+			state.categories = action.payload;
+		})
+		.addCase(exportSelectedItems.rejected, (state, action) => {
+			state.status = 'Fallido';
+			state.error = action.payload;
+		});
 	builder
 		.addCase(getCategories.pending, (state) => {
 			state.status = 'Cargando';
@@ -79,77 +86,15 @@ export const priceExtraReducers = (builder) => {
 			state.error = action.payload;
 		});
 	builder
-		.addCase(getSubcategories.pending, (state) => {
-			state.status = 'Cargando';
-		})
-		.addCase(getSubcategories.fulfilled, (state, action) => {
-			// console.log('Subcategories fetched:', action.payload);
-			const { categoryId, subcategories } = action.payload;
-			state.status = 'Exitoso';
-			state.subcategories[categoryId] = subcategories;
-		})
-		.addCase(getSubcategories.rejected, (state, action) => {
-			state.state = 'Fallido';
-			state.error = action.error.message;
-		});
-	builder
-		.addCase(createSubcategory.pending, (state) => {
-			state.statusSubcategory = 'Cargando';
-		})
-		.addCase(createSubcategory.fulfilled, (state, action) => {
-			state.statusSubcategory = 'Exitoso';
-			state.category = action.payload;
-		})
-		.addCase(createSubcategory.rejected, (state, action) => {
-			state.statusSubcategory = 'Fallido';
-			state.error = action.payload;
-		});
-	builder
-		.addCase(updateSubcategory.pending, (state) => {
-			state.statusSubcategory = 'Cargando';
-		})
-		.addCase(updateSubcategory.fulfilled, (state, action) => {
-			state.statusSubcategory = 'Exitoso';
-			state.category = action.payload;
-		})
-		.addCase(updateSubcategory.rejected, (state, action) => {
-			state.statusSubcategory = 'Fallido';
-			state.error = action.payload;
-		});
-	builder
-		.addCase(deleteSubcategory.pending, (state) => {
-			state.statusSubcategory = 'Cargando';
-		})
-		.addCase(deleteSubcategory.fulfilled, (state, action) => {
-			state.statusSubcategory = 'Exitoso';
-			state.category = action.payload;
-		})
-		.addCase(deleteSubcategory.rejected, (state, action) => {
-			state.statusSubcategory = 'Fallido';
-			state.error = action.payload;
-		});
-	builder
-		.addCase(getCategoryItemsPrice.pending, (state) => {
+		.addCase(getItemsPrice.pending, (state) => {
 			state.statusPriceCategory = 'Cargando';
 		})
-		.addCase(getCategoryItemsPrice.fulfilled, (state, action) => {
+		.addCase(getItemsPrice.fulfilled, (state, action) => {
 			state.statusPriceCategory = 'Exitoso';
-			state.itemsPriceCategory = action.payload;
+			state.ItemsPrice = action.payload;
 		})
-		.addCase(getCategoryItemsPrice.rejected, (state, action) => {
+		.addCase(getItemsPrice.rejected, (state, action) => {
 			state.statusPriceCategory = 'Fallido';
-			state.error = action.payload;
-		});
-	builder
-		.addCase(getSubcategoryItemsPrice.pending, (state) => {
-			state.statusPriceSubcategory = 'Cargando';
-		})
-		.addCase(getSubcategoryItemsPrice.fulfilled, (state, action) => {
-			state.statusPriceSubcategory = 'Exitoso';
-			state.itemsPriceSubcategory = action.payload;
-		})
-		.addCase(getSubcategoryItemsPrice.rejected, (state, action) => {
-			state.statusPriceSubcategory = 'Fallido';
 			state.error = action.payload;
 		});
 	builder
@@ -165,27 +110,15 @@ export const priceExtraReducers = (builder) => {
 			state.error = action.payload;
 		});
 	builder
-		.addCase(createCategoryItemPrice.pending, (state) => {
+		.addCase(createItemPrice.pending, (state) => {
 			state.statusPriceCategory = 'Cargando';
 		})
-		.addCase(createCategoryItemPrice.fulfilled, (state, action) => {
+		.addCase(createItemPrice.fulfilled, (state, action) => {
 			state.statusPriceCategory = 'Exitoso';
-			state.itemPrice = action.payload;
+			state.itemsPrice = action.payload;
 		})
-		.addCase(createCategoryItemPrice.rejected, (state, action) => {
+		.addCase(createItemPrice.rejected, (state, action) => {
 			state.statusPriceCategory = 'Fallido';
-			state.error = action.payload;
-		});
-	builder
-		.addCase(createSubcategoryItemPrice.pending, (state) => {
-			state.statusPriceSubcategory = 'Cargando';
-		})
-		.addCase(createSubcategoryItemPrice.fulfilled, (state, action) => {
-			state.statusPriceSubcategory = 'Exitoso';
-			state.itemPrice = action.payload;
-		})
-		.addCase(createSubcategoryItemPrice.rejected, (state, action) => {
-			state.statusPriceSubcategory = 'Fallido';
 			state.error = action.payload;
 		});
 	builder
@@ -194,7 +127,7 @@ export const priceExtraReducers = (builder) => {
 		})
 		.addCase(updateItemPrice.fulfilled, (state, action) => {
 			state.statusUpdate = 'Exitoso';
-			state.itemPriec = action.payload;
+			state.itemPrice = action.payload;
 		})
 		.addCase(updateItemPrice.rejected, (state, action) => {
 			state.statusUpdate = 'Fallido';
@@ -206,7 +139,7 @@ export const priceExtraReducers = (builder) => {
 		})
 		.addCase(deleteItemPrice.fulfilled, (state, action) => {
 			state.statusDelete = 'Exitoso';
-			state.itemsPrice = action.payload;
+			state.itemPrice = action.payload;
 		})
 		.addCase(deleteItemPrice.rejected, (state, action) => {
 			state.statusDelete = 'Fallido';

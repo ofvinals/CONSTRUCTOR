@@ -79,7 +79,6 @@ export const createEmployee = createAsyncThunk(
 			);
 			return { id: res.id };
 		} catch (error) {
-			// Manejo de errores
 			dispatch(
 				showToast({
 					type: 'error',
@@ -134,11 +133,7 @@ export const disableEmployee = createAsyncThunk(
 					message: 'Empleado inhabilitado exitosamente',
 				})
 			);
-			if (updatedEmployee.exists()) {
-				return { uid: updatedEmployee.uid, ...updatedEmployee.data() };
-			} else {
-				return null;
-			}
+			return { uid: updatedEmployee.uid, ...updatedEmployee.data() };
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -165,11 +160,7 @@ export const enableEmployee = createAsyncThunk(
 					message: 'Empleado habilitado exitosamente',
 				})
 			);
-			if (updatedCategory.exists()) {
-				return { uid: updatedCategory.id, ...updatedCategory.data() };
-			} else {
-				return null;
-			}
+			return { uid: updatedCategory.id, ...updatedCategory.data() };
 		} catch (error) {
 			dispatch(
 				showToast({

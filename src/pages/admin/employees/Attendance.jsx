@@ -1,8 +1,8 @@
 import { Button } from 'primereact/button';
-import { TableAttendance } from './TableAttendance';
-import Modals from '../../../../utils/Modals';
-import { FormAttendance } from './FormAttendance';
-import useModal from '../../../../hooks/useModal';
+import { TableAttendance } from '../../../components/adminDashboard/employees/attendance/TableAttendance';
+import Modals from '../../../utils/Modals';
+import { FormAttendance } from '../../../components/adminDashboard/employees/attendance/FormAttendance';
+import useModal from '../../../hooks/useModal';
 
 export const Attendance = () => {
 	const addModal = useModal();
