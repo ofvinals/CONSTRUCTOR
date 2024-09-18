@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useBudgetDetailsActions } from '../../../../hooks/useBudgetDetailsActions';
 import HashLoader from 'react-spinners/HashLoader';
 import Modals from '../../../../utils/Modals';
-import FormPrices from '../FormDetailBudget/FormPrices';
+import { FormPrices } from '../FormDetailBudget/FormPrices';
 import useModal from '../../../../hooks/useModal';
 import { formatCurrency } from '../../../../utils/FormatCurrency';
 import { TableBudget } from './TableBudget';
