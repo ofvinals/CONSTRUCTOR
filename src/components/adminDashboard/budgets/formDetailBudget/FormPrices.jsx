@@ -162,3 +162,4 @@ export const FormPrices = ({
 		</div>
 	);
 };
+export default FormPrices;

@@ -6,7 +6,7 @@ import { useBudgetDetailsActions } from '../../../../hooks/useBudgetDetailsActio
 import HashLoader from 'react-spinners/HashLoader';
 import Modals from '../../../../utils/Modals';
 import useModal from '../../../../hooks/useModal';
-import { FormPrices } from '../FormDetailBudget/FormPrices';
+import { FormPrices } from '../formDetailBudget/FormPrices';
 import { Button } from 'primereact/button';
 import { formatCurrency } from '../../../../utils/FormatCurrency';
 import { TableBudget } from './TableBudget';

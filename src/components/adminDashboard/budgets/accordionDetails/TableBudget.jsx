@@ -5,7 +5,7 @@ import useModal from '../../../../hooks/useModal';
 import { useBudgetDetailsActions } from '../../../../hooks/useBudgetDetailsActions';
 import { useBudgetActions } from '../../../../hooks/useBudgetActions';
 import Modals from '../../../../utils/Modals';
-import { FormPrices } from '../FormDetailBudget/FormPrices';
+import { FormPrices } from '../formDetailBudget/FormPrices';
 import ConfirmDialog from '../../../../utils/ConfirmDialog';
 import TableActions from './TableActions';
 import { formatCurrency } from '../../../../utils/FormatCurrency';
