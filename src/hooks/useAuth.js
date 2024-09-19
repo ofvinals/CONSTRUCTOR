@@ -17,7 +17,7 @@ export const useAuth = () => {
 			).unwrap();
 			const user = userAction;
 			if (user.admin || user.coadmin) {
-				navigate('/proyects');
+				navigate('/budgets');
 			} else {
 				navigate('/client');
 			}
@@ -31,7 +31,7 @@ export const useAuth = () => {
 			const userAction = await dispatch(login({ email, password })).unwrap();
 			const user = userAction;
 			if (user.admin || user.coadmin) {
-				navigate('/admin');
+				navigate('/budgets');
 			} else {
 				navigate('/client');
 			}
@@ -44,7 +44,7 @@ export const useAuth = () => {
 	const registerUser = async ({ values }) => {
 		try {
 			await dispatch(register({ values })).unwrap();
-			navigate('/admin');
+			navigate('/client');
 		} catch (error) {
 			alert(error);
 		}

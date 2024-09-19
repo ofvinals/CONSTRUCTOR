@@ -9,7 +9,7 @@ import '../../../../styles/Custom.css';
 import HashLoader from 'react-spinners/HashLoader';
 
 export const AccordionPrices = ({ isBudget }) => {
-	const [selectedItems, setSelectedItems] = useState({});
+	const [selectedItems, setSelectedItems] = useState({ categories: {} });
 	const { setItems } = usePriceActions();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [deleteItem, setDeleteItem] = useState({
@@ -87,63 +87,95 @@ export const AccordionPrices = ({ isBudget }) => {
 		isChecked,
 	}) => {
 		setSelectedItems((prevSelectedItems) => {
-			const updatedSelectedItems = { ...prevSelectedItems };
+			// Hacemos una copia profunda del objeto
+			const updatedSelectedItems = JSON.parse(
+				JSON.stringify(prevSelectedItems)
+			);
+
+			// Asegúrate de que categories esté inicializado
+			if (!updatedSelectedItems.categories) {
+				updatedSelectedItems.categories = {};
+			}
+
 			if (isChecked) {
 				// Lógica para seleccionar
-				if (!updatedSelectedItems[categoryId]) {
-					updatedSelectedItems[categoryId] = {};
+				if (!updatedSelectedItems.categories[categoryId]) {
+					updatedSelectedItems.categories[categoryId] = {
+						items: [],
+						subcategories: {},
+					};
 				}
+
 				if (subcategoryId) {
 					// Manejo de subcategoría
-					if (!updatedSelectedItems[categoryId][subcategoryId]) {
-						updatedSelectedItems[categoryId][subcategoryId] = [];
+					if (!updatedSelectedItems.categories[categoryId].subcategories) {
+						updatedSelectedItems.categories[categoryId].subcategories =
+							{};
 					}
+
 					if (
-						!updatedSelectedItems[categoryId][subcategoryId].includes(
-							itemId
-						)
+						!updatedSelectedItems.categories[categoryId].subcategories[
+							subcategoryId
+						]
 					) {
-						updatedSelectedItems[categoryId][subcategoryId].push(itemId);
+						updatedSelectedItems.categories[categoryId].subcategories[
+							subcategoryId
+						] = {
+							items: [],
+						};
+					}
+
+					// Agregar el item a la subcategoría
+					const subcategoryItems =
+						updatedSelectedItems.categories[categoryId].subcategories[
+							subcategoryId
+						].items;
+					if (!subcategoryItems.includes(itemId)) {
+						subcategoryItems.push(itemId);
 					}
 				} else {
 					// Manejo de selección de categoría
-					if (!Array.isArray(updatedSelectedItems[categoryId])) {
-						updatedSelectedItems[categoryId] = [];
-					}
-					if (!updatedSelectedItems[categoryId].includes(itemId)) {
-						updatedSelectedItems[categoryId].push(itemId);
+					const categoryItems =
+						updatedSelectedItems.categories[categoryId].items;
+					if (!categoryItems.includes(itemId)) {
+						categoryItems.push(itemId);
 					}
 				}
 			} else {
 				// Lógica para deseleccionar
 				if (subcategoryId) {
 					// Si se está deseleccionando un item dentro de una subcategoría
-					if (
-						Array.isArray(
-							updatedSelectedItems[categoryId]?.[subcategoryId]
-						)
-					) {
-						updatedSelectedItems[categoryId][subcategoryId] =
-							updatedSelectedItems[categoryId][subcategoryId].filter(
-								(id) => id !== itemId
-							);
+					const subcategory =
+						updatedSelectedItems.categories[categoryId]?.subcategories?.[
+							subcategoryId
+						];
+					if (subcategory && Array.isArray(subcategory.items)) {
+						subcategory.items = subcategory.items.filter(
+							(id) => id !== itemId
+						);
+
 						// Si la subcategoría queda vacía, eliminarla
-						if (
-							updatedSelectedItems[categoryId][subcategoryId].length ===
-							0
-						) {
-							delete updatedSelectedItems[categoryId][subcategoryId];
+						if (subcategory.items.length === 0) {
+							delete updatedSelectedItems.categories[categoryId]
+								.subcategories[subcategoryId];
+
+							// Si no quedan subcategorías, eliminar la categoría
+							if (
+								Object.keys(
+									updatedSelectedItems.categories[categoryId]
+										.subcategories
+								).length === 0
+							) {
+								delete updatedSelectedItems.categories[categoryId];
+							}
 						}
 					}
 				} else {
 					// Si se está deseleccionando la categoría completa
-					delete updatedSelectedItems[categoryId];
+					delete updatedSelectedItems.categories[categoryId];
 				}
 			}
-			// Limpieza de categorías vacías
-			if (Object.keys(updatedSelectedItems).length === 0) {
-				return {};
-			}
+
 			return updatedSelectedItems;
 		});
 	};
@@ -163,9 +195,15 @@ export const AccordionPrices = ({ isBudget }) => {
 							getCategoryNumber={getCategoryNumber}
 							getSubcategoryNumber={getSubcategoryNumber}
 							handleSelectionChange={handleSelectionChange}
-							selectedItemsCategory={selectedItems[category.uid] || []}
+							selectedItemsCategory={
+								selectedItems?.categories[category.uid] || {
+									items: [],
+									subcategories: {},
+								}
+							}
 							selectedItemsSubcategory={
-								selectedItems[category.uid] || {}
+								selectedItems?.categories[category.uid]
+									?.subcategories || {}
 							}
 							isBudget={isBudget}
 						/>

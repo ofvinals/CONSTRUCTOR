@@ -107,7 +107,6 @@ export const CategoryBudget = ({
 					(id) => id !== itemId
 				);
 			}
-			console.log(updatedItems);
 			return updatedItems;
 		});
 		setSelectedItemsSubcategory((prevState) => {

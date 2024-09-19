@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from '../src/components/header/Header';
-import { Footer } from '../src/components/home/Footer';
 import { About } from '../src/pages/home/About';
 import { Home } from '../src/pages/Home';
 import { AdminDashboard } from '../src/pages/admin/AdminDashboard';
@@ -92,7 +91,7 @@ export const AppRouter = () => {
 							<Route path='*' element={<Error404 />} />
 						</Routes>
 					</main>
-					<Footer />
+					
 				</div>
 			</div>
 		</BrowserRouter>

@@ -41,13 +41,15 @@ const SubCategoryItem = ({
 	};
 
 	useEffect(() => {
-		const allSelected = subcategory.items.every(
-			(item) =>
-				selectedItemsSubcategory[subcategory.uid]?.includes(item.uid) ||
-				selectAll
+		// Asegúrate de que selectedItemsSubcategory tenga la estructura adecuada
+		const selectedSubcategory = selectedItemsSubcategory[subcategory.uid] || { items: [] };
+  
+		const allSelected = subcategory.items.every(item =>
+			 selectedSubcategory.items.includes(item.uid)
 		);
+  
 		setSelectAll(allSelected);
-	}, [subcategory, selectedItemsSubcategory, selectAll]);
+  }, [subcategory, selectedItemsSubcategory]);
 
 	const handleSelectAllChange = () => {
 		const newSelectAll = !selectAll;
@@ -128,6 +130,7 @@ const SubCategoryItem = ({
 							selectedItemsSubcategory={selectedItemsSubcategory}
 							handleCheckboxChange={handleCheckboxChange}
 							categoryId={categoryId}
+							subcategoryId={subcategory.uid}
 							subcategory={subcategory}
 							category={null}
 							isBudget={isBudget}

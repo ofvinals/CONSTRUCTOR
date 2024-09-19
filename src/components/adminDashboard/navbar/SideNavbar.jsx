@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { ItemsNavbar } from '../../../utils/ItemsNavbar';
 
 export const SideNavbar = () => {
-	const [activeItem, setActiveItem] = useState('Proyectos');
+	const [activeItem, setActiveItem] = useState('Presupuestos');
 	const [sidebarVisible, setSidebarVisible] = useState(false);
 	const { loggedUser } = useAuth();
 
