@@ -5,11 +5,14 @@ import { Form, FormLabel } from 'react-bootstrap';
 import { FormSelect, SaveButton } from '../../../../utils/Form';
 import { useBudgetActions } from '../../../../hooks/useBudgetActions';
 import { useEffect, useState } from 'react';
-import { usePriceActions } from '../../../../hooks/usePriceActions';
+import { useBudgetDetailsActions } from '../../../../hooks/useBudgetDetailsActions';
+import { useSelector } from 'react-redux';
 
 export const FormBudgets = ({ onClose }) => {
+	const selectedItems = useSelector((state) => state.prices.selectedItems);
+
 	const { budgets, getBudgets } = useBudgetActions();
-	const { exportSelectedItems } = usePriceActions();
+	const { exportSelectedItems } = useBudgetDetailsActions();
 	const [selectedBudget, setSelectedBudget] = useState(null);
 	const {
 		register,
@@ -27,14 +30,10 @@ export const FormBudgets = ({ onClose }) => {
 		setSelectedBudget(budget);
 	};
 
-	const onSubmit = async (budgetId, values) => {
+	const onSubmit = async (selectedBudget) => {
 		try {
-			console.log(budgetId, values);
-			const dataToExport = {
-				budgetId,
-				items: values,
-			};
-			await exportSelectedItems(dataToExport);
+			console.log(selectedBudget, selectedItems);
+			await exportSelectedItems({ budgetId: selectedBudget, selectedItems });
 			onClose();
 		} catch (error) {
 			console.error('Error al exportar los datos:', error);

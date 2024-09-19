@@ -5,11 +5,86 @@ import {
 	addDoc,
 	getDoc,
 	getDocs,
+	setDoc,
 	deleteDoc,
 	collection,
 	updateDoc,
 } from 'firebase/firestore';
 import { showToast } from '../toast/slice';
+
+export const exportSelectedItems = createAsyncThunk(
+	'category/exportSelectedItems',
+	async ({ budgetId, selectedItems }, { dispatch }) => {
+		try {
+			const categoriesIds = Object.keys(selectedItems); // IDs de las categorías
+			// Iterar sobre cada categoría
+			await Promise.all(
+				categoriesIds.map(async (categoryId) => {
+					// Recuperar la categoría desde la colección prices
+					const pricesRef = doc(db, 'categories', categoryId);
+					const categorySnapshot = await getDoc(pricesRef);
+					if (categorySnapshot.exists()) {
+						const categoryData = {
+							...categorySnapshot.data(),
+							uid: categorySnapshot.id,
+						};
+						// Agregar la categoría al presupuesto
+						const budgetCategoryRef = doc(
+							db,
+							'budgets',
+							budgetId,
+							'categories',
+							categoryId
+						);
+						await setDoc(budgetCategoryRef, categoryData); // Cambiado a setDoc
+						console.log(budgetCategoryRef);
+						// Recuperar ítems de la categoría desde la colección prices
+						const itemsSnapshot = await getDocs(
+							collection(pricesRef, 'items')
+						);
+						const items = itemsSnapshot.docs.map((itemDoc) => ({
+							uid: itemDoc.id,
+							...itemDoc.data(),
+						}));
+						// Agregar ítems a la subcolección de categorías en el presupuesto
+						await Promise.all(
+							items.map(async (item) => {
+								await setDoc(
+									doc(
+										db,
+										'budgets',
+										budgetId,
+										'categories',
+										categoryId,
+										'items',
+										item.uid
+									),
+									item
+								);
+							})
+						);
+					}
+				})
+			);
+			dispatch(getBudgets({ budgetId }));
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Datos importados exitosamente',
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al importar datos',
+				})
+			);
+			console.error(error);
+			throw error;
+		}
+	}
+);
 
 export const getBudgets = createAsyncThunk(
 	'budgets/getBudgets',

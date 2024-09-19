@@ -1,4 +1,5 @@
 import {
+	exportSelectedItems,
 	getBudgets,
 	getBudget,
 	createBudget,
@@ -12,6 +13,18 @@ import {
 } from './thunks';
 
 export const budgetDetailExtraReducers = (builder) => {
+	builder
+	.addCase(exportSelectedItems.pending, (state) => {
+		state.status = 'Cargando';
+	})
+	.addCase(exportSelectedItems.fulfilled, (state, action) => {
+		state.status = 'Exitoso';
+		state.categories = action.payload;
+	})
+	.addCase(exportSelectedItems.rejected, (state, action) => {
+		state.status = 'Fallido';
+		state.error = action.payload;
+	});
 	builder
 		.addCase(getBudgets.pending, (state) => {
 			state.status = 'Cargando';
