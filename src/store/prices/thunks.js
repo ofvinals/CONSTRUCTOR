@@ -11,30 +11,6 @@ import {
 } from 'firebase/firestore';
 import { showToast } from '../toast/slice';
 
-export const exportSelectedItems = createAsyncThunk(
-	'category/exportSelectedItems',
-	async ({ dataToExport }, { dispatch }) => {
-		try {
-			console.log(dataToExport);
-			dispatch(
-				showToast({
-					type: 'success',
-					message: 'Exportacion realizada exitosamente',
-				})
-			);
-		} catch (error) {
-			dispatch(
-				showToast({
-					type: 'error',
-					message: 'Error al exportar los datos',
-				})
-			);
-			console.error(error);
-			throw error;
-		}
-	}
-);
-
 export const getCategories = createAsyncThunk(
 	'category/getCategories',
 	async (_, { dispatch }) => {

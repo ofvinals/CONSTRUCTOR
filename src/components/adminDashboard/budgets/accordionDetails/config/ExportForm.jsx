@@ -1,22 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useSelector } from 'react-redux';
 import AccordionPrices from '../../../pricesBank/myBank/AccordionPrices';
-import { usePriceActions } from '../../../../../hooks/usePriceActions';
+import { useBudgetDetailsActions } from '../../../../../hooks/useBudgetDetailsActions';
 
-export const ExportForm = ({ budgetId }) => {
+export const ExportForm = ({ budgetId, onClose }) => {
 	const selectedItems = useSelector((state) => state.prices.selectedItems);
-	const categories = useSelector((state) => state.prices.categories);
-	const { exportSelectedItems } = usePriceActions();
-	console.log(categories);
-	console.log(selectedItems);
+	const { exportSelectedItems } = useBudgetDetailsActions();
 
 	const handleExport = async () => {
-		// Prepara los datos para el presupuesto
-		const dataToExport = {
-			budgetId,
-			items: selectedItems,
-		};
-		await exportSelectedItems(dataToExport);
+		await exportSelectedItems({ selectedItems, budgetId });
+		onClose();
 	};
 
 	return (

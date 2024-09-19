@@ -208,10 +208,14 @@ export const TableBudget = ({
 									{formatCurrency(totalCost)}
 								</td>
 								<td className='text-center text-nowrap align-middle'>
-									{formatCurrency(adjustedPrice)}
+									{isNaN(adjustedPrice)
+										? '$ 0'
+										: formatCurrency(adjustedPrice)}
 								</td>
 								<td className='text-center text-nowrap align-middle'>
-									{formatCurrency(adjustedCost)}
+									{isNaN(adjustedCost)
+										? '$ 0'
+										: formatCurrency(adjustedCost)}
 								</td>
 								<td>
 									<TableActions

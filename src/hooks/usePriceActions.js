@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from './store';
 import {
-	exportSelectedItems as exportSelectedItemsThunk,
 	getCategory as getCategoryThunk,
 	getCategories as getCategoriesThunk,
 	createCategory as createCategoryThunk,
@@ -49,9 +48,7 @@ export const usePriceActions = () => {
 	const clearCurrentCategory = () => dispatch(clearCategory());
 	const setCategory = (data) => dispatch(setCategoryData(data));
 	const setSubcategories = (data) => dispatch(setSubcategoriesData(data));
-	const exportSelectedItems = async ({ dataToExport }) => {
-		await dispatch(exportSelectedItemsThunk({ dataToExport }));
-	};
+
 	const getCategory = async ({ id }) => {
 		await dispatch(getCategoryThunk({ id }));
 	};
@@ -119,7 +116,6 @@ export const usePriceActions = () => {
 		statusPriceSubcategory,
 		statusPriceCategory,
 		selectedItemsCategory,
-		exportSelectedItems,
 		clearCurrentCategory,
 		setItems,
 		setCategory,

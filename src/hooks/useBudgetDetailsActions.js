@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from './store';
 import {
+	exportSelectedItems as exportSelectedItemsThunk,
 	getBudget as getBudgetThunk,
 	getBudgets as getBudgetsThunk,
 	createBudget as createBudgetThunk,
@@ -41,7 +42,9 @@ export const useBudgetDetailsActions = () => {
 	);
 
 	const dispatch = useAppDispatch();
-
+	const exportSelectedItems = async ({ selectedItems, budgetId }) => {
+		await dispatch(exportSelectedItemsThunk({ selectedItems, budgetId }));
+	};
 	const getBudget = async ({ budgetId, categoryId }) => {
 		await dispatch(getBudgetThunk({ budgetId, categoryId }));
 	};
@@ -156,6 +159,7 @@ export const useBudgetDetailsActions = () => {
 		itemPrice,
 		statusPriceSubcategory,
 		statusPriceCategory,
+		exportSelectedItems,
 		getBudget,
 		getBudgets,
 		createBudget,

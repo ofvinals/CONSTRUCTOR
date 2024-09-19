@@ -102,7 +102,7 @@ export const AccordionBudget = () => {
 		}, 0);
 	};
 
-	const mapedCategories = categories.map((category) => {
+	const mapedCategories = categories?.map((category) => {
 		const items = category.items || [];
 		const finalPrice = calculateFinalPrice(items);
 		return { ...category, finalPrice };

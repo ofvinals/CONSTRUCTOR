@@ -6,10 +6,8 @@ export const ResumeBudget = () => {
 	const { configValues } = useBudgetActions();
 	const { categories } = useBudgetDetailsActions();
 
-	// Función para calcular el total de precios
 	const calculateTotalPrice = (categories) => {
 		let total = 0;
-		// Calcula el precio total de los ítems
 		const calculateItemsPrice = (items) => {
 			return items.reduce((sum, item) => {
 				const finalPrice = parseFloat(item.finalPrice) || 0;
@@ -17,7 +15,7 @@ export const ResumeBudget = () => {
 				return sum + finalPrice * measurement;
 			}, 0);
 		};
-		// Itera sobre cada categoría
+
 		const processCategory = (category) => {
 			total += calculateItemsPrice(category.items || []);
 			if (category.subcategories && category.subcategories.length > 0) {
@@ -27,30 +25,35 @@ export const ResumeBudget = () => {
 				});
 			}
 		};
+
 		if (categories) {
 			categories.forEach((category) => processCategory(category));
 		}
 		return total;
 	};
-	
+
 	const totalPrice = categories ? calculateTotalPrice(categories) : 0;
 
-	// Calcula el precio total con beneficio
-	const totalPriceWithBenefits =
-		totalPrice * (1 + configValues.benefits / 100);
+	const totalPriceWithBenefits = isNaN(totalPrice)
+		? 0
+		: totalPrice * (1 + configValues.benefits / 100);
 
-	// Calcula los honorarios
-	const anteproyectFeeAmount =
-		totalPrice * (configValues.anteproyectFee / 100);
-	const proyectFeeAmount = totalPrice * (configValues.proyectFee / 100);
-	const dtFeeAmount = totalPrice * (configValues.dtFee / 100);
-	const adminFeeAmount = totalPrice * (configValues.adminFee / 100);
+	const anteproyectFeeAmount = isNaN(totalPrice)
+		? 0
+		: totalPrice * (configValues.anteproyectFee / 100);
+	const proyectFeeAmount = isNaN(totalPrice)
+		? 0
+		: totalPrice * (configValues.proyectFee / 100);
+	const dtFeeAmount = isNaN(totalPrice)
+		? 0
+		: totalPrice * (configValues.dtFee / 100);
+	const adminFeeAmount = isNaN(totalPrice)
+		? 0
+		: totalPrice * (configValues.adminFee / 100);
 
-	// Total de honorarios
 	const totalFees =
 		anteproyectFeeAmount + proyectFeeAmount + dtFeeAmount + adminFeeAmount;
 
-	// Total presupuesto
 	const totalBudget = totalPriceWithBenefits + totalFees;
 
 	return (
@@ -59,7 +62,9 @@ export const ResumeBudget = () => {
 				<div className='flex flex-col items-center justify-center text-center'>
 					<p className='font-bold text-lg'>Costo Real</p>
 					<span className='font-semibold pt-2'>
-						{formatCurrency(totalPrice.toFixed(2))}
+						{isNaN(totalPrice)
+							? '$ 0'
+							: formatCurrency(totalPrice.toFixed(2))}
 					</span>
 				</div>
 				<div className='flex flex-col items-center justify-center pt-3 text-center'>
@@ -69,35 +74,48 @@ export const ResumeBudget = () => {
 			</div>
 			<div className='flex flex-col flex-wrap items-center justify-center text-center'>
 				<p className='text-lg font-bold'>
-					Honorarios <span>{formatCurrency(totalFees.toFixed(2))}</span>
+					Honorarios{' '}
+					<span>
+						{isNaN(totalFees)
+							? '$ 0'
+							: formatCurrency(totalFees.toFixed(2))}
+					</span>
 				</p>
 				<div className='flex flex-row flex-wrap items-center justify-center gap-2 border-2 p-2 border-gray-400'>
 					<div className='flex flex-col items-center justify-center text-center'>
 						<p className='font-semibold'>AnteProyecto</p>
 						<span>{configValues.anteproyectFee} %</span>
 						<span className='font-semibold'>
-							{formatCurrency(anteproyectFeeAmount.toFixed(2))}
+							{isNaN(anteproyectFeeAmount)
+								? '$ 0'
+								: formatCurrency(anteproyectFeeAmount.toFixed(2))}
 						</span>
 					</div>
 					<div className='flex flex-col items-center justify-center text-center'>
 						<p className='font-semibold'>Proyecto</p>
 						<span>{configValues.proyectFee} %</span>
 						<span className='font-semibold'>
-							{formatCurrency(proyectFeeAmount.toFixed(2))}
+							{isNaN(proyectFeeAmount)
+								? '$ 0'
+								: formatCurrency(proyectFeeAmount.toFixed(2))}
 						</span>
 					</div>
 					<div className='flex flex-col items-center justify-center text-center'>
 						<p className='font-semibold'>D. T.</p>
 						<span>{configValues.dtFee} %</span>
 						<span className='font-semibold'>
-							{formatCurrency(dtFeeAmount.toFixed(2))}
+							{isNaN(dtFeeAmount)
+								? '$ 0'
+								: formatCurrency(dtFeeAmount.toFixed(2))}
 						</span>
 					</div>
 					<div className='flex flex-col items-center justify-center text-center'>
 						<p className='font-semibold'>Administracion</p>
 						<span>{configValues.adminFee} %</span>
 						<span className='font-semibold'>
-							{formatCurrency(adminFeeAmount.toFixed(2))}
+							{isNaN(adminFeeAmount)
+								? '$ 0'
+								: formatCurrency(adminFeeAmount.toFixed(2))}
 						</span>
 					</div>
 				</div>
@@ -106,7 +124,9 @@ export const ResumeBudget = () => {
 			<div className='flex flex-col items-center justify-center'>
 				<p className='font-bold text-xl'>Total Presupuesto</p>
 				<span className='font-bold text-xl'>
-					{formatCurrency(totalBudget.toFixed(2))}
+					{isNaN(totalBudget)
+						? '$ 0'
+						: formatCurrency(totalBudget.toFixed(2))}
 				</span>
 			</div>
 		</div>

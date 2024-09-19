@@ -1,5 +1,4 @@
 import {
-	exportSelectedItems,
 	getCategories,
 	getCategory,
 	createCategory,
@@ -13,18 +12,6 @@ import {
 } from './thunks';
 
 export const priceExtraReducers = (builder) => {
-	builder
-		.addCase(exportSelectedItems.pending, (state) => {
-			state.status = 'Cargando';
-		})
-		.addCase(exportSelectedItems.fulfilled, (state, action) => {
-			state.status = 'Exitoso';
-			state.categories = action.payload;
-		})
-		.addCase(exportSelectedItems.rejected, (state, action) => {
-			state.status = 'Fallido';
-			state.error = action.payload;
-		});
 	builder
 		.addCase(getCategories.pending, (state) => {
 			state.status = 'Cargando';

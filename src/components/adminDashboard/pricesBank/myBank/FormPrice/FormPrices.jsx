@@ -39,14 +39,10 @@ export const FormPrices = ({
 			laborPrice: '',
 			items: [
 				{
-					shortDescription: '',
-					largeDescription: '',
-					itemType: '',
+					ItemType: '',
 					itemDescription: '',
 					itemUnit: '',
-					itemCant: '',
 					itemPrice: '',
-					itemTotalPrice: '',
 				},
 			],
 		},
@@ -103,7 +99,7 @@ export const FormPrices = ({
 					categoryId,
 					subcategoryId,
 					itemId: id,
-					values:finalValues,
+					values: finalValues,
 				});
 				onClose();
 			} else if (mode === 'create') {

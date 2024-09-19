@@ -71,7 +71,11 @@ export const MenuConfig = ({ budgetId }) => {
 				onClose={handleClose}
 				size='lg'
 				title='Exportar Banco de Precios'>
-				<ExportForm isBudget={true} budgetId={budgetId} />
+				<ExportForm
+					onClose={handleClose}
+					isBudget={true}
+					budgetId={budgetId}
+				/>
 			</Modals>
 		</>
 	);
