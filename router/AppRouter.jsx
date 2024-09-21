@@ -23,6 +23,7 @@ import { Unauthorized } from '../src/pages/Unauthorized';
 import { Error404 } from '../src/pages/Error404';
 import { Loan } from '../src/pages/admin/employees/Loan';
 import { BudgetDetail } from '../src/pages/admin/BudgetDetail';
+import { Board } from '../src/components/adminDashboard/tools/board/Board';
 
 export const AppRouter = () => {
 	return (
@@ -82,6 +83,8 @@ export const AppRouter = () => {
 								<Route path='/employees/salary' element={<Salary />} />
 								<Route path='/employees/loan' element={<Loan />} /> s
 								<Route path='/tools' element={<Tools />} />
+								<Route path='/tools/stock' element={<Tools />} />
+								<Route path='/tools/locations' element={<Board />} />
 							</Route>
 
 							{/* Ruta para usuarios no autorizados */}
@@ -91,7 +94,6 @@ export const AppRouter = () => {
 							<Route path='*' element={<Error404 />} />
 						</Routes>
 					</main>
-					
 				</div>
 			</div>
 		</BrowserRouter>

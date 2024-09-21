@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 
+import { Height } from '@mui/icons-material';
+
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin');
 

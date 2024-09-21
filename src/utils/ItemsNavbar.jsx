@@ -26,6 +26,11 @@ export const ItemsNavbar = [
 		path: '/clients',
 	},
 	{
+		icon: 'pi pi-wrench',
+		label: 'Herramientas',
+		path: '/tools',
+	},
+	{
 		icon: 'pi pi-chart-bar',
 		label: 'Gestion de Empresa',
 		path: '/business',

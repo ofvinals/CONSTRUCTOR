@@ -30,10 +30,11 @@ export const FormBudgets = ({ onClose }) => {
 		setSelectedBudget(budget);
 	};
 
-	const onSubmit = async (selectedBudget) => {
+	const onSubmit = async () => {
 		try {
-			console.log(selectedBudget, selectedItems);
-			await exportSelectedItems({ budgetId: selectedBudget, selectedItems });
+			const budgetId = selectedBudget?.uid; 
+			console.log(budgetId, selectedItems);
+			await exportSelectedItems({ budgetId, selectedItems });
 			onClose();
 		} catch (error) {
 			console.error('Error al exportar los datos:', error);

@@ -183,7 +183,7 @@ export const TableBudget = ({
 											onFocus={() =>
 												handleInputClick(item.uid, item.measurement)
 											}
-											className='form-control'
+											className='form-control w-[130px]'
 										/>
 									) : (
 										<span

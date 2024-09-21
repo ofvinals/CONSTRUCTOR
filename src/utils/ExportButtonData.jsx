@@ -51,7 +51,7 @@ export const ExportDataButton = () => {
 					menuRef.current.toggle(e);
 				}}
 				className='btnprimary disabled:bg-gray-400 h-[40px]'
-				disabled={Object.keys(selectedItems).length === 0}>
+				disabled={!(selectedItems && Object.keys(selectedItems.categories || {}).length > 0)}>
 				<i className='pi pi-upload mr-2'></i>
 				Exportar Datos Seleccionados
 				<Menu model={items} popup ref={menuRef} />
