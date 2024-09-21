@@ -4,6 +4,7 @@ import { useAttendanceActions } from '../../../../hooks/useAttendanceActions';
 import Loader from '../../../../utils/Loader';
 import TreeTable from '../../../../utils/TreeTable';
 import { DateTime } from 'luxon';
+import { formatCurrency } from '../../../../utils/FormatCurrency';
 
 export const TableAttendance = () => {
 	const {
@@ -112,6 +113,17 @@ export const TableAttendance = () => {
 				accessorKey: 'endTime',
 				size: 10,
 				header: 'Hora Salida',
+				muiEditTextFieldProps: {
+					required: true,
+					error: !!validationErrors?.endDate,
+					helperText: validationErrors?.endDate,
+				},
+			},
+			{
+				accessorKey: 'valuePosition',
+				size: 10,
+				header: 'Jornal',
+				Cell: ({ cell }) => formatCurrency(cell.getValue()),
 				muiEditTextFieldProps: {
 					required: true,
 					error: !!validationErrors?.endDate,

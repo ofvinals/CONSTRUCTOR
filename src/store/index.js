@@ -8,6 +8,7 @@ import loanReducer from './loans/slice';
 import priceReducer from './prices/slice';
 import budgetReducer from './budgets/slice';
 import budgetDetailReducer from './budgetDetails/slice';
+import toolReducer from './tools/slice';
 
 export const store = configureStore({
 	reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
 		prices: priceReducer,
 		budgets: budgetReducer,
 		budgetDetails: budgetDetailReducer,
+		tools: toolReducer,
 	},
 });

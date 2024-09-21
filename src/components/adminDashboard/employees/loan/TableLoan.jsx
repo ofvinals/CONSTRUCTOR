@@ -15,6 +15,7 @@ import { FormLoan } from './FormLoan';
 import useModal from '../../../../hooks/useModal';
 import ConfirmDialog from '../../../../utils/ConfirmDialog';
 import { useAuth } from '../../../../hooks/useAuth';
+import { formatCurrency } from '../../../../utils/FormatCurrency';
 
 export const TableLoan = () => {
 	const {
@@ -43,17 +44,7 @@ export const TableLoan = () => {
 		return '';
 	};
 	const filteredLoans = loans.filter((loan) => loan.isPay === false);
-	const formatCurrency = (value) => {
-		const numberValue = parseFloat(value);
-		if (!isNaN(numberValue)) {
-			return new Intl.NumberFormat('es-AR', {
-				style: 'currency',
-				currency: 'ARS',
-				minimumFractionDigits: 0,
-			}).format(numberValue);
-		}
-		return value;
-	};
+
 	const handleUpdateLoan = async ({ values, row, table }) => {
 		try {
 			const id = row.original.uid;

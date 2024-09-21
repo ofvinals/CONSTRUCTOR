@@ -11,10 +11,11 @@ import { formatCurrency } from '../../../../../utils/FormatCurrency';
 
 export const TablePrice = ({
 	selectedItemsSubcategory,
-	selectedItemsCategory,
+	selectedItemsCategory = { items: [] },
 	handleCheckboxChange,
 	categoryId,
 	subcategory,
+	subcategoryId,
 	category,
 	isBudget,
 }) => {
@@ -26,15 +27,12 @@ export const TablePrice = ({
 
 	// Determinar la lista de items a mostrar
 	const items = category?.items || subcategory?.items || [];
-	const selectedItemsCategoryList = Array.isArray(selectedItemsCategory)
-		? selectedItemsCategory
-		: [];
 
 	// Función para manejar el cambio del checkbox
 	const handleItemCheckboxChange = (itemId, isChecked) => {
 		handleCheckboxChange({
 			categoryId,
-			subcategoryId: subcategory?.uid || null,
+			subcategoryId: subcategoryId || null,
 			itemId,
 			isChecked,
 		});
@@ -70,12 +68,15 @@ export const TablePrice = ({
 					{items.length > 0 ? (
 						items.map((item, index) => {
 							const isChecked =
-								(category &&
-									selectedItemsCategoryList?.includes(item?.uid)) ||
-								(subcategory &&
-									selectedItemsSubcategory[subcategory?.uid]?.includes(
-										item?.uid
-									)) ||
+								(Array.isArray(selectedItemsCategory.items) &&
+									selectedItemsCategory.items.includes(item.uid)) ||
+								(selectedItemsSubcategory?.[subcategoryId]?.items &&
+									Array.isArray(
+										selectedItemsSubcategory[subcategoryId].items
+									) &&
+									selectedItemsSubcategory[
+										subcategory.uid
+									].items.includes(item.uid)) ||
 								false;
 
 							return (

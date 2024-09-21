@@ -1,0 +1,176 @@
+/* eslint-disable no-unused-vars */
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { db, storage } from '../../services/firebase';
+import {
+	doc,
+	addDoc,
+	getDoc,
+	getDocs,
+	query,
+	collection,
+	updateDoc,
+	deleteDoc,
+} from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+
+import { showToast } from '../toast/slice';
+
+export const getTools = createAsyncThunk(
+	'tool/getTools',
+	async (_, { dispatch }) => {
+		const arrayAux = [];
+		try {
+			const querySnapshot = await getDocs(query(collection(db, 'tools')));
+			querySnapshot.forEach((doc) => {
+				arrayAux.push({ uid: doc.id, ...doc.data() });
+			});
+			console.log(arrayAux);
+			return arrayAux;
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al obtener datos de las herramientas',
+				})
+			);
+			console.error(error);
+			throw error;
+		}
+	}
+);
+
+export const getTool = createAsyncThunk(
+	'tool/getTool',
+	async ({ id }, { dispatch }) => {
+		try {
+			const toolRef = doc(db, 'tools', id);
+			const snapshot = await getDoc(toolRef);
+			const toolData = snapshot.data();
+			return toolData;
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al obtener datos de la herramienta',
+				})
+			);
+			console.error(error);
+			throw error;
+		}
+	}
+);
+
+export const createTool = createAsyncThunk(
+	'tool/createTool',
+	async ({ values, fileImage }, { dispatch }) => {
+		try {
+			const toolsRef = collection(db, 'tools');
+			let url = ''; // Variable para almacenar la URL
+			if (fileImage) {
+				// Crea una referencia única para la foto
+				const fileName = `${fileImage.name}`; // Corrige aquí
+				const storageRef = ref(storage, `tools/${fileName}`);
+				// Subir la imagen al almacenamiento
+				const uploadTask = uploadBytesResumable(storageRef, fileImage);
+				// Espera a que se complete la carga
+				await uploadTask;
+				// Obtener la URL de descarga
+				url = await getDownloadURL(uploadTask.snapshot.ref);
+			}
+			// Eliminar campos con valores undefined antes de actualizar
+			const filteredValues = Object.fromEntries(
+				Object.entries(values).filter(([_, value]) => value !== undefined)
+			);
+			const res = await addDoc(toolsRef, {
+				...filteredValues,
+				photoTool: url,
+			});
+			dispatch(getTools());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Herramienta creada exitosamente',
+				})
+			);
+			return { id: res.id };
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al crear la herramienta',
+				})
+			);
+			console.error('Error:', error.message);
+			return { error: error.message };
+		}
+	}
+);
+
+export const updateTool = createAsyncThunk(
+	'tool/updateTool',
+	async ({ id, values, fileImage }, { dispatch }) => {
+		try {
+			const toolRef = doc(db, 'tools', id);
+			let url = ''; // Variable para almacenar la URL
+			if (fileImage) {
+				// Crea una referencia única para la foto
+				const fileName = `${id}_${fileImage.name}`; // O un nombre único de tu elección
+				const storageRef = ref(storage, `tools/${fileName}`);
+				// Subir la imagen al almacenamiento
+				const uploadTask = uploadBytesResumable(storageRef, fileImage);
+				// Espera a que se complete la carga
+				await uploadTask;
+				// Obtener la URL de descarga
+				url = await getDownloadURL(uploadTask.snapshot.ref);
+			}
+			// Eliminar campos con valores undefined antes de actualizar
+			const filteredValues = Object.fromEntries(
+				Object.entries(values).filter(([_, value]) => value !== undefined)
+			);
+			await updateDoc(toolRef, { ...filteredValues, photoTool: url });
+			const toolDoc = await getDoc(doc(db, 'tools', id));
+			dispatch(getTools());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Herramienta actualizada exitosamente',
+				})
+			);
+			return toolDoc.data();
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al actualizar la herramienta',
+				})
+			);
+			console.error('Error:', error);
+			throw error;
+		}
+	}
+);
+
+export const deleteTool = createAsyncThunk(
+	'tool/deleteTool',
+	async ({ id }, { dispatch }) => {
+		try {
+			await deleteDoc(doc(db, 'tools', id));
+			dispatch(getTools());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Herramienta eliminada exitosamente',
+				})
+			);
+			return;
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al eliminar la herramienta',
+				})
+			);
+			throw error;
+		}
+	}
+);

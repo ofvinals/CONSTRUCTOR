@@ -94,4 +94,16 @@ export const menuOptions = {
 		{ label: 'Historico de Certificaciones', path: '/proyects/historycerts' },
 		{ label: 'Sub Contratistas', path: '/proyects/subcontracts' },
 	],
+	'/tools': [
+		{ label: 'Stock', path: '/tools/stock' },
+		{ label: 'Ubicacion de Herramientas', path: '/tools/locations' },
+	],
+	'/tools/stock': [
+		{ label: 'Stock', path: '/tools/stock' },
+		{ label: 'Ubicacion de Herramientas', path: '/tools/locations' },
+	],
+	'/tools/locations': [
+		{ label: 'Stock', path: '/tools/stock' },
+		{ label: 'Ubicacion de Herramientas', path: '/tools/locations' },
+	],
 };

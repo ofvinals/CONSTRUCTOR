@@ -16,7 +16,8 @@ export const exportSelectedItems = createAsyncThunk(
 	'category/exportSelectedItems',
 	async ({ budgetId, selectedItems }, { dispatch }) => {
 		try {
-			const categoriesIds = Object.keys(selectedItems); // IDs de las categorías
+			// Obtener las claves de las categorías seleccionadas
+			const categoriesIds = Object.keys(selectedItems.categories);
 			// Iterar sobre cada categoría
 			await Promise.all(
 				categoriesIds.map(async (categoryId) => {
@@ -36,36 +37,109 @@ export const exportSelectedItems = createAsyncThunk(
 							'categories',
 							categoryId
 						);
-						await setDoc(budgetCategoryRef, categoryData); // Cambiado a setDoc
-						console.log(budgetCategoryRef);
-						// Recuperar ítems de la categoría desde la colección prices
-						const itemsSnapshot = await getDocs(
-							collection(pricesRef, 'items')
-						);
-						const items = itemsSnapshot.docs.map((itemDoc) => ({
-							uid: itemDoc.id,
-							...itemDoc.data(),
-						}));
-						// Agregar ítems a la subcolección de categorías en el presupuesto
+						await setDoc(budgetCategoryRef, categoryData);
+						// Recuperar ítems de la categoría
+						const items =
+							selectedItems.categories[categoryId].items || [];
 						await Promise.all(
-							items.map(async (item) => {
-								await setDoc(
-									doc(
+							items.map(async (itemId) => {
+								const itemRef = doc(pricesRef, 'items', itemId);
+								const itemSnapshot = await getDoc(itemRef);
+								if (itemSnapshot.exists()) {
+									const itemData = {
+										uid: itemSnapshot.id,
+										...itemSnapshot.data(),
+									};
+									// Agregar ítem al presupuesto
+									await setDoc(
+										doc(
+											db,
+											'budgets',
+											budgetId,
+											'categories',
+											categoryId,
+											'items',
+											itemId
+										),
+										itemData
+									);
+								}
+							})
+						);
+						// Manejar subcategorías
+						const subcategories =
+							selectedItems.categories[categoryId].subcategories || {};
+						await Promise.all(
+							Object.keys(subcategories).map(async (subcategoryId) => {
+								const subcategoryRef = doc(
+									db,
+									'categories',
+									categoryId,
+									'subcategories',
+									subcategoryId
+								);
+								const subcategorySnapshot = await getDoc(
+									subcategoryRef
+								);
+								if (subcategorySnapshot.exists()) {
+									const subcategoryData = {
+										...subcategorySnapshot.data(),
+										uid: subcategorySnapshot.id,
+									};
+									// Agregar la subcategoría al presupuesto
+									const budgetSubcategoryRef = doc(
 										db,
 										'budgets',
 										budgetId,
 										'categories',
 										categoryId,
-										'items',
-										item.uid
-									),
-									item
-								);
+										'subcategories',
+										subcategoryId
+									);
+									await setDoc(budgetSubcategoryRef, subcategoryData);
+									// Recuperar ítems de la subcategoría
+									const subItems =
+										subcategories[subcategoryId].items || [];
+									await Promise.all(
+										subItems.map(async (itemId) => {
+											const subItemRef = doc(
+												subcategoryRef,
+												'items',
+												itemId
+											);
+											const subItemSnapshot = await getDoc(
+												subItemRef
+											);
+											if (subItemSnapshot.exists()) {
+												const subItemData = {
+													uid: subItemSnapshot.id,
+													...subItemSnapshot.data(),
+												};
+												// Agregar ítem a la subcategoría en el presupuesto
+												await setDoc(
+													doc(
+														db,
+														'budgets',
+														budgetId,
+														'categories',
+														categoryId,
+														'subcategories',
+														subcategoryId,
+														'items',
+														itemId
+													),
+													subItemData
+												);
+											}
+										})
+									);
+								}
 							})
 						);
 					}
 				})
 			);
+
 			dispatch(getBudgets({ budgetId }));
 			dispatch(
 				showToast({
