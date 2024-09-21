@@ -41,7 +41,8 @@ export const FormTools = ({ id, onClose, mode }) => {
 			setValue('name', tool.name);
 			setValue('model', tool.model);
 			setValue('purchaseDate', tool.purchaseDate);
-			setValue('locaition', tool.locaition);
+			setValue('location', tool.location);
+			setValue('locationId', tool.locationId);
 			setValue('photoTool', tool.photoTool);
 		}
 	}, [tool]);
@@ -64,7 +65,12 @@ export const FormTools = ({ id, onClose, mode }) => {
 				await updateTool({ id, values, fileImage });
 				onClose();
 			} else if (mode === 'create') {
-				await createTool({ values, fileImage });
+				const locationId = '';
+				const updatedValues = {
+					...values,
+					locationId, 
+				};
+				await createTool({ values: updatedValues, fileImage });
 				onClose();
 			}
 		} catch (error) {

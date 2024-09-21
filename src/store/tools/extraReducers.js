@@ -4,6 +4,10 @@ import {
 	createTool,
 	deleteTool,
 	updateTool,
+	getLocations,
+	createLocation,
+	deleteLocation,
+	updateLocation,
 } from './thunks';
 
 export const toolExtraReducers = (builder) => {
@@ -65,6 +69,54 @@ export const toolExtraReducers = (builder) => {
 		})
 		.addCase(updateTool.rejected, (state, action) => {
 			state.statusUpdate = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(getLocations.pending, (state) => {
+			state.statusLocation = 'Cargando';
+		})
+		.addCase(getLocations.fulfilled, (state, action) => {
+			state.status = 'Exitoso';
+			state.locations = action.payload;
+		})
+		.addCase(getLocations.rejected, (state, action) => {
+			state.statusLocation = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(createLocation.pending, (state) => {
+			state.statusLocation = 'Cargando';
+		})
+		.addCase(createLocation.fulfilled, (state, action) => {
+			state.statusLocation = 'Exitoso';
+			state.Location = action.payload;
+		})
+		.addCase(createLocation.rejected, (state, action) => {
+			state.statusTool = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(deleteLocation.pending, (state) => {
+			state.statusLocation = 'Cargando';
+		})
+		.addCase(deleteLocation.fulfilled, (state, action) => {
+			state.statusLocation = 'Exitoso';
+			state.Locations = action.payload;
+		})
+		.addCase(deleteLocation.rejected, (state, action) => {
+			state.statusLocation = 'Fallido';
+			state.error = action.payload;
+		});
+	builder
+		.addCase(updateLocation.pending, (state) => {
+			state.statusLocation = 'Cargando';
+		})
+		.addCase(updateLocation.fulfilled, (state, action) => {
+			state.statusLocation = 'Exitoso';
+			state.Location = action.payload;
+		})
+		.addCase(updateLocation.rejected, (state, action) => {
+			state.statusLocation = 'Fallido';
 			state.error = action.payload;
 		});
 };

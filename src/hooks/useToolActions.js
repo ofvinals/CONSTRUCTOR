@@ -5,6 +5,10 @@ import {
 	createTool as createToolThunk,
 	deleteTool as deleteToolThunk,
 	updateTool as updateToolThunk,
+	getLocations as getLocationsThunk,
+	createLocation as createLocationThunk,
+	deleteLocation as deleteLocationThunk,
+	updateLocation as updateLocationThunk,
 } from '../store/tools/thunks';
 import { clearTool } from '../store/tools/slice';
 
@@ -12,6 +16,7 @@ export const useToolActions = () => {
 	const tools = useAppSelector((state) => state.tools.tools);
 	const allToolsStatus = useAppSelector((state) => state.tools.status);
 	const tool = useAppSelector((state) => state.tools.tool);
+	const locations = useAppSelector((state) => state.tools.locations);
 	const toolStatusUpdate = useAppSelector((state) => state.tools.statusUpdate);
 	const toolStatusDelete = useAppSelector((state) => state.tools.statusDelete);
 	const toolStatus = useAppSelector((state) => state.tools.statusTool);
@@ -40,6 +45,22 @@ export const useToolActions = () => {
 		await dispatch(deleteToolThunk({ id }));
 	};
 
+	const getLocations = async () => {
+		await dispatch(getLocationsThunk());
+	};
+
+	const createLocation = async ({ values }) => {
+		await dispatch(createLocationThunk({ values }));
+	};
+
+	const updateLocation = async ({ id, values }) => {
+		await dispatch(updateLocationThunk({ id, values }));
+	};
+
+	const deleteLocation = async ({ id }) => {
+		await dispatch(deleteLocationThunk({ id }));
+	};
+
 	const clearStateTool = () => {
 		dispatch(clearTool());
 	};
@@ -49,12 +70,17 @@ export const useToolActions = () => {
 		allToolsStatus,
 		toolStatusUpdate,
 		tool,
+		locations,
 		getTool,
 		getTools,
 		createTool,
 		deleteTool,
 		updateTool,
 		clearStateTool,
+		getLocations,
+		createLocation,
+		deleteLocation,
+		updateLocation,
 		toolStatusDelete,
 		toolStatus,
 		configState,

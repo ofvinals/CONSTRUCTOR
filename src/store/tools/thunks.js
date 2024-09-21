@@ -111,16 +111,12 @@ export const updateTool = createAsyncThunk(
 	async ({ id, values, fileImage }, { dispatch }) => {
 		try {
 			const toolRef = doc(db, 'tools', id);
-			let url = ''; // Variable para almacenar la URL
+			let url = ''; 
 			if (fileImage) {
-				// Crea una referencia única para la foto
-				const fileName = `${id}_${fileImage.name}`; // O un nombre único de tu elección
+				const fileName = `${id}_${fileImage.name}`; 
 				const storageRef = ref(storage, `tools/${fileName}`);
-				// Subir la imagen al almacenamiento
 				const uploadTask = uploadBytesResumable(storageRef, fileImage);
-				// Espera a que se complete la carga
 				await uploadTask;
-				// Obtener la URL de descarga
 				url = await getDownloadURL(uploadTask.snapshot.ref);
 			}
 			// Eliminar campos con valores undefined antes de actualizar
@@ -168,6 +164,111 @@ export const deleteTool = createAsyncThunk(
 				showToast({
 					type: 'error',
 					message: 'Error al eliminar la herramienta',
+				})
+			);
+			throw error;
+		}
+	}
+);
+
+export const getLocations = createAsyncThunk(
+	'tool/getLocations',
+	async (_, { dispatch }) => {
+		const arrayAux = [];
+		try {
+			const querySnapshot = await getDocs(
+				query(collection(db, 'location'))
+			);
+			querySnapshot.forEach((doc) => {
+				arrayAux.push({ uid: doc.id, ...doc.data() });
+			});
+			return arrayAux;
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al obtener datos de las ubicaciones',
+				})
+			);
+			console.error(error);
+			throw error;
+		}
+	}
+);
+
+export const createLocation = createAsyncThunk(
+	'tool/createLocation',
+	async ({ values }, { dispatch }) => {
+		try {
+			const locationsRef = collection(db, 'location');
+			const res = await addDoc(locationsRef, values);
+			dispatch(getLocations());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Ubicacion creada exitosamente',
+				})
+			);
+			return { id: res.id };
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al crear la ubicacion',
+				})
+			);
+			console.error('Error:', error.message);
+			return { error: error.message };
+		}
+	}
+);
+
+export const updateLocation = createAsyncThunk(
+	'tool/updateLocation',
+	async ({ id, values }, { dispatch }) => {
+		try {
+			const locationsRef = collection('location', id);
+			await updateDoc(locationsRef, values);
+			const toolDoc = await getDoc(doc(locationsRef, id));
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Ubicacion actualizada exitosamente',
+				})
+			);
+			return toolDoc.data();
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al actualizar la ubicacion',
+				})
+			);
+			console.error('Error:', error);
+			throw error;
+		}
+	}
+);
+
+export const deleteLocation = createAsyncThunk(
+	'tool/deleteLocation',
+	async ({ id }, { dispatch }) => {
+		try {
+			const locationsRef = collection(db, 'location');
+			await deleteDoc(doc(locationsRef, id));
+			dispatch(getLocations());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Ubicacion eliminada exitosamente',
+				})
+			);
+			return;
+		} catch (error) {
+			dispatch(
+				showToast({
+					type: 'error',
+					message: 'Error al eliminar la ubicacion',
 				})
 			);
 			throw error;

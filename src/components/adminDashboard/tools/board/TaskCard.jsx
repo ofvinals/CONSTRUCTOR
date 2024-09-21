@@ -16,14 +16,6 @@ const SubTitle = styled('span')(() => ({
 	color: '#333333',
 	fontWeight: 'bold',
 }));
-const Heading = styled('div')(() => ({
-	color: '#333333',
-	fontWeight: 'bold',
-	fontSize: '16px',
-	overflow: 'hidden',
-	whiteSpace: 'nowrap',
-	textOverflow: 'ellipsis',
-}));
 
 const rightIconAction = (
 	<>
@@ -35,7 +27,7 @@ const rightIconAction = (
 
 const TaskCard = ({ item, index }) => {
 	return (
-		<Draggable key={item.id} draggableId={item.id} index={index}>
+		<Draggable key={item.uid} draggableId={item.uid} index={index}>
 			{(provided) => (
 				<div
 					ref={provided.innerRef}
@@ -51,12 +43,11 @@ const TaskCard = ({ item, index }) => {
 								}}>
 								<Box sx={{ display: 'flex', alignItems: 'center' }}>
 									<Avatar
-										alt={item.assigned_To}
+										alt={item.name}
 										src={item.photoTool}
 										sx={{ marginRight: 2 }} 
 									/>
 									<div>
-										<Heading>{item.assigned_To}</Heading>
 										<SubTitle>{item.name}</SubTitle>
 									</div>
 								</Box>

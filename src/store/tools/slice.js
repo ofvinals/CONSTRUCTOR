@@ -4,6 +4,7 @@ import { toolExtraReducers } from './extraReducers';
 const initialState = {
 	tools: [],
 	tool: null,
+	locations: [],
 	status: 'Inactivo',
 	statusTool: 'Inactivo',
 	statusAuth: 'Inactivo',
