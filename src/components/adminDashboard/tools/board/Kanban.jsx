@@ -22,8 +22,29 @@ export const Kanban = () => {
 	const [title, setTitle] = useState('');
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [deleteItem, setDeleteItem] = useState({ id: null });
+	const unassignedColumnId = '2IqHNF9mRBeBumKjeFim';
+
+	useEffect(() => {
+		const initialColumns = {};
+		locations.forEach((location) => {
+			const columnId = location.uid;
+			initialColumns[columnId] = {
+				title: location.title,
+				items: tools.filter((tool) => tool.locationId === location.uid),
+			};
+		});
+		const unassignedTools = tools.filter((tool) => tool.locationId === '');
+		if (unassignedTools.length > 0) {
+			initialColumns[unassignedColumnId] = {
+				title: 'Herramientas sin asignación',
+				items: unassignedTools,
+			};
+		}
+		setColumns(initialColumns);
+	}, [locations, tools]);
 
 	const handleBlur = async (columnId, currentTitle) => {
+		if (columnId === unassignedColumnId) return;
 		setEditingColumnId(null);
 		if (title !== currentTitle && title.trim()) {
 			await updateLocation({
@@ -34,6 +55,12 @@ export const Kanban = () => {
 	};
 
 	const handleDeleteLocation = (columnId) => {
+		if (columnId === unassignedColumnId) {
+			alert(
+				'No se puede eliminar la columna de herramientas sin asignación.'
+			);
+			return;
+		}
 		const hasItems = tools.some((tool) => tool.locationId === columnId);
 		if (hasItems) {
 			alert(
@@ -113,26 +140,6 @@ export const Kanban = () => {
 		}
 	};
 
-	useEffect(() => {
-		const initialColumns = {};
-		locations.forEach((location) => {
-			const columnId = location.uid;
-			initialColumns[columnId] = {
-				title: location.title,
-				items: tools.filter((tool) => tool.locationId === location.uid),
-			};
-		});
-		const unassignedTools = tools.filter((tool) => tool.locationId === '');
-		const unassignedColumnId = '2IqHNF9mRBeBumKjeFim';
-		if (unassignedTools.length > 0) {
-			initialColumns[unassignedColumnId] = {
-				title: 'Herramientas sin asignación',
-				items: unassignedTools,
-			};
-		}
-		setColumns(initialColumns);
-	}, [locations, tools]);
-
 	return (
 		<>
 			<DragDropContext onDragEnd={onDragEnd}>
@@ -140,11 +147,12 @@ export const Kanban = () => {
 					<div className='flex w-full min-h[72vh]  m-2'>
 						{Object.entries(columns).map(([columnId, column]) => {
 							const isEditing = editingColumnId === columnId;
+							const isUnassigned = columnId === unassignedColumnId;
 							return (
 								<Droppable key={columnId} droppableId={columnId}>
 									{(provided) => (
 										<div
-											className='flex flex-col w-[220px] mr-[45px] h-[70vh] rounded-lg bg-background px-3'
+											className='flex flex-col w-[230px] mr-[45px] h-[70vh] rounded-lg bg-background px-3'
 											ref={provided.innerRef}
 											{...provided.droppableProps}>
 											<Box>
@@ -154,8 +162,13 @@ export const Kanban = () => {
 													className='m-2 flex flex-nowrap justify-between items-center w-full'>
 													{isEditing ? (
 														<input
-															className=' flex items-center justify-center w-[150px] h-[30px] p-1'
+															className={`flex items-center justify-center w-[150px] h-[48px] align-middle p-1 ${
+																isUnassigned
+																	? 'bg-transparent font-bold'
+																	: ''
+															}`}
 															value={title}
+															readOnly={isUnassigned}
 															onChange={(e) =>
 																setTitle(e.target.value)
 															}
@@ -165,11 +178,10 @@ export const Kanban = () => {
 																	column.title
 																)
 															}
-															autoFocus
 														/>
 													) : (
 														<span
-															className='font-bold text-center min-w-[150px]'
+															className='font-bold text-center min-w-[150px] h-[48px] inline-flex items-center justify-center'
 															onClick={() => {
 																setEditingColumnId(columnId);
 																setTitle(column.title);

@@ -1,15 +1,17 @@
 /* eslint-disable react/prop-types */
-import { Card, IconButton, CardContent, Avatar, Box } from '@mui/material';
+import { Card, IconButton, CardContent, Box } from '@mui/material';
 import { Draggable } from 'react-beautiful-dnd';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Modals from '../../../../utils/Modals';
 import useModal from '../../../../hooks/useModal';
 import { useState } from 'react';
 import { ToolDetails } from './ToolDetails';
+import Avatar from 'react-avatar';
 
 const TaskCard = ({ item, index }) => {
 	const [itemIdToView, setItemIdToView] = useState(null);
 	const viewModal = useModal();
+	const photoModal = useModal();
 
 	return (
 		<>
@@ -19,8 +21,14 @@ const TaskCard = ({ item, index }) => {
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}>
-						<Card sx={{ Width: '100px', m: '8px 1px' }}>
-							<CardContent sx={{ p: '10px 10px' }}>
+						<Card
+							sx={{
+								Width: '120px',
+								m: '8px 1px',
+								borderRadius: '15px',
+								backgroundColor: '#fef08a',
+							}}>
+							<CardContent sx={{ p: '5px 5px' }}>
 								<Box
 									sx={{
 										display: 'flex',
@@ -28,13 +36,30 @@ const TaskCard = ({ item, index }) => {
 										justifyContent: 'space-between',
 									}}>
 									<Box sx={{ display: 'flex', alignItems: 'center' }}>
-										<Avatar
-											alt={item.name}
-											src={item.photoTool}
-											sx={{ marginRight: 2 }}
-										/>
-										<div>
-											<span className='text-center font-semibold text-sm'>
+										{item.photoTool ? (
+											<button
+												className='text-center'
+												type='button'
+												onClick={(e) => {
+													e.stopPropagation();
+													photoModal.openModal();
+												}}>
+												<img
+													src={item.photoTool}
+													alt='foto de perfil'
+													className='rounded-full m-1 h-[40px]'
+												/>
+											</button>
+										) : (
+											<Avatar
+												name={item.name}
+												size='40'
+												round={true}
+												className='m-1 text-center'
+											/>
+										)}
+										<div className='flex items-center'>
+											<span className='text-center font-semibold text-sm pl-2'>
 												{item.name}
 											</span>
 										</div>
@@ -58,6 +83,17 @@ const TaskCard = ({ item, index }) => {
 				size='md'
 				title='Movimientos de la Herramienta'>
 				<ToolDetails onClose={viewModal.closeModal} toolId={itemIdToView} />
+			</Modals>
+			<Modals
+				isOpen={photoModal.isOpen}
+				onClose={photoModal.closeModal}
+				size='md'
+				title='Fotografia Ampliada'>
+				<img
+					src={item.photoTool}
+					alt='foto de herramienta ampliada'
+					style={{ maxHeight: '90%', maxWidth: '90%' }}
+				/>
 			</Modals>
 		</>
 	);
