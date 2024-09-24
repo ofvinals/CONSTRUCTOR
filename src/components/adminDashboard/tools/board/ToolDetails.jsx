@@ -3,10 +3,13 @@
 import { useEffect } from 'react';
 import { useToolActions } from '../../../../hooks/useToolActions';
 import Loader from '../../../../utils/Loader';
+import Avatar from 'react-avatar';
+import useModal from '../../../../hooks/useModal';
+import Modals from '../../../../utils/Modals';
 
 export const ToolDetails = ({ toolId }) => {
 	const { getTool, tool, toolStatus } = useToolActions();
-
+	const photoModal = useModal();
 	const toolData = async () => {
 		await getTool({ id: toolId });
 	};
@@ -14,6 +17,12 @@ export const ToolDetails = ({ toolId }) => {
 	useEffect(() => {
 		toolData();
 	}, [toolId]);
+
+	const sortedMovementHistory = tool?.movementHistory
+		? [...tool.movementHistory].sort((a, b) => {
+				return new Date(b.date) - new Date(a.date);
+		  })
+		: [];
 
 	if (toolStatus === 'Cargando') {
 		return <Loader />;
@@ -23,11 +32,28 @@ export const ToolDetails = ({ toolId }) => {
 		<div>
 			<div className='flex flex-col items-center justify-center'>
 				<p className='text-xl font-bold'>{tool?.name}</p>
-				<img
-					className='my-2'
-					src={tool?.photoTool}
-					alt='foto de herramienta'
-				/>
+				{tool.photoTool ? (
+					<button
+						className='text-center'
+						type='button'
+						onClick={(e) => {
+							e.stopPropagation();
+							photoModal.openModal();
+						}}>
+						<img
+							src={tool.photoTool}
+							alt='foto de perfil'
+							className='rounded-full m-1 h-[80px]'
+						/>
+					</button>
+				) : (
+					<Avatar
+						name={tool.name}
+						size='80'
+						round={true}
+						className='m-1 text-center'
+					/>
+				)}
 				<p className='my-3'>
 					Ubicacion Actual: <span>{tool?.location}</span>
 				</p>
@@ -37,7 +63,7 @@ export const ToolDetails = ({ toolId }) => {
 					Historial de Ubicaciones
 				</p>
 				<ul className=' ml-3 list-disc'>
-					{tool?.movementHistory?.map((movement) => (
+					{sortedMovementHistory?.map((movement) => (
 						<li key={movement.uid} className='my-1'>
 							<span>
 								Movida el{' '}
@@ -57,6 +83,17 @@ export const ToolDetails = ({ toolId }) => {
 					))}
 				</ul>
 			</div>
+			<Modals
+				isOpen={photoModal.isOpen}
+				onClose={photoModal.closeModal}
+				size='md'
+				title='Fotografia Ampliada'>
+				<img
+					src={tool.photoTool}
+					alt='foto de herramienta ampliada'
+					style={{ maxHeight: '90%', maxWidth: '90%' }}
+				/>
+			</Modals>
 		</div>
 	);
 };

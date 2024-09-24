@@ -76,7 +76,7 @@ export const toolExtraReducers = (builder) => {
 			state.statusLocation = 'Cargando';
 		})
 		.addCase(getLocations.fulfilled, (state, action) => {
-			state.status = 'Exitoso';
+			state.statusLocation = 'Exitoso';
 			state.locations = action.payload;
 		})
 		.addCase(getLocations.rejected, (state, action) => {
@@ -89,7 +89,7 @@ export const toolExtraReducers = (builder) => {
 		})
 		.addCase(createLocation.fulfilled, (state, action) => {
 			state.statusLocation = 'Exitoso';
-			state.Location = action.payload;
+			state.location = action.payload;
 		})
 		.addCase(createLocation.rejected, (state, action) => {
 			state.statusTool = 'Fallido';
@@ -101,7 +101,7 @@ export const toolExtraReducers = (builder) => {
 		})
 		.addCase(deleteLocation.fulfilled, (state, action) => {
 			state.statusLocation = 'Exitoso';
-			state.Locations = action.payload;
+			state.location = action.payload;
 		})
 		.addCase(deleteLocation.rejected, (state, action) => {
 			state.statusLocation = 'Fallido';
@@ -113,7 +113,7 @@ export const toolExtraReducers = (builder) => {
 		})
 		.addCase(updateLocation.fulfilled, (state, action) => {
 			state.statusLocation = 'Exitoso';
-			state.Location = action.payload;
+			state.location = action.payload;
 		})
 		.addCase(updateLocation.rejected, (state, action) => {
 			state.statusLocation = 'Fallido';

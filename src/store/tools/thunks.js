@@ -54,7 +54,7 @@ export const getTool = createAsyncThunk(
 				historyData.push({
 					uid: doc.id,
 					...movement,
-					date: movement.date.toDate().toISOString(), 
+					date: movement.date.toDate().toISOString(),
 				});
 			});
 
@@ -137,7 +137,7 @@ export const updateTool = createAsyncThunk(
 			);
 			await updateDoc(toolRef, { ...filteredValues, photoTool: url });
 			const toolDoc = await getDoc(doc(db, 'tools', id));
-			dispatch(getTools());
+			dispatch(getLocations());
 			dispatch(
 				showToast({
 					type: 'success',
@@ -209,6 +209,7 @@ export const getLocations = createAsyncThunk(
 			querySnapshot.forEach((doc) => {
 				arrayAux.push({ uid: doc.id, ...doc.data() });
 			});
+			console.log(arrayAux);
 			return arrayAux;
 		} catch (error) {
 			dispatch(
@@ -253,11 +254,11 @@ export const createLocation = createAsyncThunk(
 export const updateLocation = createAsyncThunk(
 	'tool/updateLocation',
 	async ({ id, values }, { dispatch }) => {
-		console.log(id, values);
 		try {
 			const locationsRef = doc(db, 'location', id);
 			await updateDoc(locationsRef, values);
 			const toolDoc = await getDoc(locationsRef);
+			dispatch(getLocations());
 			dispatch(
 				showToast({
 					type: 'success',
