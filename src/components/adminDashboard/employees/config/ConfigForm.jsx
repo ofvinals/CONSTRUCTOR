@@ -312,7 +312,7 @@ const ConfigForm = ({ onClose }) => {
 					</Accordion.Header>
 					<Accordion.Body>
 						<FormInput
-							label='Valor Hora de Presentismo'
+							label='Valor Diario de Presentismo'
 							name='presentism'
 							type='number'
 							register={register}

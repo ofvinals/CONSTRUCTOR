@@ -86,8 +86,7 @@ export const FormAttendance = ({ id, onClose, mode }) => {
 						);
 						const valuePosition = positionData
 							? positionData.hourlyRate
-							: values.employees[index].position; // Asigna 0 si no se encuentra la posición
-
+							: values.employees[index].position; 
 						return {
 							...employee,
 							startTime: employee.attendance ? '08:00' : '',

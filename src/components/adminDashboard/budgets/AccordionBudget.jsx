@@ -19,7 +19,7 @@ export const AccordionBudget = () => {
 	const {
 		categories,
 		statusCategory,
-		allCategoriesStatus,
+		// statusBudget,
 		getBudgets,
 		createBudget,
 		updateBudget,
@@ -70,8 +70,9 @@ export const AccordionBudget = () => {
 		});
 	};
 
-	const handleDelete = (budgetId, id) => {
-		setDeleteItem(budgetId, id);
+	const handleDelete = (id) => {
+		console.log(id);
+		setDeleteItem({ budgetId, id });
 		setShowConfirmDialog(true);
 	};
 
@@ -108,13 +109,13 @@ export const AccordionBudget = () => {
 		return { ...category, finalPrice };
 	});
 
-	if (allCategoriesStatus === 'Cargando') {
-		return (
-			<div className='flex items-center justify-center my-20'>
-				<HashLoader />
-			</div>
-		);
-	}
+	// if (statusBudget === 'Cargando') {
+	// 	return (
+	// 		<div className='flex items-center justify-center my-20'>
+	// 			<HashLoader />
+	// 		</div>
+	// 	);
+	// }
 
 	return (
 		<>

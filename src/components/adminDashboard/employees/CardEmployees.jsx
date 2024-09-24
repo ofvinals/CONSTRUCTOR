@@ -22,7 +22,7 @@ export const CardEmployees = ({ employees }) => {
 	} = useEmployeeActions();
 	const { loggedUser } = useAuth();
 	const [first, setFirst] = useState(0);
-	const [rows, setRows] = useState(10);
+	const [rows, setRows] = useState(12);
 	const [employeeId, setEmployeeId] = useState(null);
 	const editModal = useModal();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);

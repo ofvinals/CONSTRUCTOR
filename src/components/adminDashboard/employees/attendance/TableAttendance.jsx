@@ -5,7 +5,7 @@ import Loader from '../../../../utils/Loader';
 import TreeTable from '../../../../utils/TreeTable';
 import { DateTime } from 'luxon';
 import { formatCurrency } from '../../../../utils/FormatCurrency';
-
+import '../../../../styles/Custom.css';
 export const TableAttendance = () => {
 	const {
 		attendances,
