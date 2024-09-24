@@ -1,55 +1,56 @@
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { Grid, Box, TextField } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import TaskCard from './TaskCard';
 import { useToolActions } from '../../../../hooks/useToolActions';
-
-const Container = styled('div')(() => ({
-	display: 'flex',
-	flexDirection: 'row',
-}));
-
-const TaskList = styled('div')(() => ({
-	minHeight: '100px',
-	display: 'flex',
-	flexDirection: 'column',
-	background: '#d7dce8',
-	minWidth: '341px',
-	borderRadius: '5px',
-	padding: '15px 15px',
-	marginRight: '45px',
-}));
-
-const TaskColumnStyles = styled('div')(() => ({
-	margin: '8px',
-	display: 'flex',
-	width: '100%',
-	minHeight: '80vh',
-}));
-
-const Title = styled('span')(() => ({
-	fontWeight: 'bold',
-	color: '#333333',
-	fontSize: 16,
-	marginBottom: '1.5px',
-}));
+import ConfirmDialog from '../../../../utils/ConfirmDialog';
+import { useAuth } from '../../../../hooks/useAuth';
 
 export const Kanban = () => {
 	const [columns, setColumns] = useState({});
-	const { tools, locations, updateTool } = useToolActions();
+	const {
+		tools,
+		locations,
+		updateTool,
+		updateLocation,
+		deleteLocation,
+		saveMovementHistory,
+	} = useToolActions();
+	const { loggedUser } = useAuth();
 	const [editingColumnId, setEditingColumnId] = useState(null);
 	const [title, setTitle] = useState('');
+	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+	const [deleteItem, setDeleteItem] = useState({ id: null });
 
 	const handleBlur = async (columnId, currentTitle) => {
 		setEditingColumnId(null);
-		if (title !== currentTitle) {
-			await updateTool({
+		if (title !== currentTitle && title.trim()) {
+			await updateLocation({
 				id: columnId,
-				values: { name: title },
+				values: { title: title },
 			});
 		}
+	};
+
+	const handleDeleteLocation = (columnId) => {
+		const hasItems = tools.some((tool) => tool.locationId === columnId);
+		if (hasItems) {
+			alert(
+				'No se puede eliminar la ubicación porque contiene herramientas asociadas.'
+			);
+			return;
+		}
+		setDeleteItem({ id: columnId });
+		setShowConfirmDialog(true);
+	};
+
+	const confirmDelete = async () => {
+		await deleteLocation({
+			id: deleteItem.id,
+		});
+		setShowConfirmDialog(false);
+		setDeleteItem({ id: null });
 	};
 
 	const onDragEnd = async (result) => {
@@ -60,7 +61,6 @@ export const Kanban = () => {
 			(location) => location.uid === destination.droppableId
 		);
 		const destColumnTitle = destLocation ? destLocation.title : '';
-
 		if (source.droppableId !== destination.droppableId) {
 			const sourceItems = [...sourceColumn.items];
 			const destItems = [...columns[destination.droppableId].items];
@@ -90,6 +90,12 @@ export const Kanban = () => {
 						locationId: updatedItem.locationId,
 					},
 				});
+				await saveMovementHistory({
+					toolId: updatedItem.uid,
+					fromLocation: sourceColumn.title,
+					toLocation: destColumnTitle,
+					movedBy: loggedUser.displayName,
+				});
 			} catch (error) {
 				console.error('Error al actualizar la ubicación:', error);
 			}
@@ -108,7 +114,7 @@ export const Kanban = () => {
 	};
 
 	useEffect(() => {
-		let initialColumns = {};
+		const initialColumns = {};
 		locations.forEach((location) => {
 			const columnId = location.uid;
 			initialColumns[columnId] = {
@@ -128,79 +134,84 @@ export const Kanban = () => {
 	}, [locations, tools]);
 
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
-			<Container>
-				<TaskColumnStyles>
-					{Object.entries(columns).map(([columnId, column]) => {
-						const isEditing = editingColumnId === columnId;
-						return (
-							<Droppable key={columnId} droppableId={columnId}>
-								{(provided) => (
-									<TaskList
-										ref={provided.innerRef}
-										{...provided.droppableProps}>
-										<Box
-											sx={{
-												width: '100%',
-												display: 'flex',
-												flexDirection: 'row',
-												justifyContent: 'space-between',
-											}}>
-											<Grid
-												item
-												xs={10}
-												className='m-2 flex flex-nowrap justify-between items-center w-full'>
-												{isEditing ? (
-													<TextField
-														value={title}
-														onChange={(e) =>
-															setTitle(e.target.value)
-														}
-														onBlur={() =>
-															handleBlur(columnId, column.title)
-														}
-														autoFocus
-														size='small'
-													/>
-												) : (
-													<span
-														className='font-bold'
-														onClick={() => {
-															setEditingColumnId(columnId);
-															setTitle(column.title);
-														}}>
-														{column.title}
-													</span>
-												)}
-												<Title
+		<>
+			<DragDropContext onDragEnd={onDragEnd}>
+				<div className='flex flex-row'>
+					<div className='flex w-full min-h[72vh]  m-2'>
+						{Object.entries(columns).map(([columnId, column]) => {
+							const isEditing = editingColumnId === columnId;
+							return (
+								<Droppable key={columnId} droppableId={columnId}>
+									{(provided) => (
+										<div
+											className='flex flex-col w-[220px] mr-[45px] h-[70vh] rounded-lg bg-background px-3'
+											ref={provided.innerRef}
+											{...provided.droppableProps}>
+											<Box>
+												<Grid
 													item
-													xs={2}
-													display='flex'
-													alignContent='flex-end'
-													justifyContent='flex-end'>
-													<button>
-														<i className='pi pi-trash text-red-500 text-xl hover:font-bold'></i>
-													</button>
-												</Title>
-											</Grid>
-										</Box>
-										<Divider />
-										{column.items.map((item, index) => (
-											<TaskCard
-												key={item.uid || `${columnId}-${index}`}
-												item={item}
-												index={index}
-											/>
-										))}
-										{provided.placeholder}
-									</TaskList>
-								)}
-							</Droppable>
-						);
-					})}
-				</TaskColumnStyles>
-			</Container>
-		</DragDropContext>
+													xs={10}
+													className='m-2 flex flex-nowrap justify-between items-center w-full'>
+													{isEditing ? (
+														<input
+															className=' flex items-center justify-center w-[150px] h-[30px] p-1'
+															value={title}
+															onChange={(e) =>
+																setTitle(e.target.value)
+															}
+															onBlur={() =>
+																handleBlur(
+																	columnId,
+																	column.title
+																)
+															}
+															autoFocus
+														/>
+													) : (
+														<span
+															className='font-bold text-center min-w-[150px]'
+															onClick={() => {
+																setEditingColumnId(columnId);
+																setTitle(column.title);
+															}}>
+															{column.title || 'N/A'}
+														</span>
+													)}
+													<div className='flex flex-end font-bold items-end justify-end'>
+														<button
+															onClick={() =>
+																handleDeleteLocation(columnId)
+															}>
+															<i className='pi pi-trash text-red-500 text-xl hover:font-bold'></i>
+														</button>
+													</div>
+												</Grid>
+											</Box>
+											<Divider />
+											{column.items.map((item, index) => (
+												<TaskCard
+													key={item.uid || `${columnId}-${index}`}
+													item={item}
+													index={index}
+												/>
+											))}
+											{provided.placeholder}
+										</div>
+									)}
+								</Droppable>
+							);
+						})}
+					</div>
+				</div>
+			</DragDropContext>
+			<ConfirmDialog
+				header='Confirmar Eliminacion'
+				visible={showConfirmDialog}
+				onHide={() => setShowConfirmDialog(false)}
+				onConfirm={confirmDelete}
+				message='¿Estás seguro que quieres eliminar la ubicacion?'
+			/>
+		</>
 	);
 };
 

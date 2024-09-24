@@ -7,6 +7,7 @@ const initialState = {
 	items: [],
 	itemPrice: null,
 	status: 'Inactivo',
+	statusBudget: 'Inactivo',
 	statusCategory: 'Inactivo',
 	statusUpdate: 'Inactivo',
 	statusDelete: 'Inactivo',

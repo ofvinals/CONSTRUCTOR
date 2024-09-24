@@ -6,6 +6,7 @@ import {
 	deleteTool as deleteToolThunk,
 	updateTool as updateToolThunk,
 	getLocations as getLocationsThunk,
+	saveMovementHistory as saveMovementHistoryThunk,
 	createLocation as createLocationThunk,
 	deleteLocation as deleteLocationThunk,
 	updateLocation as updateLocationThunk,
@@ -39,6 +40,17 @@ export const useToolActions = () => {
 
 	const updateTool = async ({ id, values, fileImage }) => {
 		await dispatch(updateToolThunk({ id, values, fileImage }));
+	};
+
+	const saveMovementHistory = async ({
+		toolId,
+		fromLocation,
+		toLocation,
+		movedBy,
+	}) => {
+		await dispatch(
+			saveMovementHistoryThunk({ toolId, fromLocation, toLocation, movedBy })
+		);
 	};
 
 	const deleteTool = async ({ id }) => {
@@ -76,6 +88,7 @@ export const useToolActions = () => {
 		createTool,
 		deleteTool,
 		updateTool,
+		saveMovementHistory,
 		clearStateTool,
 		getLocations,
 		createLocation,

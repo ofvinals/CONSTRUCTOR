@@ -558,7 +558,6 @@ export const createItemPrice = createAsyncThunk(
 					subcategoryId,
 				})
 			);
-
 			dispatch(
 				showToast({
 					type: 'success',
@@ -612,14 +611,6 @@ export const updateItemPrice = createAsyncThunk(
 			await updateDoc(itemRef, cleanedValues);
 			dispatch(getBudgets({ budgetId }));
 			dispatch(
-				getItemPrice({
-					budgetId,
-					categoryId,
-					subcategoryId,
-					itemId,
-				})
-			);
-			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Ítem actualizado exitosamente',
@@ -640,6 +631,7 @@ export const updateItemPrice = createAsyncThunk(
 export const deleteItemPrice = createAsyncThunk(
 	'budgets/deleteItemPrice',
 	async ({ budgetId, categoryId, subcategoryId, itemId }, { dispatch }) => {
+		console.log(budgetId, categoryId, subcategoryId, itemId);
 		try {
 			const itemRef = subcategoryId
 				? doc(

@@ -14,27 +14,30 @@ import {
 
 export const budgetDetailExtraReducers = (builder) => {
 	builder
-	.addCase(exportSelectedItems.pending, (state) => {
-		state.status = 'Cargando';
-	})
-	.addCase(exportSelectedItems.fulfilled, (state, action) => {
-		state.status = 'Exitoso';
-		state.categories = action.payload;
-	})
-	.addCase(exportSelectedItems.rejected, (state, action) => {
-		state.status = 'Fallido';
-		state.error = action.payload;
-	});
+		.addCase(exportSelectedItems.pending, (state) => {
+			state.status = 'Cargando';
+		})
+		.addCase(exportSelectedItems.fulfilled, (state, action) => {
+			state.status = 'Exitoso';
+			state.categories = action.payload;
+		})
+		.addCase(exportSelectedItems.rejected, (state, action) => {
+			state.status = 'Fallido';
+			state.error = action.payload;
+		});
 	builder
 		.addCase(getBudgets.pending, (state) => {
 			state.status = 'Cargando';
+			state.statusBudget = 'Cargando';
 		})
 		.addCase(getBudgets.fulfilled, (state, action) => {
 			state.status = 'Exitoso';
+			state.statusBudget = 'Exitoso';
 			state.categories = action.payload;
 		})
 		.addCase(getBudgets.rejected, (state, action) => {
 			state.status = 'Fallido';
+			state.statusBudget = 'Fallido';
 			state.error = action.payload;
 		});
 	builder

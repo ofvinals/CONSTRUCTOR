@@ -21,7 +21,8 @@ export const CardClients = ({ users }) => {
 	const editModal = useModal();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [first, setFirst] = useState(0);
-	const [rows, setRows] = useState(10);
+	const [rows, setRows] = useState(12);
+
 	const handleConfirmDisable = async (uid) => {
 		try {
 			await disableUser({ id: uid });

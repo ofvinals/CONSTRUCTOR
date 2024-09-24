@@ -228,7 +228,7 @@ export const AccordionPrices = ({ isBudget }) => {
 				visible={showConfirmDialog}
 				onHide={() => setShowConfirmDialog(false)}
 				onConfirm={confirmDelete}
-				message='¿Estás seguro de que quieres eliminar la categoria?'
+				message='¿Estás seguro que quieres eliminar la categoria?'
 			/>
 		</>
 	);

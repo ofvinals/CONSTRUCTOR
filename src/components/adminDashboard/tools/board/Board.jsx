@@ -16,7 +16,7 @@ export const Board = () => {
 				<button
 					onClick={handleAddColumn}
 					className='btnprimary h-[47px]'>
-					<i className='pi pi-plus mr-2'></i>Crear Nueva Ubicacion
+					<i className='pi pi-plus mr-2 font-bold'></i>Crear Nueva Ubicacion
 				</button>
 			</div>
 			<div className='flex'>

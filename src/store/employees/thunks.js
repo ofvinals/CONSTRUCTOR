@@ -71,6 +71,7 @@ export const createEmployee = createAsyncThunk(
 				displayName: displayNameValue,
 			};
 			const res = await addDoc(employeesRef, employeeData);
+			dispatch(getEmployees());
 			dispatch(
 				showToast({
 					type: 'success',

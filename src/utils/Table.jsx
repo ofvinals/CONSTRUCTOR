@@ -21,7 +21,7 @@ export const Table = ({ columns, data, actions, initialSortColumn }) => {
 			showGlobalFilter: true,
 			sorting: initialSortColumn
 				? [{ id: initialSortColumn, desc: false }]
-				: [], 
+				: [],
 		},
 		enableColumnFilterModes: true,
 		enableColumnOrdering: true,
@@ -38,12 +38,12 @@ export const Table = ({ columns, data, actions, initialSortColumn }) => {
 		},
 		muiPaginationProps: {
 			color: 'primary',
-			rowsPerPageOptions: [5, 10, 20, 30],
+			rowsPerPageOptions: [10, 20, 30],
 			shape: 'rounded',
 			variant: 'outlined',
 		},
 		renderRowActions: ({ row }) => {
-			const rowActions = actions(row); 
+			const rowActions = actions(row);
 			return (
 				<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
 					{rowActions.map((action, index) => (

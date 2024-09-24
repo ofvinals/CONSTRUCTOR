@@ -24,7 +24,6 @@ export const getTools = createAsyncThunk(
 			querySnapshot.forEach((doc) => {
 				arrayAux.push({ uid: doc.id, ...doc.data() });
 			});
-			console.log(arrayAux);
 			return arrayAux;
 		} catch (error) {
 			dispatch(
@@ -46,7 +45,20 @@ export const getTool = createAsyncThunk(
 			const toolRef = doc(db, 'tools', id);
 			const snapshot = await getDoc(toolRef);
 			const toolData = snapshot.data();
-			return toolData;
+			// Obtener el historial de movimientos
+			const historyRef = collection(db, 'tools', id, 'movementHistory');
+			const historySnapshot = await getDocs(historyRef);
+			const historyData = [];
+			historySnapshot.forEach((doc) => {
+				const movement = doc.data();
+				historyData.push({
+					uid: doc.id,
+					...movement,
+					date: movement.date.toDate().toISOString(), 
+				});
+			});
+
+			return { ...toolData, movementHistory: historyData };
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -111,9 +123,9 @@ export const updateTool = createAsyncThunk(
 	async ({ id, values, fileImage }, { dispatch }) => {
 		try {
 			const toolRef = doc(db, 'tools', id);
-			let url = ''; 
+			let url = '';
 			if (fileImage) {
-				const fileName = `${id}_${fileImage.name}`; 
+				const fileName = `${id}_${fileImage.name}`;
 				const storageRef = ref(storage, `tools/${fileName}`);
 				const uploadTask = uploadBytesResumable(storageRef, fileImage);
 				await uploadTask;
@@ -142,6 +154,23 @@ export const updateTool = createAsyncThunk(
 			);
 			console.error('Error:', error);
 			throw error;
+		}
+	}
+);
+
+export const saveMovementHistory = createAsyncThunk(
+	'tool/saveMovementHistory',
+	async ({ toolId, fromLocation, toLocation, movedBy }) => {
+		try {
+			const historyRef = collection(db, 'tools', toolId, 'movementHistory');
+			await addDoc(historyRef, {
+				from: fromLocation,
+				to: toLocation,
+				movedBy: movedBy,
+				date: new Date(),
+			});
+		} catch (error) {
+			console.error('Error al guardar el historial de movimientos:', error);
 		}
 	}
 );
@@ -176,9 +205,7 @@ export const getLocations = createAsyncThunk(
 	async (_, { dispatch }) => {
 		const arrayAux = [];
 		try {
-			const querySnapshot = await getDocs(
-				query(collection(db, 'location'))
-			);
+			const querySnapshot = await getDocs(query(collection(db, 'location')));
 			querySnapshot.forEach((doc) => {
 				arrayAux.push({ uid: doc.id, ...doc.data() });
 			});
@@ -226,10 +253,11 @@ export const createLocation = createAsyncThunk(
 export const updateLocation = createAsyncThunk(
 	'tool/updateLocation',
 	async ({ id, values }, { dispatch }) => {
+		console.log(id, values);
 		try {
-			const locationsRef = collection('location', id);
+			const locationsRef = doc(db, 'location', id);
 			await updateDoc(locationsRef, values);
-			const toolDoc = await getDoc(doc(locationsRef, id));
+			const toolDoc = await getDoc(locationsRef);
 			dispatch(
 				showToast({
 					type: 'success',
@@ -253,9 +281,10 @@ export const updateLocation = createAsyncThunk(
 export const deleteLocation = createAsyncThunk(
 	'tool/deleteLocation',
 	async ({ id }, { dispatch }) => {
+		console.log(id);
 		try {
-			const locationsRef = collection(db, 'location');
-			await deleteDoc(doc(locationsRef, id));
+			const locationsRef = doc(db, 'location', id);
+			await deleteDoc(locationsRef, id);
 			dispatch(getLocations());
 			dispatch(
 				showToast({

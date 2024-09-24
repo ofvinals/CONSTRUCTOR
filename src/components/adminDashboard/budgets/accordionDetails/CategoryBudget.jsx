@@ -36,6 +36,7 @@ export const CategoryBudget = ({
 	const [title, setTitle] = useState(category.title);
 	const [selectedItemsCategory, setSelectedItemsCategory] = useState({});
 	const [selectedItemsSubcategory, setSelectedItemsSubcategory] = useState({});
+	
 	const handleBlur = (e) => {
 		const newTitle = e.target.value;
 		if (newTitle !== category.title) {

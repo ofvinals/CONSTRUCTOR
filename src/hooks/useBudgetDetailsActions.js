@@ -21,6 +21,9 @@ export const useBudgetDetailsActions = () => {
 	const allCategoriesStatus = useAppSelector(
 		(state) => state.budgetDetails.status
 	);
+		const statusBudget = useAppSelector(
+		(state) => state.budgetDetails.statusBudget
+	);
 	const statusCategory = useAppSelector(
 		(state) => state.budgetDetails.statusCategory
 	);
@@ -159,6 +162,7 @@ export const useBudgetDetailsActions = () => {
 		itemPrice,
 		statusPriceSubcategory,
 		statusPriceCategory,
+		statusBudget,
 		exportSelectedItems,
 		getBudget,
 		getBudgets,

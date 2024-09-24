@@ -35,7 +35,7 @@ export const TableBudget = ({
 	const handleMeasurementInputChange = useCallback((e) => {
 		setMeasurementValue(e.target.value);
 	}, []);
-
+	console.log(measurementValue);
 	const handleItemCheckboxChange = (itemId, isChecked) => {
 		handleCheckboxChange({
 			categoryId,
@@ -48,6 +48,7 @@ export const TableBudget = ({
 	const handleDeleteItem = () => {
 		if (itemIdToDelete) {
 			deleteItemPrice({
+				budgetId,
 				categoryId,
 				subcategoryId: subcategory?.uid || null,
 				itemId: itemIdToDelete,
@@ -76,7 +77,7 @@ export const TableBudget = ({
 			updateItemPrice({
 				budgetId,
 				subcategoryId,
-				categoryId: category.uid,
+				categoryId,
 				itemId: itemUid,
 				values: { measurement: newMeasurement },
 			});
@@ -173,7 +174,7 @@ export const TableBudget = ({
 											type='text'
 											value={measurementValue}
 											onChange={handleMeasurementInputChange}
-											onClick={(e) => e.stopPropagation}
+											onClick={(e) => e.stopPropagation()}
 											onBlur={() =>
 												handleMeasurementChange(
 													item.uid,
