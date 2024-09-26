@@ -144,7 +144,7 @@ export const Kanban = () => {
 		<>
 			<DragDropContext onDragEnd={onDragEnd}>
 				<div className='flex flex-row'>
-					<div className='flex w-full min-h[72vh]  m-2'>
+					<div className='flex w-full min-h[72vh] m-2'>
 						{Object.entries(columns).map(([columnId, column]) => {
 							const isEditing = editingColumnId === columnId;
 							const isUnassigned = columnId === unassignedColumnId;
@@ -152,7 +152,7 @@ export const Kanban = () => {
 								<Droppable key={columnId} droppableId={columnId}>
 									{(provided) => (
 										<div
-											className='flex flex-col w-[230px] mr-[45px] h-[70vh] rounded-lg bg-background px-3'
+											className='flex flex-col w-[230px] overflow-auto mr-[45px] h-[70vh] rounded-lg bg-background px-3'
 											ref={provided.innerRef}
 											{...provided.droppableProps}>
 											<Box>

@@ -137,13 +137,13 @@ export const updateTool = createAsyncThunk(
 			);
 			await updateDoc(toolRef, { ...filteredValues, photoTool: url });
 			const toolDoc = await getDoc(doc(db, 'tools', id));
-			dispatch(getLocations());
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Herramienta actualizada exitosamente',
 				})
 			);
+			dispatch(getTools());
 			return toolDoc.data();
 		} catch (error) {
 			dispatch(
