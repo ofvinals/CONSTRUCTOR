@@ -209,7 +209,6 @@ export const getLocations = createAsyncThunk(
 			querySnapshot.forEach((doc) => {
 				arrayAux.push({ uid: doc.id, ...doc.data() });
 			});
-			console.log(arrayAux);
 			return arrayAux;
 		} catch (error) {
 			dispatch(

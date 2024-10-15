@@ -1,29 +1,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useBudgetActions } from '../../hooks/useBudgetActions';
+import { useProyectActions } from '../../hooks/useProyectActions';
 import { AccordionBudget } from '../../components/adminDashboard/budgets/AccordionBudget';
 import { MenuConfig } from '../../components/adminDashboard/budgets/accordionDetails/config/MenuConfig';
 import Dropdown from 'react-bootstrap/Dropdown';
 import ConfirmDialog from '../../utils/ConfirmDialog';
 import { ResumeBudget } from '../../components/adminDashboard/budgets/accordionDetails/ResumeBudget';
-import BudgetGeneratePDF from '../../utils/BudgetGeneratePDF';
-import { useProyectActions } from '../../hooks/useProyectActions';
+import { useBudgetActions } from '../../hooks/useBudgetActions';
 
-export const BudgetDetail = () => {
+export const ProyectDetail = () => {
 	const { budgetId } = useParams();
-	const { getBudget, budget, disableBudget, getConfigValues, confirmProyect } =
-		useBudgetActions();
-	const { createProyect } = useProyectActions();
+	const { getProyect, proyects, disableProyect } = useProyectActions();
+	const { getBudget, budget } = useBudgetActions();
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [confirmAction, setConfirmAction] = useState(null);
 	const [confirmMessage, setConfirmMessage] = useState('');
 	const [confirmHeader, setConfirmHeader] = useState('');
+	const [proyectId, setProyectId] = useState(null);
 
 	useEffect(() => {
-		getBudget({ budgetId });
-		getConfigValues({ budgetId });
-	}, [budgetId]);
+		if (budgetId === undefined) {
+			const storedBudgetId = localStorage.getItem('budgetId');
+			getBudget({ storedBudgetId });
+		} else {
+			getBudget({ budgetId });
+			if (proyects && proyectId) {
+				const foundProyect = proyects.find(
+					(proyect) => proyect.budgetId === budgetId
+				);
+				if (foundProyect) {
+					setProyectId(foundProyect.budgetId);
+					getProyect({ proyectId });
+				}
+			}
+		}
+	}, [proyects, proyectId]);
 
 	const handleShowConfirmDialog = (action, header, message) => {
 		setConfirmAction(() => action);
@@ -39,22 +51,19 @@ export const BudgetDetail = () => {
 		setShowConfirmDialog(false);
 	};
 
-	const handleProyectBudget = () => {
+	const handleArchiveProyect = () => {
 		handleShowConfirmDialog(
-			() => {
-				confirmProyect({ budgetId });
-				createProyect({ values: budgetId });
-			},
-			'Confirmar Inicio de Proyecto',
-			'¿Estás seguro que quieres iniciar el proyecto?'
+			() => disableProyect({ proyectId }),
+			'Confirmar Archivado',
+			'¿Estás seguro que quieres archivar el proyecto?'
 		);
 	};
 
-	const handleArchiveBudget = () => {
+	const handleEndProyect = () => {
 		handleShowConfirmDialog(
-			() => disableBudget({ budgetId }),
-			'Confirmar Archivado',
-			'¿Estás seguro que quieres archivar el presupuesto?'
+			() => disableProyect({ proyectId }),
+			'Confirmar Finalizacion',
+			'¿Estás seguro que quieres finalizar el proyecto?'
 		);
 	};
 
@@ -62,7 +71,7 @@ export const BudgetDetail = () => {
 		<div>
 			<div className='flex flex-wrap items-center justify-between mt-3 mx-1'>
 				<h1 className='items-start text-start title'>
-					Presupuesto {budget?.proyectName}
+					Proyecto {budget?.proyectName}
 				</h1>
 				<div className='flex flex-row flex-wrap items-end justify-around gap-2'>
 					<div className='card flex justify-content-center'>
@@ -71,26 +80,25 @@ export const BudgetDetail = () => {
 								className='btnprimary px-2 focus:bg-[#e5e7eb] focus:text-black'
 								id='dropdown-basic'>
 								<i className='pi pi-server mr-2'></i>
-								Cerrar Presupuesto
+								Cerrar Proyecto
 							</Dropdown.Toggle>
 							<Dropdown.Menu>
 								<Dropdown.Item
-									onClick={handleArchiveBudget}
+									onClick={handleArchiveProyect}
 									className='text-lg hover:font-bold hover:bg-[#fde047]'>
 									<i className='pi pi-bookmark mr-2'></i>
-									Archivar Presupuesto
+									Archivar Proyecto
 								</Dropdown.Item>
 								<Dropdown.Item
-									onClick={handleProyectBudget}
+									onClick={handleEndProyect}
 									className='text-lg hover:font-bold hover:bg-[#fde047]'>
-									<i className='pi pi-arrow-up-right mr-2 text-green-500'></i>
-									Iniciar Proyecto
+									<i className='pi pi-bookmark mr-2'></i>
+									Finalizar Proyecto
 								</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
 					</div>
-					<BudgetGeneratePDF />
-					<MenuConfig budgetId={budgetId} />
+					<MenuConfig proyectId={proyectId} />
 				</div>
 			</div>
 			<div className='mt-3'>

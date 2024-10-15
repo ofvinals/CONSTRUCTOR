@@ -4,6 +4,7 @@ import {
 	getBudgets,
 	createBudget,
 	duplicateBudget,
+	confirmProyect,
 	deleteBudget,
 	updateBudget,
 	enableBudget,
@@ -107,6 +108,20 @@ export const budgetExtraReducers = (builder) => {
 			);
 		})
 		.addCase(enableBudget.rejected, (state, action) => {
+			state.statusUpdate = 'Fallido';
+			state.error = action.payload;
+		});
+		builder
+		.addCase(confirmProyect.pending, (state) => {
+			state.statusUpdate = 'Cargando';
+		})
+		.addCase(confirmProyect.fulfilled, (state, action) => {
+			state.statusUpdate = 'Exitoso';
+			state.budgets = state.budgets.map((budget) =>
+				budget.uid === action.payload.uid ? action.payload : budget
+			);
+		})
+		.addCase(confirmProyect.rejected, (state, action) => {
 			state.statusUpdate = 'Fallido';
 			state.error = action.payload;
 		});

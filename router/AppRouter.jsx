@@ -24,6 +24,14 @@ import { Error404 } from '../src/pages/Error404';
 import { Loan } from '../src/pages/admin/employees/Loan';
 import { BudgetDetail } from '../src/pages/admin/BudgetDetail';
 import { Board } from '../src/components/adminDashboard/tools/board/Board';
+import { Finance } from '../src/components/adminDashboard/business/finance/Finance';
+import { Archived } from '../src/components/adminDashboard/business/archived/Archived';
+import { Info } from '../src/components/adminDashboard/business/info/Info';
+import { ProyectDetail} from '../src/pages/admin/ProyectDetail';
+import { Docs } from '../src/components/adminDashboard/proyects/proyectDetails/docs/Docs';
+import { Notes } from '../src/components/adminDashboard/proyects/proyectDetails/notes/Notes';
+import { Certs } from '../src/components/adminDashboard/proyects/proyectDetails/certs/Certs';
+import { Subcontracts } from '../src/components/adminDashboard/proyects/proyectDetails/subcontracts/Subcontracts';
 
 export const AppRouter = () => {
 	return (
@@ -46,16 +54,16 @@ export const AppRouter = () => {
 								<Route path='/client' element={<ClientDashboard />} />
 								<Route path='/profile' element={<EditProfile />} />
 								<Route path='/proyects' element={<Proyects />} />
-								<Route path='/proyects/budget' element={<Proyects />} />
-								<Route path='/proyects/docs' element={<Proyects />} />
-								<Route path='/proyects/certs' element={<Proyects />} />
 								<Route
-									path='/proyects/historycerts'
-									element={<Proyects />}
+									path='/proyects/budget/:budgetId'
+									element={<ProyectDetail />}
 								/>
+								<Route path='/proyects/docs' element={<Docs />} />
+								<Route path='/proyects/notes' element={<Notes />} />
+								<Route path='/proyects/certs' element={<Certs />} />
 								<Route
 									path='/proyects/subcontracts'
-									element={<Proyects />}
+									element={<Subcontracts />}
 								/>
 							</Route>
 
@@ -68,7 +76,6 @@ export const AppRouter = () => {
 									path='/budget/:budgetId'
 									element={<BudgetDetail />}
 								/>
-								<Route path='/business' element={<Business />} />
 								<Route path='/pricesbank' element={<PricesBank />} />
 								<Route
 									path='/pricesbank/magazine'
@@ -81,10 +88,17 @@ export const AppRouter = () => {
 									element={<Attendance />}
 								/>
 								<Route path='/employees/salary' element={<Salary />} />
-								<Route path='/employees/loan' element={<Loan />} /> s
+								<Route path='/employees/loan' element={<Loan />} />
 								<Route path='/tools' element={<Tools />} />
 								<Route path='/tools/stock' element={<Tools />} />
 								<Route path='/tools/locations' element={<Board />} />
+								<Route path='/business' element={<Business />} />
+								<Route path='/business/info' element={<Info />} />
+								<Route path='/business/finance' element={<Finance />} />
+								<Route
+									path='/business/archived'
+									element={<Archived />}
+								/>
 							</Route>
 
 							{/* Ruta para usuarios no autorizados */}

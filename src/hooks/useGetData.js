@@ -10,6 +10,8 @@ import { getLoans } from '../store/loans/thunks';
 import { getCategories } from '../store/prices/thunks';
 import { getBudgets } from '../store/budgets/thunks';
 import { getLocations, getTools } from '../store/tools/thunks';
+import { getBusiness } from '../store/business/thunks';
+import { getProyects } from '../store/proyects/thunks';
 
 export const useGetData = () => {
 	const dispatch = useAppDispatch();
@@ -25,6 +27,8 @@ export const useGetData = () => {
 		dispatch(getBudgets());
 		dispatch(getTools());
 		dispatch(getLocations());
+		dispatch(getBusiness());
+		dispatch(getProyects());
 	}, []);
 
 	return {};

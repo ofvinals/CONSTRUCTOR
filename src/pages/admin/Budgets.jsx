@@ -17,15 +17,18 @@ export const Budgets = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		const budgetsFiltered = budgets.filter(
+			(budget) => budget.isProyect === false
+		);
 		if (searchQuery) {
-			const filtered = budgets.filter(
+			const filtered = budgetsFiltered.filter(
 				(budget) =>
 					budget.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					budget.client?.toLowerCase().includes(searchQuery.toLowerCase())
 			);
 			setFilteredBudgets(filtered);
 		} else {
-			setFilteredBudgets(budgets);
+			setFilteredBudgets(budgetsFiltered);
 		}
 	}, [searchQuery, budgets]);
 

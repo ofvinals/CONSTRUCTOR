@@ -6,6 +6,7 @@ import {
 	getBudgets as getBudgetsThunk,
 	createBudget as createBudgetThunk,
 	duplicateBudget as duplicateBudgetThunk,
+	confirmProyect as confirmProyectThunk,
 	deleteBudget as deleteBudgetThunk,
 	updateBudget as updateBudgetThunk,
 	enableBudget as enableBudgetThunk,
@@ -55,6 +56,10 @@ export const useBudgetActions = () => {
 	const disableBudget = async ({ budgetId }) => {
 		await dispatch(disableBudgetThunk({ budgetId }));
 	};
+	const confirmProyect = async ({ budgetId }) => {
+		await dispatch(confirmProyectThunk({ budgetId }));
+	};
+
 	const enableBudget = async ({ budgetId }) => {
 		await dispatch(enableBudgetThunk({ budgetId }));
 	};
@@ -76,6 +81,7 @@ export const useBudgetActions = () => {
 		duplicateBudget,
 		deleteBudget,
 		updateBudget,
+		confirmProyect,
 		clearStateBudget,
 		budgetStatusDelete,
 		budgetStatus,

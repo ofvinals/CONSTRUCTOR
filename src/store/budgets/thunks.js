@@ -150,6 +150,7 @@ export const createBudget = createAsyncThunk(
 				...values,
 				photoProfile: photoProfileUrl,
 				isActive: true,
+				isProyect: false
 			};
 			const budgetsRef = collection(db, 'budgets');
 			const res = await addDoc(budgetsRef, budgetData);
@@ -181,10 +182,6 @@ export const duplicateBudget = createAsyncThunk(
 			// Paso 1: Obtener el documento existente
 			const budgetRef = doc(db, 'budgets', budgetId);
 			const budgetSnap = await getDoc(budgetRef);
-
-			if (!budgetSnap.exists()) {
-				throw new Error('Presupuesto no encontrado');
-			}
 			// Copiar los datos del presupuesto
 			const budgetData = budgetSnap.data();
 			const newBudgetData = {
@@ -366,6 +363,27 @@ export const disableBudget = createAsyncThunk(
 				showToast({
 					type: 'success',
 					message: 'Presupuesto archivado exitosamente',
+				})
+			);
+			return { uid: updatedBudget.uid, ...updatedBudget.data() };
+		} catch (error) {
+			return rejectWithValue(error.message);
+		}
+	}
+);
+
+export const confirmProyect = createAsyncThunk(
+	'budget/confirmProyect',
+	async ({ budgetId }, { rejectWithValue, dispatch }) => {
+		try {
+			const budgetDoc = doc(db, 'budgets', budgetId);
+			await updateDoc(budgetDoc, { isProyect: true });
+			const updatedBudget = await getDoc(budgetDoc);
+			dispatch(getBudgets());
+			dispatch(
+				showToast({
+					type: 'success',
+					message: 'Proyecto iniciado exitosamente',
 				})
 			);
 			return { uid: updatedBudget.uid, ...updatedBudget.data() };

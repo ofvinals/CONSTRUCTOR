@@ -1,19 +1,18 @@
 /* eslint-disable react/prop-types */
 import pdfMake from 'pdfmake/build/pdfmake';
-// import pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { format } from 'date-fns';
 
 // Asignar fuentes virtuales a pdfMake
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export const SalaryGeneratePDF = ({ employees, startDate, endDate }) => {
 	const formattedStartDate = startDate ? format(startDate, 'dd/MM/yyyy') : '';
 	const formattedEndDate = endDate ? format(endDate, 'dd/MM/yyyy') : '';
-
 	// Función para formatear números
 	const formatNumber = (value) => {
 		const number = Number(value);
-		return number.toLocaleString('es-AR'); // Usar formato con puntos para Argentina
+		return number.toLocaleString('es-AR'); 
 	};
 
 	const handleDownloadPDF = () => {

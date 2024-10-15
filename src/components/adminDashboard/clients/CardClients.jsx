@@ -159,12 +159,12 @@ export const CardClients = ({ users }) => {
 				/>
 			</Modals>
 			<ConfirmDialog
-						header='Confirmar Eliminacion'
-						visible={showConfirmDialog}
-						onHide={() => setShowConfirmDialog(false)}
-						onConfirm={handleDeleteUser}
-						message='¿Estás seguro de que quieres eliminar el cliente?'
-					/>
+				header='Confirmar Eliminacion'
+				visible={showConfirmDialog}
+				onHide={() => setShowConfirmDialog(false)}
+				onConfirm={handleDeleteUser}
+				message='¿Estás seguro de que quieres eliminar el cliente?'
+			/>
 		</div>
 	);
 };

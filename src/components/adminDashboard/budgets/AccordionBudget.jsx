@@ -71,7 +71,6 @@ export const AccordionBudget = () => {
 	};
 
 	const handleDelete = (id) => {
-		console.log(id);
 		setDeleteItem({ budgetId, id });
 		setShowConfirmDialog(true);
 	};

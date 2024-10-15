@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Card } from 'primereact/card';
 import Loader from '../../../utils/Loader';
@@ -6,11 +5,13 @@ import Avatar from 'react-avatar';
 import PaginatorComponent from '../../../utils/Paginator';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Custom.css';
-import { useBudgetActions } from '../../../hooks/useBudgetActions';
+import { useProyectActions } from '../../../hooks/useProyectActions';
 import { MenuCard } from './MenuCard';
+import { useBudgetActions } from '../../../hooks/useBudgetActions';
 
-export const CardBudgets = ({ budgets }) => {
-	const { allBudgetsStatus } = useBudgetActions();
+export const CardProyects = () => {
+	const { allProyectsStatus, proyects } = useProyectActions();
+	const { budgets } = useBudgetActions();
 	const [first, setFirst] = useState(0);
 	const [rows, setRows] = useState(10);
 	const navigate = useNavigate();
@@ -20,31 +21,38 @@ export const CardBudgets = ({ budgets }) => {
 		setRows(event.rows);
 	};
 
-	if (allBudgetsStatus === 'Cargando') {
+	if (allProyectsStatus === 'Cargando') {
 		return <Loader />;
 	}
 
-	const paginatedBudgets =
-		budgets && budgets.lenght > 0
-			? budgets?.slice(first, first + rows)
+	const proyectsFiltered = budgets.filter(
+		(budget) => budget.isProyect === true
+	);
+
+	const paginatedProyects =
+		proyectsFiltered && proyectsFiltered.length > 0
+			? proyectsFiltered.slice(first, first + rows)
 			: null;
 
 	return (
 		<div className='pt-4 flex flex-col items-center bg-background'>
 			<div className='flex flex-row flex-wrap items-center justify-around'>
-				{paginatedBudgets ? (
-					paginatedBudgets.map((budget) => (
+				{paginatedProyects ? (
+					paginatedProyects.map((budget) => (
 						<Card
 							key={budget.uid}
 							className='w-[300px] h-full flex flex-col border-2 border-[#ffd52b] justify-center rounded-xl m-2'>
 							<div className='flex flex-row w-full items-center justify-between'>
 								<div
 									className='flex flex-row items-center justify-between cursor-pointer'
-									onClick={() => navigate(`/budget/${budget.uid}`)}>
+									onClick={() => {
+										localStorage.setItem('budgetId', budget.uid);
+										navigate(`/proyects/budget/${budget.uid}`);
+									}}>
 									{budget.photoProfile ? (
 										<img
 											src={budget.photoProfile}
-											alt='foto de presupuesto'
+											alt='foto de proyecto'
 											className='rounded-full m-2 h-[60px]'
 										/>
 									) : (
@@ -62,7 +70,7 @@ export const CardBudgets = ({ budgets }) => {
 								<div className=''>
 									<MenuCard
 										isActive={budget.isActive}
-										budgetId={budget.uid}
+										proyectId={budget.uid}
 									/>
 								</div>
 							</div>
@@ -76,14 +84,14 @@ export const CardBudgets = ({ budgets }) => {
 					))
 				) : (
 					<div className='text-xl font-semibold'>
-						No tienes presupuestos pendientes
+						No tienes proyectos pendientes
 					</div>
 				)}
 			</div>
 			<PaginatorComponent
 				first={first}
 				rows={rows}
-				totalRecords={budgets?.length}
+				totalRecords={proyects?.length}
 				onPageChange={onPageChange}
 			/>
 		</div>

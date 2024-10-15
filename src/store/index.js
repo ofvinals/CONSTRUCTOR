@@ -9,6 +9,8 @@ import priceReducer from './prices/slice';
 import budgetReducer from './budgets/slice';
 import budgetDetailReducer from './budgetDetails/slice';
 import toolReducer from './tools/slice';
+import businessReducer from './business/slice';
+import proyectReducer from './proyects/slice';
 
 export const store = configureStore({
 	reducer: {
@@ -22,5 +24,7 @@ export const store = configureStore({
 		budgets: budgetReducer,
 		budgetDetails: budgetDetailReducer,
 		tools: toolReducer,
+		business: businessReducer,
+		proyects: proyectReducer,
 	},
 });

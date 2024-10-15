@@ -6,8 +6,14 @@ import { useAuth } from '../../hooks/useAuth';
 
 export function Header() {
 	const location = useLocation();
+
 	useEffect(() => {}, [location]);
-	const currentMenuOptions = menuOptions[location.pathname] || [];
+
+	const isBudgetRoute = location.pathname.startsWith('/proyects/budget');
+
+	const currentMenuOptions = isBudgetRoute
+		? menuOptions['/proyects/budget']
+		: menuOptions[location.pathname] || [];
 	const { loggedUser } = useAuth();
 
 	return (

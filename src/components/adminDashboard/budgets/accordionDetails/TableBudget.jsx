@@ -35,7 +35,7 @@ export const TableBudget = ({
 	const handleMeasurementInputChange = useCallback((e) => {
 		setMeasurementValue(e.target.value);
 	}, []);
-	console.log(measurementValue);
+	
 	const handleItemCheckboxChange = (itemId, isChecked) => {
 		handleCheckboxChange({
 			categoryId,
