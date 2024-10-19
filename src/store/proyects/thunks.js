@@ -51,7 +51,7 @@ export const getProyect = createAsyncThunk(
 			const usuarioRef = doc(db, 'proyects', proyectId);
 			const snapshot = await getDoc(usuarioRef);
 			const proyectData = snapshot.data();
-			return proyectData;
+			return { proyectId, ...proyectData };
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -234,14 +234,13 @@ export const createDocs = createAsyncThunk(
 			const snapshot = await uploadBytes(storageRef, file);
 			// Obtener la URL del archivo subido
 			const downloadURL = await getDownloadURL(snapshot.ref);
+			dispatch(getDocuments());
 			dispatch(
 				showToast({
 					type: 'success',
 					message: 'Archivo guardado exitosamente',
 				})
 			);
-			// Retornar la URL para guardarla o utilizarla en tu app
-			return downloadURL;
 		} catch (error) {
 			dispatch(
 				showToast({
@@ -262,6 +261,7 @@ export const deleteDocs = createAsyncThunk(
 			const fileRef = ref(storage, `proyects/docs/${file}`);
 			// Eliminar el archivo
 			await deleteObject(fileRef);
+			dispatch(getDocuments());
 			dispatch(
 				showToast({
 					type: 'success',

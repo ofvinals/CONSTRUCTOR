@@ -56,11 +56,11 @@ export const menuOptions = {
 	'/proyects': [],
 	'/proyects/budget': [
 		{ label: 'Presupuesto', path: `/proyects/budget/${budgetId}` },
-		{ label: 'Documentacion del Proyecto', path: '/proyects/docs' },
-		{ label: 'Actas', path: '/proyects/notes' },
-		{ label: 'Certificaciones', path: '/proyects/certs' },
-		{ label: 'Historico de Certificaciones', path: '/proyects/historycerts' },
-		{ label: 'Sub Contratistas', path: '/proyects/subcontracts' },
+		{ label: 'Documentacion del Proyecto', path: `/proyects/docs/${budgetId}` },
+		{ label: 'Actas', path: `/proyects/notes/${budgetId}` },
+		{ label: 'Certificaciones', path: `/proyects/certs/${budgetId}` },
+		{ label: 'Historico de Certificaciones', path: `/proyects/historycerts/${budgetId}` },
+		{ label: 'Sub Contratistas', path: `/proyects/subcontracts/${budgetId}` },
 	],
 	'/proyects/docs': [
 		{ label: 'Presupuesto', path: '/proyects/budget' },

@@ -15,10 +15,10 @@ export const Budgets = () => {
 		useBudgetActions();
 	const addModal = useModal();
 	const navigate = useNavigate();
-
+	console.log(budgets);
 	useEffect(() => {
 		const budgetsFiltered = budgets.filter(
-			(budget) => budget.isProyect === false
+			(budget) => budget.isProyect === false && budget.isActive === true
 		);
 		if (searchQuery) {
 			const filtered = budgetsFiltered.filter(
@@ -31,7 +31,7 @@ export const Budgets = () => {
 			setFilteredBudgets(budgetsFiltered);
 		}
 	}, [searchQuery, budgets]);
-
+console.log(filteredBudgets)
 	const handleSearchSubmit = (e) => {
 		e.preventDefault();
 		navigate(`/budgets?search=${searchQuery}`);

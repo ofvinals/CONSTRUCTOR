@@ -9,7 +9,7 @@ export function Header() {
 
 	useEffect(() => {}, [location]);
 
-	const isBudgetRoute = location.pathname.startsWith('/proyects/budget');
+	const isBudgetRoute = location.pathname.startsWith('/proyects');
 
 	const currentMenuOptions = isBudgetRoute
 		? menuOptions['/proyects/budget']

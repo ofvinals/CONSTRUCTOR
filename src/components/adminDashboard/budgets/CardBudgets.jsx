@@ -23,9 +23,9 @@ export const CardBudgets = ({ budgets }) => {
 	if (allBudgetsStatus === 'Cargando') {
 		return <Loader />;
 	}
-
+	
 	const paginatedBudgets =
-		budgets && budgets.lenght > 0
+		budgets && budgets.length > 0
 			? budgets?.slice(first, first + rows)
 			: null;
 

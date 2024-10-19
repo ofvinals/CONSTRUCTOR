@@ -62,7 +62,7 @@ export const FileCard = ({ file, onDownload, onDelete }) => {
 				<button type='button' onClick={() => onDownload(file)}>
 					<i className='pi pi-download text-xl p-2 font-semibold text-blue-500 hover:bg-blue-200 hover:rounded-md '></i>
 				</button>
-				<button onClick={() => onDelete(file)}>
+				<button type='button' onClick={() => onDelete(file)}>
 					<i className='pi pi-trash text-xl p-2 font-semibold text-red-500 hover:bg-red-200 hover:rounded-md'></i>
 				</button>
 			</div>

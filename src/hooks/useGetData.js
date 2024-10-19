@@ -12,6 +12,7 @@ import { getBudgets } from '../store/budgets/thunks';
 import { getLocations, getTools } from '../store/tools/thunks';
 import { getBusiness } from '../store/business/thunks';
 import { getProyects } from '../store/proyects/thunks';
+import { getDocuments } from '../store/proyects/thunks';
 
 export const useGetData = () => {
 	const dispatch = useAppDispatch();
@@ -29,6 +30,8 @@ export const useGetData = () => {
 		dispatch(getLocations());
 		dispatch(getBusiness());
 		dispatch(getProyects());
+		dispatch(getDocuments());
+
 	}, []);
 
 	return {};

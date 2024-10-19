@@ -1,13 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 import { useProyectActions } from '../../../hooks/useProyectActions';
 import ConfirmDialog from '../../../utils/ConfirmDialog';
 import useModal from '../../../hooks/useModal';
 
-export const MenuCard = ({ isActive, proyectId }) => {
+export const MenuCard = ({ isActive, budgetId }) => {
 	const {
+		proyects,
+		getProyect,
 		deleteProyect,
 		disableProyect,
 		enableProyect,
@@ -19,6 +22,23 @@ export const MenuCard = ({ isActive, proyectId }) => {
 	const [confirmMessage, setConfirmMessage] = useState('');
 	const [confirmHeader, setConfirmHeader] = useState('');
 	const editModal = useModal();
+	const [proyectId, setProyectId] = useState(null);
+	console.log(proyects);
+	useEffect(() => {
+		if (proyects && budgetId) {
+			const foundProyect = proyects.find(
+				(proyect) => proyect.budgetId === budgetId
+			);
+			console.log(foundProyect)
+			if (foundProyect) {
+				const fetchProyect = async () => {
+					setProyectId(foundProyect.uid);
+					await getProyect({ proyectId: foundProyect.uid });
+				};
+				fetchProyect();
+			}
+		}
+	}, [proyects]);
 
 	const handleShowConfirmDialog = (action, header, message) => {
 		setConfirmAction(() => action);
@@ -36,7 +56,7 @@ export const MenuCard = ({ isActive, proyectId }) => {
 		handleShowConfirmDialog(
 			() => deleteProyect({ proyectId }),
 			'Confirmar Eliminación',
-			'¿Estás seguro que quieres eliminar el presupuesto?'
+			'¿Estás seguro que quieres eliminar el proyecto?'
 		);
 	};
 
@@ -44,7 +64,7 @@ export const MenuCard = ({ isActive, proyectId }) => {
 		handleShowConfirmDialog(
 			() => disableProyect({ proyectId }),
 			'Confirmar Archivado',
-			'¿Estás seguro que quieres archivar el presupuesto?'
+			'¿Estás seguro que quieres archivar el proyecto?'
 		);
 	};
 
@@ -52,7 +72,7 @@ export const MenuCard = ({ isActive, proyectId }) => {
 		handleShowConfirmDialog(
 			() => enableProyect({ proyectId }),
 			'Confirmar Desarchivado',
-			'¿Estás seguro que quieres desarchivar el presupuesto?'
+			'¿Estás seguro que quieres desarchivar el proyecto?'
 		);
 	};
 

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import PaginatorComponent from '../../../../../utils/Paginator';
 import { FileCard } from './FileCard';
@@ -6,12 +5,12 @@ import ConfirmDialog from '../../../../../utils/ConfirmDialog';
 import { useProyectActions } from '../../../../../hooks/useProyectActions';
 import Loader from '../../../../../utils/Loader';
 
-const FileUploader = ({ files }) => {
+const FileUploader = () => {
 	const [first, setFirst] = useState(0);
 	const [rows, setRows] = useState(10);
 	const [fileToDelete, setFileToDelete] = useState(null);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-	const { deleteDocs, docsStatus } = useProyectActions();
+	const { deleteDocs, docsStatus, docs } = useProyectActions();
 
 	const handleDownload = async (file) => {
 		try {
@@ -37,8 +36,8 @@ const FileUploader = ({ files }) => {
 
 	const confirmDelete = async () => {
 		if (fileToDelete) {
-			await deleteDocs({ file: fileToDelete.name });
 			setShowConfirmDialog(false);
+			await deleteDocs({ file: fileToDelete.name });
 			setFileToDelete(null);
 		}
 	};
@@ -47,9 +46,9 @@ const FileUploader = ({ files }) => {
 		setFirst(event.first);
 		setRows(event.rows);
 	};
-
+	console.log(docs);
 	const paginatedDocs =
-		files && files.length > 0 ? files?.slice(first, first + rows) : null;
+		docs && docs.length > 0 ? docs.slice(first, first + rows) : null;
 
 	if (docsStatus === 'Cargando') {
 		return <Loader />;
@@ -58,8 +57,8 @@ const FileUploader = ({ files }) => {
 	return (
 		<div className='pt-4 flex flex-col items-center bg-background'>
 			<div className='flex flex-row flex-wrap items-center justify-around'>
-				{paginatedDocs ? (
-					paginatedDocs?.map((file, index) => (
+				{paginatedDocs && paginatedDocs.length > 0 ? (
+					paginatedDocs.map((file, index) => (
 						<FileCard
 							key={index}
 							file={file}
@@ -76,7 +75,7 @@ const FileUploader = ({ files }) => {
 			<PaginatorComponent
 				first={first}
 				rows={rows}
-				totalRecords={files?.length}
+				totalRecords={docs?.length}
 				onPageChange={onPageChange}
 			/>
 			<ConfirmDialog

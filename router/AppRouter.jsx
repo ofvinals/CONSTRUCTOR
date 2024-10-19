@@ -58,11 +58,11 @@ export const AppRouter = () => {
 									path='/proyects/budget/:budgetId'
 									element={<ProyectDetail />}
 								/>
-								<Route path='/proyects/docs' element={<Docs />} />
-								<Route path='/proyects/notes' element={<Notes />} />
-								<Route path='/proyects/certs' element={<Certs />} />
+								<Route path='/proyects/docs/:budgetId' element={<Docs />} />
+								<Route path='/proyects/notes/:budgetId' element={<Notes />} />
+								<Route path='/proyects/certs/:budgetId' element={<Certs />} />
 								<Route
-									path='/proyects/subcontracts'
+									path='/proyects/subcontracts/:budgetId'
 									element={<Subcontracts />}
 								/>
 							</Route>

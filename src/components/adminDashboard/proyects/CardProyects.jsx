@@ -70,7 +70,7 @@ export const CardProyects = () => {
 								<div className=''>
 									<MenuCard
 										isActive={budget.isActive}
-										proyectId={budget.uid}
+										budgetId={budget.uid}
 									/>
 								</div>
 							</div>

@@ -5,7 +5,7 @@ import '../../../../../styles/Custom.css';
 import { useProyectActions } from '../../../../../hooks/useProyectActions';
 
 export const Docs = () => {
-	const { getDocuments, createDocs, docs } = useProyectActions();
+	const { getDocuments, createDocs } = useProyectActions();
 
 	useEffect(() => {
 		const dataDocuments = async () => {
@@ -47,7 +47,7 @@ export const Docs = () => {
 				/>
 			</div>
 			<div>
-				<FileUploader files={docs} />
+				<FileUploader />
 			</div>
 		</div>
 	);
